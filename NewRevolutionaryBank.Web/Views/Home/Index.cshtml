@@ -1,0 +1,45 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+	<h1 class="display-4 text-secondary fw-bold text-dark py-3">
+		Welcome to
+		<span class="text-info">NewRevolutionaryBank</span>!
+	</h1>
+	<p class="text-secondary fw-bold py-1">
+		We hope you are having a great @DateTime.Now.DayOfWeek!
+		<i class="fa fa-smile-o"></i>
+	</p>
+	<hr />
+	<br />
+</div>
+
+<!-- Carousel -->
+<div id="nrbCarousel" class="carousel slide mb-5">
+	<div class="carousel-inner">
+		<div class="carousel-item active">
+			<img src="~/carousel/img1.jpg" class="d-block w-100">
+		</div>
+		<div class="carousel-item">
+			<img src="~/carousel/img2.jpg" class="d-block w-100">
+		</div>
+		<div class="carousel-item">
+			<img src="~/carousel/img3.jpg" class="d-block w-100">
+		</div>
+		<div class="carousel-item">
+			<img src="~/carousel/img4.jpg" class="d-block w-100">
+		</div>
+		<div class="carousel-item">
+			<img src="~/carousel/img5.jpg" class="d-block w-100">
+		</div>
+	</div>
+	<button class="carousel-control-prev" type="button" data-bs-target="#nrbCarousel" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Previous</span>
+	</button>
+	<button class="carousel-control-next" type="button" data-bs-target="#nrbCarousel" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="visually-hidden">Next</span>
+	</button>
+</div>

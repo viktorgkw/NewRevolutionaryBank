@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+	<!-- Metadata -->
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<!-- Title -->
+	<title>NRB -> @ViewData["Title"]</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+	<link rel="stylesheet" href="~/NewRevolutionaryBank.Web.styles.css" asp-append-version="true" />
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+	<!-- Font -->
+	<link rel="preconnect"
+		  href="https://fonts.googleapis.com">
+	<link rel="preconnect"
+		  href="https://fonts.gstatic.com"
+		  rossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"
+		  rel="stylesheet">
+
+	<!-- Font Awesome -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="bg-light">
+	<header>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container-fluid">
+				<a class="navbar-brand fw-bold fs-4 text-info" asp-controller="Home" asp-action="Index">NRB</a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+						aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link text-white fw-bold"
+							   asp-controller="Home"
+							   asp-action="Index">
+								Home
+							</a>
+						</li>
+
+						@if (User.IsInRole("Guest"))
+						{
+							<li class="nav-item">
+								<a class="nav-link text-white fw-bold"
+								   asp-controller="BankAccount"
+								   asp-action="Create">
+									Create Bank Account
+								</a>
+							</li>
+						}
+					</ul>
+
+					<partial name="_LoginPartial" />
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<div class="container min-vh-100">
+		@RenderBody()
+	</div>
+
+	<footer class="bg-dark footer text-light position-static py-2">
+		<div class="container text-center">
+			<span class="fw-bold">&copy; 2023 New Revolutionary Bank. All rights reserved.</span>
+		</div>
+	</footer>
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="~/js/site.js" asp-append-version="true"></script>
+	@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
