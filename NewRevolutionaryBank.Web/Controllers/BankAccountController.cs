@@ -24,13 +24,14 @@ public class BankAccountController : Controller
 	}
 
 	[HttpGet]
-	[Authorize(Roles = "Guest")]
+	[Authorize(Roles = "Guest,AccountHolder")]
 	public IActionResult Create()
 	{
 		return View();
 	}
 
 	[HttpPost]
+	[Authorize(Roles = "Guest,AccountHolder")]
 	public async Task<IActionResult> Create(BankAccountCreateViewModel model)
 	{
 		if (!ModelState.IsValid)
@@ -38,8 +39,15 @@ public class BankAccountController : Controller
 			return View(model);
 		}
 
-		await _bankAccountService.Create(model);
+		await _bankAccountService.Create(User.Identity!.Name!, model);
 
 		return RedirectToAction("MyAccount", "BankAccount");
+	}
+
+	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
+	public IActionResult MyAccount()
+	{
+		return View();
 	}
 }

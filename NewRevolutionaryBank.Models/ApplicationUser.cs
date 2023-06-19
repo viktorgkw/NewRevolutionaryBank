@@ -8,9 +8,7 @@ public class ApplicationUser : IdentityUser
 	{
 		CreatedOn = DateTime.UtcNow;
 		IsDeleted = false;
-		Roles = new HashSet<IdentityUserRole<string>>();
-		Claims = new HashSet<IdentityUserClaim<string>>();
-		Logins = new HashSet<IdentityUserLogin<string>>();
+		BankAccounts = new HashSet<BankAccount>();
 	}
 
 	public string? FirstName { get; set; }
@@ -25,11 +23,5 @@ public class ApplicationUser : IdentityUser
 
 	public DateTime? DeletedOn { get; set; }
 
-	public virtual ICollection<IdentityUserRole<string>> Roles { get; set; }
-
-	public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
-
-	public virtual ICollection<IdentityUserLogin<string>> Logins { get; set; }
-
-    public BankAccount? BankAccount { get; set; }
+    public ICollection<BankAccount> BankAccounts { get; set; }
 }

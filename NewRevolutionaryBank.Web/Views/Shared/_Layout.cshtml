@@ -48,6 +48,16 @@
 							</a>
 						</li>
 
+						@if (User.IsInRole("AccountHolder"))
+						{
+							<li class="nav-item">
+								<a class="nav-link text-white fw-bold"
+								   asp-controller="BankAccount"
+								   asp-action="MyAccount">
+									My Account
+								</a>
+							</li>
+						}
 						@if (User.IsInRole("Guest"))
 						{
 							<li class="nav-item">

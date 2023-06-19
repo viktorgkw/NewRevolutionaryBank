@@ -71,7 +71,8 @@ builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 
-builder.Services.AddMvc(options => options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
+builder.Services.AddMvc(options =>
+	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
