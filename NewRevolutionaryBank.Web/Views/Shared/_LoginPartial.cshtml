@@ -12,7 +12,7 @@
 
 		<ul class="dropdown-menu dropdown-menu-end bg-dark"
 			aria-labelledby="dropdownProfile">
-			<li>
+			<li class="py-2">
 				<a class="nav-link text-white fw-bold"
 				   asp-area="Identity"
 				   asp-page="/Account/Manage/Index"
@@ -20,7 +20,14 @@
 					Settings
 				</a>
 			</li>
-			<li>
+			<li class="py-2">
+				<a class="nav-link text-white fw-bold"
+				   asp-controller="BankAccount"
+				   asp-action="Create">
+					Create new Bank Account
+				</a>
+			</li>
+			<li class="py-2">
 				<a class="nav-link text-white fw-bold"
 				   asp-area="Identity"
 				   asp-page="/Account/Logout">

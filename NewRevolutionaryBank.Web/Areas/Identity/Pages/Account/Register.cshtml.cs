@@ -14,7 +14,6 @@ using NewRevolutionaryBank.Services.Messaging.Contracts;
 
 public class RegisterModel : PageModel
 {
-	private readonly SignInManager<ApplicationUser> _signInManager;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly IUserStore<ApplicationUser> _userStore;
 	private readonly IUserEmailStore<ApplicationUser> _emailStore;
@@ -23,13 +22,11 @@ public class RegisterModel : PageModel
 	public RegisterModel(
 		UserManager<ApplicationUser> userManager,
 		IUserStore<ApplicationUser> userStore,
-		SignInManager<ApplicationUser> signInManager,
 		IEmailSender emailSender)
 	{
 		_userManager = userManager;
 		_userStore = userStore;
 		_emailStore = GetEmailStore();
-		_signInManager = signInManager;
 		_emailSender = emailSender;
 	}
 

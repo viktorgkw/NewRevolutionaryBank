@@ -41,13 +41,38 @@ public class BankAccountController : Controller
 
 		await _bankAccountService.Create(User.Identity!.Name!, model);
 
-		return RedirectToAction("MyAccount", "BankAccount");
+		return RedirectToAction("MyAccounts", "BankAccount");
 	}
 
 	[HttpGet]
 	[Authorize(Roles = "AccountHolder")]
-	public IActionResult MyAccount()
+	public async Task<IActionResult> MyAccounts()
 	{
-		return View();
+		List<BankAccountDisplayViewModel> accounts = await _bankAccountService
+			.GetAllUserAccounts(User.Identity!.Name!);
+
+		if (accounts.Count < 1)
+		{
+			await _bankAccountService.RemoveHolderRole(User.Identity!.Name!);
+
+			return RedirectToAction("Create");
+		}
+
+		return View(accounts);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> Details(Guid id)
+	{
+		BankAccountDetailsViewModel? viewModel = await _bankAccountService
+			.GetDetailsByIdAsync(id);
+
+		if (viewModel is null)
+		{
+			// TODO: Add custom error page
+			return RedirectToAction("Index", "Home");
+		}
+
+		return View(viewModel);
 	}
 }

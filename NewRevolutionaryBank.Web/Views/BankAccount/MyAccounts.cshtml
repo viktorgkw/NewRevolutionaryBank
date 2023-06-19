@@ -1,0 +1,30 @@
+﻿@model List<BankAccountDisplayViewModel>
+@{
+	ViewData["Title"] = "My Bank Accounts";
+}
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+
+		<hr />
+		<br />
+	</div>
+
+	<div class="d-flex flex-row justify-content-around flex-wrap">
+		@foreach (var acc in Model)
+		{
+			var balanceColor = acc.Balance < 1 ? "text-danger" : "text-success";
+
+			<div class="border border-dark rounded p-4 fw-bold">
+
+				<p>@acc.SecureId</p>
+				<p class="@balanceColor">$@acc.Balance</p>
+
+				<a class="btn btn-info text-white fw-bold"
+				   asp-action="Details"
+				   asp-route-id="@acc.Id">Details</a>
+			</div>
+		}
+	</div>
+</div>

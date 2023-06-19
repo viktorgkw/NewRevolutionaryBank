@@ -1,0 +1,57 @@
+﻿@model BankAccountDetailsViewModel
+@{
+	ViewData["Title"] = "Account Details";
+}
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+		<hr />
+		<br />
+	</div>
+
+	<div class="fw-bold border border-dark rounded p-4 bg-dark mb-5">
+		<p class="fs-2 text-info">Account Information</p>
+		<p class="fs-5 text-light">Balance - @Model.Balance</p>
+	</div>
+
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark">
+		<p class="fs-2 text-info">Personal Information</p>
+		<p class="fs-5 text-light">Unified Civil Number - @Model.UnifiedCivilNumber</p>
+		<p class="fs-5 text-light">Address - @Model.Address</p>
+	</div>
+
+	<div class="fw-bold border border-dark rounded p-4 bg-dark" style="overflow-x: auto;">
+		<p class="fs-2 text-info">Transaction History</p>
+		@if (Model.TransactionHistory.Count > 0)
+		{
+			<table class="table table-light table-hover table-responsive">
+				<thead>
+					<tr>
+						<th>Amount</th>
+						<th>Date</th>
+						<th>Description</th>
+						<th>From</th>
+						<th>To</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var transaction in Model.TransactionHistory)
+					{
+						<tr class="text-info">
+							<td>@transaction.Amount</td>
+							<td>@transaction.TransactionDate</td>
+							<td>@transaction.Description</td>
+							<td>@transaction.AccountFrom.UserName</td>
+							<td>@transaction.AccountTo.UserName</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<p class="text-light fw-bold fs-5">No transactions yet!</p>
+		}
+	</div>
+</div>
