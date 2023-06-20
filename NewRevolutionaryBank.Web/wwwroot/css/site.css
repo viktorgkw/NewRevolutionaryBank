@@ -21,3 +21,8 @@ body {
     margin: 0;
     font-family: 'Varela Round', sans-serif !important;
 }
+
+.website-gif {
+    max-width: 80%;
+    height: 100%;
+}

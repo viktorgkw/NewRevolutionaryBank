@@ -1,10 +1,14 @@
 ﻿namespace NewRevolutionaryBank.Web.Controllers;
 
+using System.Text.RegularExpressions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
+using NewRevolutionaryBank.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
-using NewRevolutionaryBank.ViewModels;
+using NewRevolutionaryBank.ViewModels.BankAccount;
+using NewRevolutionaryBank.ViewModels.Transaction;
 
 [Authorize]
 public class BankAccountController : Controller
@@ -25,8 +29,10 @@ public class BankAccountController : Controller
 
 	[HttpGet]
 	[Authorize(Roles = "Guest,AccountHolder")]
-	public IActionResult Create()
+	public async Task<IActionResult> Create()
 	{
+		await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
+
 		return View();
 	}
 
@@ -48,15 +54,15 @@ public class BankAccountController : Controller
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> MyAccounts()
 	{
+		bool isHolder = await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
+
+		if (!isHolder)
+		{
+			return RedirectToAction("Create", "BankAccount");
+		}
+
 		List<BankAccountDisplayViewModel> accounts = await _bankAccountService
 			.GetAllUserAccounts(User.Identity!.Name!);
-
-		if (accounts.Count < 1)
-		{
-			await _bankAccountService.RemoveHolderRole(User.Identity!.Name!);
-
-			return RedirectToAction("Create");
-		}
 
 		return View(accounts);
 	}
@@ -74,5 +80,58 @@ public class BankAccountController : Controller
 		}
 
 		return View(viewModel);
+	}
+
+	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
+	public async Task<IActionResult> NewTransaction()
+	{
+		TransactionNewViewModel model = await _bankAccountService
+			.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+
+		return View(model);
+	}
+
+	[HttpPost]
+	[Authorize(Roles = "AccountHolder")]
+	public async Task<IActionResult> NewTransaction(IFormCollection form, TransactionNewViewModel model)
+	{
+		if (!ModelState.IsValid)
+		{
+			TransactionNewViewModel cleanModel = await _bankAccountService
+				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+
+			return View(cleanModel);
+		}
+
+		PaymentResult paymentResult = await _bankAccountService
+			.BeginPaymentAsync(model.AccountFrom, model.AccountTo, model.Amount);
+
+		if (paymentResult != PaymentResult.Successful)
+		{
+			ModelState.AddModelError("", string.Join(" ", Regex.Split(
+				paymentResult.ToString(),
+				@"(?<!^)(?=[A-Z])")));
+
+			TransactionNewViewModel cleanModel = await _bankAccountService
+				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+
+			return View(cleanModel);
+		}
+
+		TempData["RedirectedFromMethod"] = "NewTransaction";
+		return RedirectToAction("TransactionSuccessful", "BankAccount");
+	}
+
+	[HttpGet]
+	public IActionResult TransactionSuccessful()
+	{
+		if (TempData["RedirectedFromMethod"] is not null &&
+			TempData["RedirectedFromMethod"]!.ToString() == "NewTransaction")
+		{
+			return View();
+		}
+
+		return RedirectToAction("Index", "Home");
 	}
 }

@@ -1,0 +1,83 @@
+﻿@model TransactionNewViewModel
+@{
+	ViewData["Title"] = "New Transaction";
+}
+
+<div>
+	<div class="text-center">
+		<h1 class="display-4 text-secondary fw-bold text-dark py-3">
+			@ViewData["Title"]
+		</h1>
+		<hr />
+		<br />
+	</div>
+
+	<form method="post">
+		<div class="d-flex flex-column align-items-center justify-content-center">
+			<div asp-validation-summary="ModelOnly"
+				 class="text-danger fw-bold"
+				 role="alert"></div>
+		</div>
+
+		<input asp-for="SenderAccounts" hidden />
+
+		<div class="text-center">
+			<div class="form-group mb-3">
+				<label asp-for="Amount"
+					   class="fw-bold fs-5">Amount</label>
+				<input asp-for="Amount"
+					   type="number"
+					   value="10"
+					   class="form-control"
+					   aria-required="true"
+					   min="10"
+					   max="10000"
+					   placeholder="Transaction Amount" />
+				<span asp-validation-for="Amount" class="text-danger"></span>
+			</div>
+
+			<div class="form-group mb-3">
+				<label asp-for="Description"
+					   class="fw-bold fs-5">Description</label>
+				<input asp-for="Description"
+					   type="text"
+					   class="form-control"
+					   aria-required="true"
+					   minlength="5"
+					   maxlength="120"
+					   placeholder="Description" />
+				<span asp-validation-for="Description" class="text-danger"></span>
+			</div>
+
+			<div class="form-group mb-3">
+				<label asp-for="AccountFrom" class="fw-bold fs-5">Sender account</label>
+				<select asp-for="AccountFrom" class="form-control" aria-required="true">
+					@foreach (var account in Model.SenderAccounts)
+					{
+						<option value="@account.Id">
+							@account.Id.ToString().Substring(0, 5) - @account.Balance
+						</option>
+					}
+				</select>
+				<span asp-validation-for="AccountFrom" class="text-danger"></span>
+			</div>
+
+
+			<div class="form-group mb-3">
+				<label asp-for="AccountTo"
+					   class="fw-bold fs-5">Reciever Id</label>
+				<input asp-for="AccountTo"
+					   type="text"
+					   class="form-control"
+					   aria-required="true"
+					   minlength="30"
+					   maxlength="40"
+					   placeholder="Reciever Id" />
+				<span asp-validation-for="AccountTo" class="text-danger"></span>
+			</div>
+
+			<button type="submit" class="btn btn-info text-white fw-bold">Submit</button>
+		</div>
+	</form>
+
+</div>

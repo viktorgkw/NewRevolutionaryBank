@@ -55,12 +55,33 @@
 
 						@if (User.IsInRole("AccountHolder"))
 						{
-							<li class="nav-item">
-								<a class="nav-link text-white fw-bold"
-								   asp-controller="BankAccount"
-								   asp-action="MyAccounts">
-									My Accounts
+							<li class="dropdown">
+								<a class="btn btn-close-white dropdown-toggle fw-bold"
+								   href="#"
+								   role="button"
+								   id="dropdownProfile"
+								   data-bs-toggle="dropdown"
+								   aria-expanded="false">
+									Banking
 								</a>
+
+								<ul class="dropdown-menu dropdown-menu-end bg-dark"
+									aria-labelledby="dropdownProfile">
+									<li class="py-2">
+										<a class="nav-link text-white fw-bold"
+										   asp-controller="BankAccount"
+										   asp-action="MyAccounts">
+											My Accounts
+										</a>
+									</li>
+									<li class="py-2">
+										<a class="nav-link text-white fw-bold"
+										   asp-controller="BankAccount"
+										   asp-action="NewTransaction">
+											New Transaction
+										</a>
+									</li>
+								</ul>
 							</li>
 						}
 						@if (User.IsInRole("Guest"))

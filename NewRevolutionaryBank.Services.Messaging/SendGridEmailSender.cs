@@ -15,8 +15,7 @@ public class SendGridEmailSender : IEmailSender
 	{
 		_configuration = configuration;
 
-		string apiKey = _configuration["SendGrid:ApiKey"]
-			?? throw new ArgumentNullException("apiKey", "API Key must not be null!");
+		string apiKey = _configuration["SendGrid:ApiKey"]!;
 
 		_client = new(apiKey);
 	}
