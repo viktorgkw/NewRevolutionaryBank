@@ -42,6 +42,22 @@ public class BankAccountService : IBankAccountService
 
 		ArgumentNullException.ThrowIfNull(foundUser);
 
+		if (foundUser.BankAccounts.Count >= 5)
+		{
+			return;
+		}
+
+		BankAccount newAccount = new()
+		{
+			IBAN = GenerateIBAN(),
+			UnifiedCivilNumber = model.UnifiedCivilNumber,
+			Address = model.Address
+		};
+
+		foundUser.BankAccounts.Add(newAccount);
+
+		await _context.BankAccounts.AddAsync(newAccount);
+
 		bool isGuest = await _userManager.IsInRoleAsync(foundUser, "Guest");
 
 		if (isGuest)
@@ -51,15 +67,6 @@ public class BankAccountService : IBankAccountService
 			await _signInManager.RefreshSignInAsync(foundUser);
 		}
 
-		BankAccount newAccount = new()
-		{
-			UnifiedCivilNumber = model.UnifiedCivilNumber,
-			Address = model.Address
-		};
-
-		foundUser.BankAccounts.Add(newAccount);
-
-		await _context.BankAccounts.AddAsync(newAccount);
 		await _context.SaveChangesAsync();
 
 		await _emailSender.SendEmailAsync(
@@ -77,9 +84,11 @@ public class BankAccountService : IBankAccountService
 		ArgumentNullException.ThrowIfNull(foundUser);
 
 		return foundUser.BankAccounts
+			.Where(ba => !ba.IsClosed)
 			.Select(ba => new BankAccountDisplayViewModel
 			{
 				Id = ba.Id,
+				IBAN = ba.IBAN,
 				Balance = ba.Balance
 			})
 			.ToList();
@@ -90,11 +99,15 @@ public class BankAccountService : IBankAccountService
 		BankAccount? account = await _context.BankAccounts
 			.SingleOrDefaultAsync(acc => acc.Id == id);
 
-		return account is null
-			? null
-			: new BankAccountDetailsViewModel
+		if (account is null || account.IsClosed)
+		{
+			return null;
+		}
+
+		return new BankAccountDetailsViewModel
 			{
 				Id = account.Id,
+				IBAN = account.IBAN,
 				Address = account.Address,
 				Balance = account.Balance,
 				UnifiedCivilNumber = account.UnifiedCivilNumber,
@@ -124,9 +137,11 @@ public class BankAccountService : IBankAccountService
 		ArgumentNullException.ThrowIfNull(foundUser);
 
 		List<TransactionSenderViewModel> userAccounts = foundUser!.BankAccounts
+			.Where(ba => !ba.IsClosed)
 			.Select(ba => new TransactionSenderViewModel
 			{
 				Id = ba.Id,
+				IBAN = ba.IBAN,
 				Balance = ba.Balance,
 			})
 			.ToList();
@@ -148,7 +163,10 @@ public class BankAccountService : IBankAccountService
 		var userRoles = await _userManager.GetRolesAsync(foundUser);
 		await _userManager.RemoveFromRolesAsync(foundUser, userRoles);
 
-		if (foundUser.BankAccounts.Count < 1)
+		int accountsCount = foundUser.BankAccounts
+			.Count(ba => !ba.IsClosed);
+
+		if (accountsCount < 1)
 		{
 			await _userManager.AddToRoleAsync(foundUser, "Guest");
 		}
@@ -159,7 +177,25 @@ public class BankAccountService : IBankAccountService
 
 		await _signInManager.RefreshSignInAsync(foundUser);
 
-		return foundUser.BankAccounts.Count > 0;
+		return accountsCount > 0;
+	}
+
+	public async Task CloseAccountByIdAsync(Guid id)
+	{
+		BankAccount? account = await _context.BankAccounts
+			.SingleOrDefaultAsync(acc => acc.Id == id);
+
+		ArgumentNullException.ThrowIfNull(account);
+
+		if (account.IsClosed)
+		{
+			return;
+		}
+
+		account.IsClosed = true;
+		account.ClosedDate = DateTime.UtcNow;
+
+		await _context.SaveChangesAsync();
 	}
 
 	public async Task<PaymentResult> BeginPaymentAsync(
@@ -173,12 +209,12 @@ public class BankAccountService : IBankAccountService
 		BankAccount? accountTo = await _context.BankAccounts
 			.SingleOrDefaultAsync(acc => acc.Id.ToString() == accountToId);
 
-		if (accountFrom is null)
+		if (accountFrom is null || accountFrom.IsClosed)
 		{
 			return PaymentResult.SenderNotFound;
 		}
 
-		if (accountTo is null)
+		if (accountTo is null || accountTo.IsClosed)
 		{
 			return PaymentResult.RecieverNotFound;
 		}
@@ -222,5 +258,27 @@ public class BankAccountService : IBankAccountService
 		}
 
 		return PaymentResult.InsufficientFunds;
+	}
+
+	private static string GenerateIBAN()
+	{
+		return $"BG{GenerateRandomIbanPart()}RNB{GenerateRandomIbanPart()}";
+	}
+
+	private static string GenerateRandomIbanPart()
+	{
+		int ibanPart = 10;
+		string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+		char[] randomString = new char[ibanPart];
+
+		Random random = new();
+
+		for (int i = 0; i < ibanPart; i++)
+		{
+			randomString[i] = characters[random.Next(characters.Length)];
+		}
+
+		return new string(randomString);
 	}
 }

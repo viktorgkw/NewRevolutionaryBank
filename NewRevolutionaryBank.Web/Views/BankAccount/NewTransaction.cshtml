@@ -55,7 +55,7 @@
 					@foreach (var account in Model.SenderAccounts)
 					{
 						<option value="@account.Id">
-							@account.Id.ToString().Substring(0, 5) - @account.Balance
+							@account.IBAN - @account.Balance
 						</option>
 					}
 				</select>

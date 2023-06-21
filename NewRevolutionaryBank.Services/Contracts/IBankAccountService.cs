@@ -29,4 +29,6 @@ public interface IBankAccountService
 		string accountFromId,
 		string accountToId,
 		decimal amount);
+
+	Task CloseAccountByIdAsync(Guid id);
 }

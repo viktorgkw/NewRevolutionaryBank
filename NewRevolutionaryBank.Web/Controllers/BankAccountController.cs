@@ -11,7 +11,7 @@ using NewRevolutionaryBank.ViewModels.BankAccount;
 using NewRevolutionaryBank.ViewModels.Transaction;
 
 [Authorize]
-public class BankAccountController : Controller
+public partial class BankAccountController : Controller
 {
 	private readonly IBankAccountService _bankAccountService;
 
@@ -94,7 +94,7 @@ public class BankAccountController : Controller
 
 	[HttpPost]
 	[Authorize(Roles = "AccountHolder")]
-	public async Task<IActionResult> NewTransaction(IFormCollection form, TransactionNewViewModel model)
+	public async Task<IActionResult> NewTransaction(TransactionNewViewModel model)
 	{
 		if (!ModelState.IsValid)
 		{
@@ -109,9 +109,8 @@ public class BankAccountController : Controller
 
 		if (paymentResult != PaymentResult.Successful)
 		{
-			ModelState.AddModelError("", string.Join(" ", Regex.Split(
-				paymentResult.ToString(),
-				@"(?<!^)(?=[A-Z])")));
+			ModelState.AddModelError("",
+				string.Join(" ", UpperCaseRegex().Split(paymentResult.ToString())));
 
 			TransactionNewViewModel cleanModel = await _bankAccountService
 				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
@@ -134,4 +133,21 @@ public class BankAccountController : Controller
 
 		return RedirectToAction("Index", "Home");
 	}
+
+	[HttpGet]
+	public IActionResult Close(Guid id)
+	{
+		return View(id);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> CloseConfirmation(Guid id)
+	{
+		await _bankAccountService.CloseAccountByIdAsync(id);
+
+		return RedirectToAction("Index", "Home");
+	}
+
+	[GeneratedRegex("(?<!^)(?=[A-Z])")]
+	private static partial Regex UpperCaseRegex();
 }

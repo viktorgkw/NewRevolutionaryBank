@@ -8,12 +8,17 @@ public class BankAccount
     {
 		Id = Guid.NewGuid();
 		Balance = 0m;
+		IsClosed = false;
         TransactionHistory = new HashSet<Transaction>();
     }
 
     [Key]
     public Guid Id { get; set; }
-	
+
+	[Required]
+	[StringLength(34, MinimumLength = 24)]
+	public string IBAN { get; set; } = null!;
+
 	public decimal Balance { get; set; }
 
     [Required]
@@ -24,5 +29,9 @@ public class BankAccount
 	[StringLength(40, MinimumLength = 8)]
 	public string Address { get; set; } = null!;
 
-	public ICollection<Transaction> TransactionHistory { get; set; }
+    public bool IsClosed { get; set; }
+
+    public DateTime? ClosedDate { get; set; }
+
+    public ICollection<Transaction> TransactionHistory { get; set; }
 }

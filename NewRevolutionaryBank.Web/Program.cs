@@ -70,6 +70,7 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
+builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));

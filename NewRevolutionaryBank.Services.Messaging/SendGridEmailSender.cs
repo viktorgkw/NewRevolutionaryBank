@@ -1,23 +1,19 @@
 ﻿namespace NewRevolutionaryBank.Services.Messaging;
 
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Microsoft.Extensions.Configuration;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
 public class SendGridEmailSender : IEmailSender
 {
-	private readonly SendGridClient _client;
 	private readonly IConfiguration _configuration;
 
 	public SendGridEmailSender(IConfiguration configuration)
 	{
 		_configuration = configuration;
-
-		string apiKey = _configuration["SendGrid:ApiKey"]!;
-
-		_client = new(apiKey);
 	}
 
 	public async Task SendEmailAsync(
@@ -30,14 +26,43 @@ public class SendGridEmailSender : IEmailSender
 			throw new ArgumentException("Subject and message should be provided.");
 		}
 
-		EmailAddress fromAddress = new(
-			_configuration["Seeding:Email"],
-			_configuration["Seeding:UserName"]);
-		EmailAddress toAddress = new(toEmail);
+		var message = new MimeMessage();
 
-		SendGridMessage message = MailHelper
-			.CreateSingleEmail(fromAddress, toAddress, subject, null, htmlContent);
+		message.From.Add(new MailboxAddress(
+			_configuration["EmailSender:SenderName"],
+			_configuration["EmailSender:SenderEmail"]));
 
-		await _client.SendEmailAsync(message);
+		message.To.Add(new MailboxAddress(
+			toEmail,
+			toEmail));
+
+		message.Subject = subject;
+
+		BodyBuilder bodyBuilder = new()
+		{
+			HtmlBody = htmlContent
+		};
+
+		message.Body = bodyBuilder.ToMessageBody();
+
+		using var client = new SmtpClient();
+
+		try
+		{
+			client.Connect(
+			"smtp.gmail.com",
+			587,
+			SecureSocketOptions.StartTls);
+
+			client.Authenticate(
+				_configuration["EmailSender:SenderEmail"],
+				_configuration["EmailSender:SenderPassword"]);
+
+			await client.SendAsync(message);
+		}
+		finally
+		{
+			client.Disconnect(true);
+		}
 	}
 }

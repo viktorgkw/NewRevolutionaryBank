@@ -21,7 +21,7 @@
 		<p class="fs-5 text-light">Address - @Model.Address</p>
 	</div>
 
-	<div class="fw-bold border border-dark rounded p-4 bg-dark" style="overflow-x: auto;">
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark" style="overflow-x: auto;">
 		<p class="fs-2 text-info">Transaction History</p>
 		@if (Model.TransactionHistory.Count > 0)
 		{
@@ -53,5 +53,15 @@
 		{
 			<p class="text-light fw-bold fs-5">No transactions yet!</p>
 		}
+	</div>
+
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark">
+		<p class="fs-2 text-danger">Closing your account</p>
+		<a class="btn btn-outline-danger w-100 fw-bold text-white"
+		   asp-controller="BankAccount"
+		   asp-action="Close"
+		   asp-route-id="@Model.Id">
+			CLOSE
+		</a>
 	</div>
 </div>
