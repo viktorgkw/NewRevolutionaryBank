@@ -1,6 +1,5 @@
 ﻿namespace NewRevolutionaryBank.Data;
 
-using System.Reflection.Emit;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,25 +14,44 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, Applicati
 
 	public override DbSet<ApplicationRole> Roles { get; set; } = null!;
 
+    public DbSet<BankSettings> BankSettings { get; set; } = null!;
+
 	public DbSet<BankAccount> BankAccounts { get; set; } = null!;
 
 	public DbSet<Transaction> Transactions { get; set; } = null!;
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		builder.Entity<Transaction>()
-			.HasOne(t => t.AccountTo)
-			.WithMany()
-			.HasForeignKey(t => t.AccountToId)
-			.OnDelete(DeleteBehavior.NoAction);
+		builder.Entity<BankSettings>(options =>
+		{
+			options
+				.HasNoKey();
+
+			options
+				.Property(b => b.TransactionFee)
+				.HasPrecision(18, 2);
+
+			options
+				.Property(b => b.CurrencyExchangeFee)
+				.HasPrecision(18, 2);
+		});
 
 		builder.Entity<BankAccount>()
 			.Property(b => b.Balance)
 			.HasPrecision(18, 2);
 
-		builder.Entity<Transaction>()
-			.Property(b => b.Amount)
-			.HasPrecision(18, 2);
+		builder.Entity<Transaction>(options =>
+		{
+			options
+				.Property(b => b.Amount)
+				.HasPrecision(18, 2);
+
+			options
+				.HasOne(t => t.AccountTo)
+				.WithMany()
+				.HasForeignKey(t => t.AccountToId)
+				.OnDelete(DeleteBehavior.NoAction);
+		});
 
 		base.OnModelCreating(builder);
 	}

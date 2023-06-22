@@ -30,8 +30,9 @@
 					   value="10"
 					   class="form-control"
 					   aria-required="true"
-					   min="10"
-					   max="10000"
+					   step=".01"
+					   min="10.00"
+					   max="10000.00"
 					   placeholder="Transaction Amount" />
 				<span asp-validation-for="Amount" class="text-danger"></span>
 			</div>
@@ -65,14 +66,14 @@
 
 			<div class="form-group mb-3">
 				<label asp-for="AccountTo"
-					   class="fw-bold fs-5">Reciever Id</label>
+					   class="fw-bold fs-5">Reciever IBAN</label>
 				<input asp-for="AccountTo"
 					   type="text"
 					   class="form-control"
 					   aria-required="true"
-					   minlength="30"
-					   maxlength="40"
-					   placeholder="Reciever Id" />
+					   minlength="25"
+					   maxlength="25"
+					   placeholder="Reciever IBAN" />
 				<span asp-validation-for="AccountTo" class="text-danger"></span>
 			</div>
 

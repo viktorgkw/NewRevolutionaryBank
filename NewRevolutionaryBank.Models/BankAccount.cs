@@ -16,7 +16,7 @@ public class BankAccount
     public Guid Id { get; set; }
 
 	[Required]
-	[StringLength(34, MinimumLength = 24)]
+	[StringLength(25, MinimumLength = 25)]
 	public string IBAN { get; set; } = null!;
 
 	public decimal Balance { get; set; }

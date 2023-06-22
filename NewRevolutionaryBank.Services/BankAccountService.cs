@@ -47,9 +47,17 @@ public class BankAccountService : IBankAccountService
 			return;
 		}
 
+		string IBAN = GenerateIBAN();
+
+		while (_context.BankAccounts.Any(ba => ba.IBAN == IBAN))
+		{
+			IBAN = GenerateIBAN();
+		}
+		
+
 		BankAccount newAccount = new()
 		{
-			IBAN = GenerateIBAN(),
+			IBAN = IBAN,
 			UnifiedCivilNumber = model.UnifiedCivilNumber,
 			Address = model.Address
 		};
@@ -200,14 +208,14 @@ public class BankAccountService : IBankAccountService
 
 	public async Task<PaymentResult> BeginPaymentAsync(
 		string accountFromId,
-		string accountToId,
+		string accountToIban,
 		decimal amount)
 	{
 		BankAccount? accountFrom = await _context.BankAccounts
 			.SingleOrDefaultAsync(acc => acc.Id.ToString() == accountFromId);
 
 		BankAccount? accountTo = await _context.BankAccounts
-			.SingleOrDefaultAsync(acc => acc.Id.ToString() == accountToId);
+			.SingleOrDefaultAsync(acc => acc.IBAN == accountToIban);
 
 		if (accountFrom is null || accountFrom.IsClosed)
 		{
@@ -217,6 +225,11 @@ public class BankAccountService : IBankAccountService
 		if (accountTo is null || accountTo.IsClosed)
 		{
 			return PaymentResult.RecieverNotFound;
+		}
+
+		if (accountFrom == accountTo)
+		{
+			return PaymentResult.NoSelfTransactions;
 		}
 
 		ApplicationUser userFrom = await _context.Users
@@ -262,13 +275,13 @@ public class BankAccountService : IBankAccountService
 
 	private static string GenerateIBAN()
 	{
-		return $"BG{GenerateRandomIbanPart()}RNB{GenerateRandomIbanPart()}";
+		return $"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
 	}
 
 	private static string GenerateRandomIbanPart()
 	{
 		int ibanPart = 10;
-		string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 		char[] randomString = new char[ibanPart];
 

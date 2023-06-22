@@ -14,6 +14,7 @@ public class TransactionNewViewModel
 	public string AccountFrom { get; set; } = null!;
 
 	[Required]
+	[StringLength(25, MinimumLength = 25)]
 	public string AccountTo { get; set; } = null!;
 
 	[Required]

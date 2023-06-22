@@ -96,11 +96,11 @@ public partial class BankAccountController : Controller
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> NewTransaction(TransactionNewViewModel model)
 	{
-		if (!ModelState.IsValid)
-		{
-			TransactionNewViewModel cleanModel = await _bankAccountService
+		TransactionNewViewModel cleanModel = await _bankAccountService
 				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
+		if (!ModelState.IsValid)
+		{
 			return View(cleanModel);
 		}
 
@@ -111,9 +111,6 @@ public partial class BankAccountController : Controller
 		{
 			ModelState.AddModelError("",
 				string.Join(" ", UpperCaseRegex().Split(paymentResult.ToString())));
-
-			TransactionNewViewModel cleanModel = await _bankAccountService
-				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
 			return View(cleanModel);
 		}

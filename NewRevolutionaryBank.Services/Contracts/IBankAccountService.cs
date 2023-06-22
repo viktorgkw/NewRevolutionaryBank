@@ -27,7 +27,7 @@ public interface IBankAccountService
 
 	Task<PaymentResult> BeginPaymentAsync(
 		string accountFromId,
-		string accountToId,
+		string accountToIban,
 		decimal amount);
 
 	Task CloseAccountByIdAsync(Guid id);

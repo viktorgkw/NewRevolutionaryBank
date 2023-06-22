@@ -88,7 +88,6 @@ if (app.Environment.IsDevelopment())
 else
 {
 	app.UseExceptionHandler("/Home/Error");
-	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -129,6 +128,15 @@ RecurringJob.AddOrUpdate(
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
 	(HangfireService service) => service.DeleteThreeYearOldAccounts(),
+	Cron.Weekly,
+	new RecurringJobOptions
+	{
+		TimeZone = TimeZoneInfo.Utc
+	});
+
+RecurringJob.AddOrUpdate(
+	Guid.NewGuid().ToString(),
+	(HangfireService service) => service.DeleteClosedAccountsAfterYear(),
 	Cron.Weekly,
 	new RecurringJobOptions
 	{

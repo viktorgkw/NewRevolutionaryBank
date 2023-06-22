@@ -25,4 +25,9 @@ public class HangfireService : IHangfireService
 			.Where(u => u.IsDeleted &&
 				u.DeletedOn!.Value.Year == DateTime.Now.AddYears(-3).Year)
 			.ExecuteDeleteAsync();
+
+	public async Task DeleteClosedAccountsAfterYear()
+		=> await _dbContext.BankAccounts
+			.Where(ba => ba.IsClosed && ba.ClosedDate == DateTime.Now.AddYears(-1))
+			.ExecuteDeleteAsync();
 }
