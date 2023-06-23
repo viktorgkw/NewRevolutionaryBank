@@ -31,4 +31,6 @@ public interface IBankAccountService
 		decimal amount);
 
 	Task CloseAccountByIdAsync(Guid id);
+
+	Task<List<BankAccountDisplayViewModel>> GetAllAccounts();
 }

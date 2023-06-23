@@ -79,6 +79,8 @@ public partial class BankAccountController : Controller
 			return RedirectToAction("Index", "Home");
 		}
 
+		// TODO: If User is owner
+
 		return View(viewModel);
 	}
 
@@ -120,6 +122,7 @@ public partial class BankAccountController : Controller
 	}
 
 	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
 	public IActionResult TransactionSuccessful()
 	{
 		if (TempData["RedirectedFromMethod"] is not null &&
@@ -134,12 +137,16 @@ public partial class BankAccountController : Controller
 	[HttpGet]
 	public IActionResult Close(Guid id)
 	{
+		// TODO: Validate is owner
+
 		return View(id);
 	}
 
 	[HttpGet]
 	public async Task<IActionResult> CloseConfirmation(Guid id)
 	{
+		// TODO: Validate is owner
+
 		await _bankAccountService.CloseAccountByIdAsync(id);
 
 		return RedirectToAction("Index", "Home");

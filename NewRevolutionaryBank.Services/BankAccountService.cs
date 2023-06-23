@@ -107,12 +107,9 @@ public class BankAccountService : IBankAccountService
 		BankAccount? account = await _context.BankAccounts
 			.SingleOrDefaultAsync(acc => acc.Id == id);
 
-		if (account is null || account.IsClosed)
-		{
-			return null;
-		}
-
-		return new BankAccountDetailsViewModel
+		return account is null
+			? null
+			: new BankAccountDetailsViewModel
 			{
 				Id = account.Id,
 				IBAN = account.IBAN,
@@ -294,4 +291,14 @@ public class BankAccountService : IBankAccountService
 
 		return new string(randomString);
 	}
+
+	public Task<List<BankAccountDisplayViewModel>> GetAllAccounts()
+		=> _context.BankAccounts
+			.Select(ba => new BankAccountDisplayViewModel
+			{
+				Id = ba.Id,
+				IBAN = ba.IBAN,
+				Balance = ba.Balance
+			})
+			.ToListAsync();
 }
