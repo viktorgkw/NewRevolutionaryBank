@@ -19,12 +19,29 @@ public class AdministratorService : IAdministratorService
 		_context = context;
 	}
 
+	public async Task ActivateBankAccountByIdAsync(string id)
+	{
+		BankAccount? bankAcc = await _context.BankAccounts
+			.FirstOrDefaultAsync(ba => ba.Id.ToString() == id);
+
+		if (bankAcc is null || !bankAcc.IsClosed)
+		{
+			return;
+		}
+
+		bankAcc.IsClosed = false;
+		bankAcc.ClosedDate = null;
+
+		await _context.SaveChangesAsync();
+	}
+
 	public async Task<List<BankAccountDisplayViewModel>> GetAllBankAccounts()
 		=> await _context.BankAccounts
 		.Select(ba => new BankAccountDisplayViewModel
 		{
 			Id = ba.Id,
 			IBAN = ba.IBAN,
+			IsClosed = ba.IsClosed,
 			Balance = ba.Balance
 		})
 		.ToListAsync();

@@ -42,7 +42,7 @@ public class BankAccountService : IBankAccountService
 
 		ArgumentNullException.ThrowIfNull(foundUser);
 
-		if (foundUser.BankAccounts.Count >= 5)
+		if (foundUser.BankAccounts.Count(ba => !ba.IsClosed) >= 5)
 		{
 			return;
 		}

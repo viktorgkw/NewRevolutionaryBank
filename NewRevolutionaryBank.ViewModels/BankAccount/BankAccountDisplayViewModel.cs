@@ -6,5 +6,7 @@ public class BankAccountDisplayViewModel
 
 	public string IBAN { get; set; } = null!;
 
-	public decimal Balance { get; set; }
+    public bool IsClosed { get; set; }
+
+    public decimal Balance { get; set; }
 }

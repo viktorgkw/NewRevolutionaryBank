@@ -35,8 +35,10 @@ public class AdministratorController : Controller
 	}
 
 	[HttpGet]
-	public IActionResult ManageProfiles()
+	public async Task<IActionResult> ActivateBankAccount(string id)
 	{
-		return View();
+		await _administratorService.ActivateBankAccountByIdAsync(id);
+
+        return RedirectToAction("ManageBankAccounts", "Administrator");
 	}
 }

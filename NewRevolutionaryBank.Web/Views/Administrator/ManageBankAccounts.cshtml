@@ -13,18 +13,89 @@
 	<div class="d-flex flex-row justify-content-around flex-wrap">
 		@foreach (var bankAcc in Model)
 		{
-			<div class="border border-dark rounded p-4 fw-bold">
+			<div class="border border-dark rounded p-4 fw-bold m-3">
 
 				<p>@bankAcc.IBAN</p>
 				<p>$@bankAcc.Balance</p>
 
-				<a class="btn btn-info text-white fw-bold"
+				<a class="btn btn-info text-light fw-bold"
 				   asp-controller="Administrator"
 				   asp-action="BankAccountDetails"
 				   asp-route-id="@bankAcc.Id">
 					Details
 				</a>
+				@if (bankAcc.IsClosed)
+				{
+					<a class="btn btn-success fw-bold activate-button"
+					   asp-controller="Administrator"
+					   asp-action="ActivateBankAccount"
+					   asp-route-id="@bankAcc.Id"
+					   data-id="@bankAcc.Id">
+						Activate
+					</a>
+				}
 			</div>
 		}
 	</div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade"
+	 id="exampleModal"
+	 tabindex="-1"
+	 aria-labelledby="exampleModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"
+					id="exampleModalLabel">
+					Activate Verification
+				</h5>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to Activate this Bank Account?
+			</div>
+			<div class="modal-footer">
+				<button type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal">
+					No
+				</button>
+				<button type="button"
+						class="btn btn-danger yes-button">
+					Yes
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	const modal = document.getElementById('exampleModal');
+
+	const activateButtons = document.querySelectorAll('.activate-button');
+
+	activateButtons.forEach(button => {
+		button.addEventListener('click', function (event) {
+			event.preventDefault();
+
+			const id = this.dataset.id;
+			const url = '@Url.Action("ActivateBankAccount", "Administrator")' + '?id=' + id;
+
+			const modalInstance = new bootstrap.Modal(modal);
+			modalInstance.show();
+
+			modal.querySelector('.modal-footer')
+				.addEventListener('click', function (event) {
+					if (event.target.classList.contains('btn-danger')) {
+						window.location.href = url;
+					}
+				});
+		});
+	});
+</script>
