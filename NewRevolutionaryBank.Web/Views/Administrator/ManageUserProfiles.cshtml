@@ -1,0 +1,47 @@
+﻿@model List<UserProfileManageViewModel>
+@{
+	ViewData["Title"] = "Manage User Profiles";
+}
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+		<hr />
+		<br />
+	</div>
+
+	<div>
+		<select></select>
+		<a class="btn btn-secondary">Order</a>
+	</div>
+
+	@if (Model.Count > 0)
+	{
+		<div class="d-flex flex-row justify-content-around flex-wrap">
+			@foreach (var userAcc in Model)
+			{
+				string borderColor = userAcc.IsDeleted ? "border-danger" : "border-dark";
+
+				<div class="border border-2 @borderColor rounded p-4 fw-bold m-3 w-100">
+
+					<p class="fs-4">@userAcc.UserName</p>
+					<p class="fs-5">@userAcc.FirstName @userAcc.LastName</p>
+					<p class="fs-5">@userAcc.BankAccountsCount</p>
+
+					<a class="btn btn-info text-light fw-bold"
+					   asp-controller="Administrator"
+					   asp-action="UserProfileDetails"
+					   asp-route-id="@userAcc.Id">
+						Details
+					</a>
+				</div>
+			}
+		</div>
+	}
+	else
+	{
+		<p class="fs-3 fw-bold text-danger">No user profiles!</p>
+
+		<img src="~/gifs/empty.gif" class="website-gif" />
+	}
+</div>

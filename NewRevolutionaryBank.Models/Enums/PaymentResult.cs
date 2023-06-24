@@ -1,4 +1,4 @@
-﻿namespace NewRevolutionaryBank.Models.Enums;
+﻿namespace NewRevolutionaryBank.Data.Models.Enums;
 
 public enum PaymentResult
 {

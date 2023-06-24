@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-using NewRevolutionaryBank.Models;
+using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
 public class RegisterModel : PageModel

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-using NewRevolutionaryBank.Models;
+using NewRevolutionaryBank.Data.Models;
 
 public class LogoutModel : PageModel
 {

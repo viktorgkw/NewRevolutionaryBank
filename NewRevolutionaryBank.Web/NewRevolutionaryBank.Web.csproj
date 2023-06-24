@@ -9,11 +9,14 @@
 
   <ItemGroup>
     <PackageReference Include="Hangfire" Version="1.8.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.7" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="9.4.0.72892">
       <PrivateAssets>all</PrivateAssets>
@@ -24,10 +27,10 @@
   <ItemGroup>
     <ProjectReference Include="..\NewRevolutionaryBank.Data.Seeding\NewRevolutionaryBank.Data.Seeding.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj" />
-    <ProjectReference Include="..\NewRevolutionaryBank.Models\NewRevolutionaryBank.Models.csproj" />
+    <ProjectReference Include="..\NewRevolutionaryBank.Models\NewRevolutionaryBank.Data.Models.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Services.Messaging\NewRevolutionaryBank.Services.Messaging.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Services\NewRevolutionaryBank.Services.csproj" />
-    <ProjectReference Include="..\NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.ViewModels.csproj" />
+    <ProjectReference Include="..\NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

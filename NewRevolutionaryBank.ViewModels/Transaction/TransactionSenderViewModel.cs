@@ -1,4 +1,4 @@
-﻿namespace NewRevolutionaryBank.ViewModels.Transaction;
+﻿namespace NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 public class TransactionSenderViewModel
 {

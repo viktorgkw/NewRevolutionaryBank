@@ -7,9 +7,9 @@ using NewRevolutionaryBank.Services.Contracts;
 
 public class HangfireService : IHangfireService
 {
-	private readonly ApplicationDbContext _dbContext;
+	private readonly NrbDbContext _dbContext;
 
-	public HangfireService(ApplicationDbContext dbContext)
+	public HangfireService(NrbDbContext dbContext)
 	{
 		_dbContext = dbContext;
 	}

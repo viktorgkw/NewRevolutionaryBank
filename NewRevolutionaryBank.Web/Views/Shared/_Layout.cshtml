@@ -8,6 +8,11 @@
 	<!-- Title -->
 	<title>NRB -> @ViewData["Title"]</title>
 
+	<!-- Favicon -->
+	<link rel="icon"
+		  type="image/x-icon"
+		  href="/images/favicon.ico">
+
 	<!-- CSS -->
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/NewRevolutionaryBank.Web.styles.css" asp-append-version="true" />
@@ -119,6 +124,13 @@
 										   asp-controller="Administrator"
 										   asp-action="ManageBankAccounts">
 											Manage Bank Accounts
+										</a>
+									</li>
+									<li class="py-2">
+										<a class="nav-link text-white fw-bold"
+										   asp-controller="Administrator"
+										   asp-action="ManageUserProfiles">
+											Manage User Profiles
 										</a>
 									</li>
 								</ul>

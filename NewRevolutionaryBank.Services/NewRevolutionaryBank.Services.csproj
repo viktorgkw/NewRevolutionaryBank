@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Services.Messaging\NewRevolutionaryBank.Services.Messaging.csproj" />
-    <ProjectReference Include="..\NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.ViewModels.csproj" />
+    <ProjectReference Include="..\NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.Web.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

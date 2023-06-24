@@ -1,8 +1,10 @@
-﻿namespace NewRevolutionaryBank.Models;
+﻿namespace NewRevolutionaryBank.Data.Models;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-public class ApplicationRole : IdentityRole
+[Comment("Потребителска роля")]
+public class ApplicationRole : IdentityRole<Guid>
 {
 	public ApplicationRole(string name)
 		: base(name)
@@ -10,5 +12,6 @@ public class ApplicationRole : IdentityRole
 		CreatedOn = DateTime.UtcNow;
 	}
 
+	[Comment("Дата на създаване на ролята")]
 	public DateTime CreatedOn { get; set; }
 }

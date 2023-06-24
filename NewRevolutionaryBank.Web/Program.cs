@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 using NewRevolutionaryBank.Data;
+using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Data.Seeding;
-using NewRevolutionaryBank.Models;
 using NewRevolutionaryBank.Services;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
@@ -21,7 +21,7 @@ IConfigurationRoot configuration = new ConfigurationBuilder()
 	.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 	.Build();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<NrbDbContext>(options =>
 {
 	options.UseSqlServer(connectionString);
 	options.EnableDetailedErrors();
@@ -47,7 +47,7 @@ builder.Services
 		// User settings
 		cfg.User.RequireUniqueEmail = true;
 	})
-	.AddEntityFrameworkStores<ApplicationDbContext>()
+	.AddEntityFrameworkStores<NrbDbContext>()
 	.AddDefaultTokenProviders()
 	.AddDefaultUI();
 

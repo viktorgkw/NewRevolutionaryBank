@@ -1,7 +1,9 @@
-﻿namespace NewRevolutionaryBank.Models;
+﻿namespace NewRevolutionaryBank.Data.Models;
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
+using Microsoft.EntityFrameworkCore;
 
 public class Transaction
 {
@@ -11,26 +13,32 @@ public class Transaction
 	}
 
 	[Key]
+	[Comment("Уникален идентификатор")]
 	public Guid Id { get; set; }
 
+	[Comment("Дата на транзакцията")]
 	public DateTime TransactionDate { get; set; }
 
+	[Comment("Сума на транзакцията")]
 	public decimal Amount { get; set; }
 
 	[Required]
+	[Comment("Описание на транзакцията")]
 	[StringLength(120, MinimumLength = 5)]
 	public string Description { get; set; } = null!;
 
 	[Required]
+	[Comment("Уникален идентификатор на предавателя")]
 	[ForeignKey(nameof(AccountFrom))]
-	public string AccountFromId { get; set; } = null!;
+	public Guid AccountFromId { get; set; }
 
 	[Required]
 	public ApplicationUser AccountFrom { get; set; } = null!;
 
 	[Required]
 	[ForeignKey(nameof(AccountTo))]
-	public string AccountToId { get; set; } = null!;
+	[Comment("Уникален идентификатор на получателя")]
+	public Guid AccountToId { get; set; }
 
 	[Required]
 	public ApplicationUser AccountTo { get; set; } = null!;

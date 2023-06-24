@@ -2,10 +2,9 @@
 
 using System;
 using System.Collections.Generic;
-
-using NewRevolutionaryBank.Models.Enums;
-using NewRevolutionaryBank.ViewModels.BankAccount;
-using NewRevolutionaryBank.ViewModels.Transaction;
+using NewRevolutionaryBank.Data.Models.Enums;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
+using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 public interface IBankAccountService
 {

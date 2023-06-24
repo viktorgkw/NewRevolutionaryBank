@@ -2,8 +2,7 @@
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
-
-using NewRevolutionaryBank.Models;
+using NewRevolutionaryBank.Data.Models;
 
 public static class DbSeeder
 {

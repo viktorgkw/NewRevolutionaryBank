@@ -6,28 +6,30 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 using NewRevolutionaryBank.Data;
-using NewRevolutionaryBank.Models;
+using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
-using NewRevolutionaryBank.ViewModels.BankAccount;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
+using NewRevolutionaryBank.Web.ViewModels.Administrator;
 
 public class AdministratorService : IAdministratorService
 {
-    private readonly ApplicationDbContext _context;
+	private readonly NrbDbContext _context;
 
-	public AdministratorService(ApplicationDbContext context)
+	public AdministratorService(NrbDbContext context)
 	{
 		_context = context;
 	}
+
+	// ------------------------------------
+	//				Bank Accounts
+	// ------------------------------------
 
 	public async Task ActivateBankAccountByIdAsync(string id)
 	{
 		BankAccount? bankAcc = await _context.BankAccounts
 			.FirstOrDefaultAsync(ba => ba.Id.ToString() == id);
 
-		if (bankAcc is null || !bankAcc.IsClosed)
-		{
-			return;
-		}
+		ArgumentNullException.ThrowIfNull(bankAcc);
 
 		bankAcc.IsClosed = false;
 		bankAcc.ClosedDate = null;
@@ -35,20 +37,24 @@ public class AdministratorService : IAdministratorService
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<List<BankAccountDisplayViewModel>> GetAllBankAccounts()
-		=> await _context.BankAccounts
-		.Select(ba => new BankAccountDisplayViewModel
-		{
-			Id = ba.Id,
-			IBAN = ba.IBAN,
-			IsClosed = ba.IsClosed,
-			Balance = ba.Balance
-		})
-		.ToListAsync();
+	public async Task<List<BankAccountManageViewModel>> GetAllBankAccounts() =>
+		await _context.BankAccounts
+			.AsNoTracking()
+			.Include(ba => ba.Owner)
+			.Select(ba => new BankAccountManageViewModel
+			{
+				Id = ba.Id,
+				IBAN = ba.IBAN,
+				OwnerUsername = ba.Owner.UserName!,
+				IsClosed = ba.IsClosed,
+				Balance = ba.Balance
+			})
+			.ToListAsync();
 
 	public async Task<BankAccountDetailsViewModel> GetBankAccountDetails(Guid id)
 	{
 		BankAccount? bankAcc = await _context.BankAccounts
+			.AsNoTracking()
 			.FirstOrDefaultAsync(ba => ba.Id == id);
 
 		ArgumentNullException.ThrowIfNull(bankAcc);
@@ -63,4 +69,24 @@ public class AdministratorService : IAdministratorService
 			TransactionHistory = bankAcc.TransactionHistory.ToHashSet()
 		};
 	}
+
+	// ------------------------------------
+	//				Profiles
+	// ------------------------------------
+
+	public async Task<List<UserProfileManageViewModel>> GetAllProfilesAsync() =>
+		await _context.Users
+			.AsNoTracking()
+			.Include(user => user.BankAccounts)
+			.Select(user => new UserProfileManageViewModel
+			{
+				Id = user.Id,
+				UserName = user.UserName!,
+				FirstName = user.FirstName,
+				LastName = user.LastName,
+				IsDeleted = user.IsDeleted,
+				DeletedOn = user.DeletedOn,
+				BankAccountsCount = user.BankAccounts.Count
+			})
+			.ToListAsync();
 }

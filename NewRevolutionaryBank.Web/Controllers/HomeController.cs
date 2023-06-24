@@ -5,7 +5,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using NewRevolutionaryBank.ViewModels;
+using NewRevolutionaryBank.Web.ViewModels.Home;
 
 [AllowAnonymous]
 public class HomeController : Controller

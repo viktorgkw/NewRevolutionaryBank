@@ -3,21 +3,27 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33801.468
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Web", "NewRevolutionaryBank.Web\NewRevolutionaryBank.Web.csproj", "{C471E100-3AE8-4E71-BD93-C4C7EB545EFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Web", "NewRevolutionaryBank.Web\NewRevolutionaryBank.Web.csproj", "{C471E100-3AE8-4E71-BD93-C4C7EB545EFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Models", "NewRevolutionaryBank.Models\NewRevolutionaryBank.Models.csproj", "{F9176984-C284-4C20-A256-0C11390873A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Data.Models", "NewRevolutionaryBank.Models\NewRevolutionaryBank.Data.Models.csproj", "{F9176984-C284-4C20-A256-0C11390873A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Data", "NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj", "{AE337896-C0F3-43AB-8C3A-AEEA44BE75DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Data", "NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj", "{AE337896-C0F3-43AB-8C3A-AEEA44BE75DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Services", "NewRevolutionaryBank.Services\NewRevolutionaryBank.Services.csproj", "{9AB77CB8-27C7-4D8B-9F89-F84160294C98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Services", "NewRevolutionaryBank.Services\NewRevolutionaryBank.Services.csproj", "{9AB77CB8-27C7-4D8B-9F89-F84160294C98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Services.Messaging", "NewRevolutionaryBank.Services.Messaging\NewRevolutionaryBank.Services.Messaging.csproj", "{8D91D962-D2B4-4DB3-A1DA-43967CABE4AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Services.Messaging", "NewRevolutionaryBank.Services.Messaging\NewRevolutionaryBank.Services.Messaging.csproj", "{8D91D962-D2B4-4DB3-A1DA-43967CABE4AF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.ViewModels", "NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.ViewModels.csproj", "{A3274CAF-6F8E-4229-B664-E7174756ACF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Web.ViewModels", "NewRevolutionaryBank.ViewModels\NewRevolutionaryBank.Web.ViewModels.csproj", "{A3274CAF-6F8E-4229-B664-E7174756ACF1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Common", "NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj", "{1D66E357-7E73-4EA2-AF5A-65DC15488BAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Common", "NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj", "{1D66E357-7E73-4EA2-AF5A-65DC15488BAA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Data.Seeding", "NewRevolutionaryBank.Data.Seeding\NewRevolutionaryBank.Data.Seeding.csproj", "{16E6E951-A012-4B12-AC23-112A0B6DF02B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Data.Seeding", "NewRevolutionaryBank.Data.Seeding\NewRevolutionaryBank.Data.Seeding.csproj", "{16E6E951-A012-4B12-AC23-112A0B6DF02B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{0ED7BA04-D6D5-44BB-8A77-C3EF13102770}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{3423CC74-CC64-49B8-AD54-AF2235CE1A0D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{BEAEB6B0-B2FB-4182-A231-430F6B72396A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -60,6 +66,15 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C471E100-3AE8-4E71-BD93-C4C7EB545EFB} = {BEAEB6B0-B2FB-4182-A231-430F6B72396A}
+		{F9176984-C284-4C20-A256-0C11390873A4} = {0ED7BA04-D6D5-44BB-8A77-C3EF13102770}
+		{AE337896-C0F3-43AB-8C3A-AEEA44BE75DB} = {0ED7BA04-D6D5-44BB-8A77-C3EF13102770}
+		{9AB77CB8-27C7-4D8B-9F89-F84160294C98} = {3423CC74-CC64-49B8-AD54-AF2235CE1A0D}
+		{8D91D962-D2B4-4DB3-A1DA-43967CABE4AF} = {3423CC74-CC64-49B8-AD54-AF2235CE1A0D}
+		{A3274CAF-6F8E-4229-B664-E7174756ACF1} = {BEAEB6B0-B2FB-4182-A231-430F6B72396A}
+		{16E6E951-A012-4B12-AC23-112A0B6DF02B} = {0ED7BA04-D6D5-44BB-8A77-C3EF13102770}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFB89EF2-8F0C-4AB2-A8E3-672D62572DB0}

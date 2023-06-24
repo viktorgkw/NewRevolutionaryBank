@@ -5,10 +5,10 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using NewRevolutionaryBank.Models.Enums;
+using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
-using NewRevolutionaryBank.ViewModels.BankAccount;
-using NewRevolutionaryBank.ViewModels.Transaction;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
+using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 [Authorize]
 public partial class BankAccountController : Controller
@@ -31,9 +31,16 @@ public partial class BankAccountController : Controller
 	[Authorize(Roles = "Guest,AccountHolder")]
 	public async Task<IActionResult> Create()
 	{
-		await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
+		try
+		{
+			await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
 
-		return View();
+			return View();
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
 	}
 
 	[HttpPost]
@@ -45,80 +52,108 @@ public partial class BankAccountController : Controller
 			return View(model);
 		}
 
-		await _bankAccountService.Create(User.Identity!.Name!, model);
+		try
+		{
+			await _bankAccountService.Create(User.Identity!.Name!, model);
 
-		return RedirectToAction("MyAccounts", "BankAccount");
+			return RedirectToAction("MyAccounts", "BankAccount");
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
 	}
 
 	[HttpGet]
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> MyAccounts()
 	{
-		bool isHolder = await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
-
-		if (!isHolder)
+		try
 		{
-			return RedirectToAction("Create", "BankAccount");
+			bool isHolder = await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
+
+			if (!isHolder)
+			{
+				return RedirectToAction("Create", "BankAccount");
+			}
+
+			List<BankAccountDisplayViewModel> accounts = await _bankAccountService
+				.GetAllUserAccounts(User.Identity!.Name!);
+
+			return View(accounts);
 		}
-
-		List<BankAccountDisplayViewModel> accounts = await _bankAccountService
-			.GetAllUserAccounts(User.Identity!.Name!);
-
-		return View(accounts);
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
 	}
 
 	[HttpGet]
 	public async Task<IActionResult> Details(Guid id)
 	{
-		BankAccountDetailsViewModel? viewModel = await _bankAccountService
-			.GetDetailsByIdAsync(id);
-
-		if (viewModel is null)
+		try
 		{
-			// TODO: Add custom error page
-			return RedirectToAction("Index", "Home");
+			BankAccountDetailsViewModel? viewModel = await _bankAccountService
+				.GetDetailsByIdAsync(id);
+
+			// TODO: If User is owner
+			return View(viewModel);
 		}
-
-		// TODO: If User is owner
-
-		return View(viewModel);
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("MyAccounts", "BankAccount");
+		}
 	}
 
 	[HttpGet]
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> NewTransaction()
 	{
-		TransactionNewViewModel model = await _bankAccountService
+		try
+		{
+			TransactionNewViewModel model = await _bankAccountService
 			.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
-		return View(model);
+			return View(model);
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
 	}
 
 	[HttpPost]
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> NewTransaction(TransactionNewViewModel model)
 	{
-		TransactionNewViewModel cleanModel = await _bankAccountService
+		try
+		{
+			TransactionNewViewModel cleanModel = await _bankAccountService
 				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
-		if (!ModelState.IsValid)
-		{
-			return View(cleanModel);
+			if (!ModelState.IsValid)
+			{
+				return View(cleanModel);
+			}
+
+			PaymentResult paymentResult = await _bankAccountService
+				.BeginPaymentAsync(model.AccountFrom, model.AccountTo, model.Amount);
+
+			if (paymentResult != PaymentResult.Successful)
+			{
+				ModelState.AddModelError("",
+					string.Join(" ", Regex.Split(paymentResult.ToString(), "(?<!^)(?=[A-Z])")));
+
+				return View(cleanModel);
+			}
+
+			TempData["RedirectedFromMethod"] = "NewTransaction";
+			return RedirectToAction("TransactionSuccessful", "BankAccount");
 		}
-
-		PaymentResult paymentResult = await _bankAccountService
-			.BeginPaymentAsync(model.AccountFrom, model.AccountTo, model.Amount);
-
-		if (paymentResult != PaymentResult.Successful)
+		catch (ArgumentNullException)
 		{
-			ModelState.AddModelError("",
-				string.Join(" ", UpperCaseRegex().Split(paymentResult.ToString())));
-
-			return View(cleanModel);
+			return RedirectToAction("Index", "Home");
 		}
-
-		TempData["RedirectedFromMethod"] = "NewTransaction";
-		return RedirectToAction("TransactionSuccessful", "BankAccount");
 	}
 
 	[HttpGet]
@@ -145,13 +180,10 @@ public partial class BankAccountController : Controller
 	[HttpGet]
 	public async Task<IActionResult> CloseConfirmation(Guid id)
 	{
-		// TODO: Validate is owner
+		// TODO: Validate is owner and if it came from Close
 
 		await _bankAccountService.CloseAccountByIdAsync(id);
 
 		return RedirectToAction("Index", "Home");
 	}
-
-	[GeneratedRegex("(?<!^)(?=[A-Z])")]
-	private static partial Regex UpperCaseRegex();
 }

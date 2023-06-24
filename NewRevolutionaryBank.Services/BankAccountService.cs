@@ -8,22 +8,22 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using NewRevolutionaryBank.Data;
-using NewRevolutionaryBank.Models;
-using NewRevolutionaryBank.Models.Enums;
+using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
-using NewRevolutionaryBank.ViewModels.BankAccount;
-using NewRevolutionaryBank.ViewModels.Transaction;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
+using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 public class BankAccountService : IBankAccountService
 {
-	private readonly ApplicationDbContext _context;
+	private readonly NrbDbContext _context;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly SignInManager<ApplicationUser> _signInManager;
 	private readonly IEmailSender _emailSender;
 
 	public BankAccountService(
-		ApplicationDbContext context,
+		NrbDbContext context,
 		UserManager<ApplicationUser> userManager,
 		SignInManager<ApplicationUser> signInManager,
 		IEmailSender emailSender)
@@ -53,7 +53,7 @@ public class BankAccountService : IBankAccountService
 		{
 			IBAN = GenerateIBAN();
 		}
-		
+
 
 		BankAccount newAccount = new()
 		{
@@ -86,6 +86,7 @@ public class BankAccountService : IBankAccountService
 	public async Task<List<BankAccountDisplayViewModel>> GetAllUserAccounts(string userName)
 	{
 		ApplicationUser? foundUser = await _context.Users
+			.AsNoTracking()
 			.Include(u => u.BankAccounts)
 			.FirstOrDefaultAsync(user => user.UserName == userName);
 
@@ -105,11 +106,12 @@ public class BankAccountService : IBankAccountService
 	public async Task<BankAccountDetailsViewModel?> GetDetailsByIdAsync(Guid id)
 	{
 		BankAccount? account = await _context.BankAccounts
+			.AsNoTracking()
 			.SingleOrDefaultAsync(acc => acc.Id == id);
 
-		return account is null
-			? null
-			: new BankAccountDetailsViewModel
+		ArgumentNullException.ThrowIfNull(account);
+
+		return new BankAccountDetailsViewModel
 			{
 				Id = account.Id,
 				IBAN = account.IBAN,
@@ -136,6 +138,7 @@ public class BankAccountService : IBankAccountService
 		string userName)
 	{
 		ApplicationUser? foundUser = await _context.Users
+			.AsNoTracking()
 			.Include(u => u.BankAccounts)
 			.FirstOrDefaultAsync(user => user.UserName == userName);
 
