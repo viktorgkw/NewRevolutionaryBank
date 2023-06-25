@@ -1,8 +1,13 @@
 ﻿@page
 @model ConfirmEmailChangeModel
 @{
-    ViewData["Title"] = "Confirm email change";
+	ViewData["Title"] = "Confirm email change";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="text-center">
+	<h1 class="display-5 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+	<hr />
+	<br />
+
+	<partial name="_StatusMessage" model="Model.StatusMessage" />
+</div>

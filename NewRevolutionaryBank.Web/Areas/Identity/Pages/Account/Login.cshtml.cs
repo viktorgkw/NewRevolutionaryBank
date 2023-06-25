@@ -6,15 +6,20 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+
 using NewRevolutionaryBank.Data.Models;
 
 public class LoginModel : PageModel
 {
 	private readonly SignInManager<ApplicationUser> _signInManager;
+	private readonly UserManager<ApplicationUser> _userManager;
 
-	public LoginModel(SignInManager<ApplicationUser> signInManager)
+	public LoginModel(
+		SignInManager<ApplicationUser> signInManager,
+		UserManager<ApplicationUser> userManager)
 	{
 		_signInManager = signInManager;
+		_userManager = userManager;
 	}
 
 	[BindProperty]
@@ -48,7 +53,6 @@ public class LoginModel : PageModel
 			ModelState.AddModelError(string.Empty, ErrorMessage);
 		}
 
-		// Clear the existing external cookie to ensure a clean login process
 		await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
 		return Page();
@@ -58,11 +62,28 @@ public class LoginModel : PageModel
 	{
 		if (ModelState.IsValid)
 		{
-			var result = await _signInManager.PasswordSignInAsync(
-				Input.UserName,
-				Input.Password,
-				Input.RememberMe,
-				lockoutOnFailure: true);
+			ApplicationUser? user = await _userManager.FindByNameAsync(Input.UserName);
+
+			if (user is null)
+			{
+				ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+
+				return Page();
+			}
+
+			if (user.IsDeleted)
+			{
+				ModelState.AddModelError(string.Empty, "The account you are trying to log into is deleted!");
+
+				return Page();
+			}
+
+			Microsoft.AspNetCore.Identity.SignInResult result =
+				await _signInManager.PasswordSignInAsync(
+					Input.UserName,
+					Input.Password,
+					Input.RememberMe,
+					lockoutOnFailure: true);
 
 			if (result.Succeeded)
 			{
@@ -79,6 +100,8 @@ public class LoginModel : PageModel
 				return Page();
 			}
 		}
+
+		ModelState.AddModelError(string.Empty, "Unexpected error occured!");
 
 		return Page();
 	}

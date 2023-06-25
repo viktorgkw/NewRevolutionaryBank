@@ -36,19 +36,6 @@ public class IndexModel : PageModel
 		public string? PhoneNumber { get; set; }
 	}
 
-	private async Task LoadAsync(ApplicationUser user)
-	{
-		string userName = (await _userManager.GetUserNameAsync(user))!;
-		string? phoneNumber = await _userManager.GetPhoneNumberAsync(user);
-
-		Username = userName;
-
-		Input = new InputModel
-		{
-			PhoneNumber = phoneNumber
-		};
-	}
-
 	public async Task<IActionResult> OnGetAsync()
 	{
 		ApplicationUser? user = await _userManager.GetUserAsync(User);
@@ -98,5 +85,18 @@ public class IndexModel : PageModel
 		StatusMessage = "Your profile has been updated";
 
 		return RedirectToPage();
+	}
+
+	private async Task LoadAsync(ApplicationUser user)
+	{
+		string userName = (await _userManager.GetUserNameAsync(user))!;
+		string? phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+
+		Username = userName;
+
+		Input = new InputModel
+		{
+			PhoneNumber = phoneNumber
+		};
 	}
 }

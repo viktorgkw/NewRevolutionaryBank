@@ -10,29 +10,18 @@ using NewRevolutionaryBank.Web.ViewModels.Home;
 [AllowAnonymous]
 public class HomeController : Controller
 {
-	public IActionResult Index()
-	{
-		return View();
-	}
+	public IActionResult Index() => View();
 
-	public IActionResult Privacy()
-	{
-		return View();
-	}
+	public IActionResult Privacy() => View();
 
-	public IActionResult Contacts()
-	{
-		return View();
-	}
+	public IActionResult Contacts() => View();
 
-	public IActionResult FindUs()
-	{
-		return View();
-	}
+	public IActionResult FindUs() => View();
 
 	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-	public IActionResult Error()
-	{
-		return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-	}
+	public IActionResult Error() =>
+		View(new ErrorViewModel
+		{
+			RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+		});
 }

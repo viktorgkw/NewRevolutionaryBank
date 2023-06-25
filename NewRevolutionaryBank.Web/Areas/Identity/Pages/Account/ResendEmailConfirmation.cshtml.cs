@@ -1,70 +1,79 @@
-﻿namespace NewRevolutionaryBank.Web.Areas.Identity.Pages.Account
+﻿namespace NewRevolutionaryBank.Web.Areas.Identity.Pages.Account;
+
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.WebUtilities;
+
+using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Services.Messaging.Contracts;
+
+[AllowAnonymous]
+public class ResendEmailConfirmationModel : PageModel
 {
-	using System.ComponentModel.DataAnnotations;
-	using System.Text;
-	using System.Text.Encodings.Web;
-	using System.Threading.Tasks;
+	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly IEmailSender _emailSender;
 
-	using Microsoft.AspNetCore.Authorization;
-	using Microsoft.AspNetCore.Identity;
-	using Microsoft.AspNetCore.Identity.UI.Services;
-	using Microsoft.AspNetCore.Mvc;
-	using Microsoft.AspNetCore.Mvc.RazorPages;
-	using Microsoft.AspNetCore.WebUtilities;
+	public ResendEmailConfirmationModel(
+		UserManager<ApplicationUser> userManager,
+		IEmailSender emailSender)
+	{
+		_userManager = userManager;
+		_emailSender = emailSender;
+	}
 
-	using NewRevolutionaryBank.Data.Models;
+	[BindProperty]
+	public InputModel Input { get; set; } = null!;
 
-	[AllowAnonymous]
-    public class ResendEmailConfirmationModel : PageModel
-    {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IEmailSender _emailSender;
+	[TempData]
+	public string? StatusMessage { get; set; }
 
-        public ResendEmailConfirmationModel(UserManager<ApplicationUser> userManager, IEmailSender emailSender)
-        {
-            _userManager = userManager;
-            _emailSender = emailSender;
-        }
+	public class InputModel
+	{
+		[Required]
+		[EmailAddress]
+		public string Email { get; set; } = null!;
+	}
 
-        [BindProperty]
-        public InputModel Input { get; set; }
+	public async Task<IActionResult> OnPostAsync()
+	{
+		if (!ModelState.IsValid)
+		{
+			return Page();
+		}
 
-        public class InputModel
-        {
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-        }
+		ApplicationUser? user = await _userManager.FindByEmailAsync(Input.Email);
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            if (!ModelState.IsValid)
-            {
-                return Page();
-            }
+		if (user is null)
+		{
+			StatusMessage = "Verification email sent. Please check your email.";
 
-            var user = await _userManager.FindByEmailAsync(Input.Email);
-            if (user == null)
-            {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
-                return Page();
-            }
+			return Page();
+		}
 
-            var userId = await _userManager.GetUserIdAsync(user);
-            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Page(
-                "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { userId = userId, code = code },
-                protocol: Request.Scheme);
-            await _emailSender.SendEmailAsync(
-                Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+		string userId = await _userManager.GetUserIdAsync(user);
+		string code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+		code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
 
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
-            return Page();
-        }
-    }
+		string callbackUrl = Url.Page(
+			"/Account/ConfirmEmail",
+			pageHandler: null,
+			values: new { userId, code },
+			protocol: Request.Scheme)!;
+
+		await _emailSender.SendEmailAsync(
+			Input.Email,
+			"NRB - Confirm your email",
+			$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+		StatusMessage = "Verification email sent. Please check your email.";
+
+		return Page();
+	}
 }

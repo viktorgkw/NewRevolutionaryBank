@@ -16,10 +16,7 @@ public partial class BankAccountController : Controller
 	private readonly IBankAccountService _bankAccountService;
 
 	public BankAccountController(
-		IBankAccountService bankAccountService)
-	{
-		_bankAccountService = bankAccountService;
-	}
+		IBankAccountService bankAccountService) => _bankAccountService = bankAccountService;
 
 	public IActionResult Index()
 	{

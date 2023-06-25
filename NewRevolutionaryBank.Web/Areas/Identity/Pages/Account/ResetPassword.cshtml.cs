@@ -14,38 +14,36 @@ public class ResetPasswordModel : PageModel
 {
     private readonly UserManager<ApplicationUser> _userManager;
 
-    public ResetPasswordModel(UserManager<ApplicationUser> userManager)
-    {
+	public ResetPasswordModel(UserManager<ApplicationUser> userManager) =>
         _userManager = userManager;
-    }
 
     [BindProperty]
-    public InputModel Input { get; set; }
+    public InputModel Input { get; set; } = null!;
 
     public class InputModel
     {
         [Required]
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; set; } = null!;
 
-        [Required]
+		[Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
 
-        [DataType(DataType.Password)]
+		[DataType(DataType.Password)]
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        public string ConfirmPassword { get; set; } = null!;
 
-        [Required]
-        public string Code { get; set; }
+		[Required]
+        public string Code { get; set; } = null!;
 
-    }
+	}
 
-    public IActionResult OnGet(string code = null)
+    public IActionResult OnGet(string code)
     {
-        if (code == null)
+        if (code is null)
         {
             return BadRequest("A code must be supplied for password reset.");
         }
@@ -55,6 +53,7 @@ public class ResetPasswordModel : PageModel
             {
                 Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
             };
+
             return Page();
         }
     }
@@ -66,23 +65,27 @@ public class ResetPasswordModel : PageModel
             return Page();
         }
 
-        var user = await _userManager.FindByEmailAsync(Input.Email);
-        if (user == null)
-        {
-            // Don't reveal that the user does not exist
-            return RedirectToPage("./ResetPasswordConfirmation");
-        }
+		ApplicationUser? user = await _userManager
+            .FindByEmailAsync(Input.Email);
 
-        var result = await _userManager.ResetPasswordAsync(user, Input.Code, Input.Password);
+        if (user is null)
+        {
+			return RedirectToPage("/Account/Login", new { area = "Identity" });
+		}
+
+		IdentityResult result = await _userManager
+            .ResetPasswordAsync(user, Input.Code, Input.Password);
+
         if (result.Succeeded)
         {
-            return RedirectToPage("./ResetPasswordConfirmation");
-        }
+			return RedirectToPage("/Account/Login", new { area = "Identity" });
+		}
 
-        foreach (var error in result.Errors)
+		foreach (IdentityError error in result.Errors)
         {
             ModelState.AddModelError(string.Empty, error.Description);
         }
+
         return Page();
     }
 }

@@ -15,10 +15,7 @@ public class AdministratorService : IAdministratorService
 {
 	private readonly NrbDbContext _context;
 
-	public AdministratorService(NrbDbContext context)
-	{
-		_context = context;
-	}
+	public AdministratorService(NrbDbContext context) => _context = context;
 
 	// ------------------------------------
 	//				Bank Accounts
@@ -135,9 +132,15 @@ public class AdministratorService : IAdministratorService
 	public async Task DeactivateUserProfileByIdAsync(Guid id)
 	{
 		ApplicationUser? user = await _context.Users
+			.Include(u => u.BankAccounts)
 			.FirstOrDefaultAsync(u => u.Id == id);
 
 		ArgumentNullException.ThrowIfNull(user);
+
+		foreach (BankAccount bankAcc in user.BankAccounts)
+		{
+			bankAcc.IsClosed = true;
+		}
 
 		user.IsDeleted = true;
 		user.DeletedOn = DateTime.Now;

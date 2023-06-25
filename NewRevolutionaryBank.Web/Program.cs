@@ -10,6 +10,7 @@ using NewRevolutionaryBank.Services;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
+using NewRevolutionaryBank.Web.Middlewares;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -60,15 +61,14 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 // Hangfire
-builder.Services.AddHangfire(config =>
-{
-	config.UseSqlServerStorage(connectionString);
-});
+builder.Services.AddHangfire(config => config.UseSqlServerStorage(connectionString));
 builder.Services.AddHangfireServer();
 
+// Configuring Services
 builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
+builder.Services.AddScoped<ILogoutService, LogoutService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 
@@ -93,6 +93,9 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Middlewares
+app.UseMiddleware<IsDeletedMiddleware>();
 
 app.UseRouting();
 
@@ -145,4 +148,3 @@ RecurringJob.AddOrUpdate(
 	});
 
 app.Run();
-

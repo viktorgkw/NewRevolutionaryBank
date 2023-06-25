@@ -10,16 +10,14 @@ public class PersonalDataModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
 
-	public PersonalDataModel(
-		UserManager<ApplicationUser> userManager)
-	{
+	public PersonalDataModel(UserManager<ApplicationUser> userManager) =>
 		_userManager = userManager;
-	}
 
 	public async Task<IActionResult> OnGet()
 	{
-		var user = await _userManager.GetUserAsync(User);
-		if (user == null)
+		ApplicationUser? user = await _userManager.GetUserAsync(User);
+
+		if (user is null)
 		{
 			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
 		}

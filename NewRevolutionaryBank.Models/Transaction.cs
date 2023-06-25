@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class Transaction
 {
-	public Transaction()
-	{
-		Id = Guid.NewGuid();
-	}
+	public Transaction() => Id = Guid.NewGuid();
 
 	[Key]
 	[Comment("Уникален идентификатор")]

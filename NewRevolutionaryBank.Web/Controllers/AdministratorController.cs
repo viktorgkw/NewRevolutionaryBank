@@ -12,10 +12,8 @@ public class AdministratorController : Controller
 {
 	private readonly IAdministratorService _administratorService;
 
-	public AdministratorController(IAdministratorService administratorService)
-	{
+	public AdministratorController(IAdministratorService administratorService) =>
 		_administratorService = administratorService;
-	}
 
 	[HttpGet]
 	public async Task<IActionResult> ManageBankAccounts()
@@ -95,7 +93,7 @@ public class AdministratorController : Controller
 		{
 			return RedirectToAction("Index", "Home");
 		}
-		
+
 	}
 
 	[HttpGet]

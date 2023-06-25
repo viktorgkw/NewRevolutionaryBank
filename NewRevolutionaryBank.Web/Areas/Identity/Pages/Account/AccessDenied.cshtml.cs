@@ -1,23 +1,11 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-#nullable disable
+﻿namespace NewRevolutionaryBank.Web.Areas.Identity.Pages.Account;
 
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace NewRevolutionaryBank.Web.Areas.Identity.Pages.Account
+public class AccessDeniedModel : PageModel
 {
-    /// <summary>
-    ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-    ///     directly from your code. This API may change or be removed in future releases.
-    /// </summary>
-    public class AccessDeniedModel : PageModel
-    {
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        public void OnGet()
-        {
-        }
-    }
+	public void OnGet()
+	{
+		// Method intentionally left empty, because the page is static.
+	}
 }

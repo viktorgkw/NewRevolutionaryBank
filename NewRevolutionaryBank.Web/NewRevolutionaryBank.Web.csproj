@@ -4,7 +4,9 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-NewRevolutionaryBank.Web-3b579815-b540-4863-bbd6-eb8f0afe77dd</UserSecretsId>
+    <UserSecretsId>
+		aspnet-NewRevolutionaryBank.Web-3b579815-b540-4863-bbd6-eb8f0afe77dd
+	</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
