@@ -14,7 +14,7 @@
 	<div class="d-flex flex-row justify-content-around flex-wrap">
 		@foreach (var acc in Model)
 		{
-			var balanceColor = acc.Balance < 1 ? "text-danger" : "text-success";
+			string balanceColor = acc.Balance < 1 ? "text-danger" : "text-success";
 
 			<div class="border border-dark rounded p-4 fw-bold m-3">
 

@@ -2,6 +2,6 @@
 
 public interface IHangfireService
 {
-	Task DeleteNotVerified();
-	Task DeleteThreeYearOldAccounts();
+	Task DeleteNotVerifiedAsync();
+	Task DeleteThreeYearOldAccountsAsync();
 }

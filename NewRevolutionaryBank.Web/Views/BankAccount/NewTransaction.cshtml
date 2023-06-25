@@ -19,6 +19,8 @@
 				 role="alert"></div>
 		</div>
 
+		<input asp-for="SenderAccounts" hidden />
+
 		<div class="text-center">
 			<div class="form-group mb-3">
 				<div></div>
@@ -33,7 +35,7 @@
 					   step=".01"
 					   min="10.00"
 					   max="10000.00"
-					   placeholder="Transaction Amount"/>
+					   placeholder="Transaction Amount" />
 				<span asp-validation-for="Amount" class="text-danger"></span>
 			</div>
 

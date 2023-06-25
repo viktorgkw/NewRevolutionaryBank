@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
@@ -34,7 +35,7 @@ public class BankAccountService : IBankAccountService
 		_emailSender = emailSender;
 	}
 
-	public async Task Create(string userName, BankAccountCreateViewModel model)
+	public async Task CreateAsync(string userName, BankAccountCreateViewModel model)
 	{
 		ApplicationUser? foundUser = await _context.Users
 			.Include(u => u.BankAccounts)
@@ -83,7 +84,7 @@ public class BankAccountService : IBankAccountService
 			"Your new bank account is ready to use!");
 	}
 
-	public async Task<List<BankAccountDisplayViewModel>> GetAllUserAccounts(string userName)
+	public async Task<List<BankAccountDisplayViewModel>> GetAllUserAccountsAsync(string userName)
 	{
 		ApplicationUser? foundUser = await _context.Users
 			.AsNoTracking()
@@ -107,18 +108,22 @@ public class BankAccountService : IBankAccountService
 	{
 		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
+			.Include(a => a.TransactionHistory)
+				.ThenInclude(th => th.AccountFrom)
+			.Include(a => a.TransactionHistory)
+				.ThenInclude(th => th.AccountTo)
 			.SingleOrDefaultAsync(acc => acc.Id == id);
 
 		ArgumentNullException.ThrowIfNull(account);
 
 		return new BankAccountDetailsViewModel
-			{
-				Id = account.Id,
-				IBAN = account.IBAN,
-				Address = account.Address,
-				Balance = account.Balance,
-				UnifiedCivilNumber = account.UnifiedCivilNumber,
-				TransactionHistory = account.TransactionHistory
+		{
+			Id = account.Id,
+			IBAN = account.IBAN,
+			Address = account.Address,
+			Balance = account.Balance,
+			UnifiedCivilNumber = account.UnifiedCivilNumber,
+			TransactionHistory = account.TransactionHistory
 					.Select(t =>
 					{
 						if (t.Description.Length >= 25)
@@ -131,7 +136,7 @@ public class BankAccountService : IBankAccountService
 					})
 					.OrderByDescending(t => t.TransactionDate)
 					.ToHashSet()
-			};
+		};
 	}
 
 	public async Task<TransactionNewViewModel> PrepareTransactionModelForUserAsync(
@@ -168,7 +173,7 @@ public class BankAccountService : IBankAccountService
 
 		ArgumentNullException.ThrowIfNull(foundUser);
 
-		var userRoles = await _userManager.GetRolesAsync(foundUser);
+		IList<string> userRoles = await _userManager.GetRolesAsync(foundUser);
 		await _userManager.RemoveFromRolesAsync(foundUser, userRoles);
 
 		int accountsCount = foundUser.BankAccounts
@@ -206,16 +211,15 @@ public class BankAccountService : IBankAccountService
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<PaymentResult> BeginPaymentAsync(
-		string accountFromId,
-		string accountToIban,
-		decimal amount)
+	public async Task<PaymentResult> BeginPaymentAsync(TransactionNewViewModel model)
 	{
 		BankAccount? accountFrom = await _context.BankAccounts
-			.SingleOrDefaultAsync(acc => acc.Id.ToString() == accountFromId);
+			.Include(af => af.TransactionHistory)
+			.SingleOrDefaultAsync(acc => acc.Id.ToString() == model.AccountFrom);
 
 		BankAccount? accountTo = await _context.BankAccounts
-			.SingleOrDefaultAsync(acc => acc.IBAN == accountToIban);
+			.Include(af => af.TransactionHistory)
+			.SingleOrDefaultAsync(acc => acc.IBAN == model.AccountTo);
 
 		if (accountFrom is null || accountFrom.IsClosed)
 		{
@@ -238,15 +242,20 @@ public class BankAccountService : IBankAccountService
 		ApplicationUser userTo = await _context.Users
 			.FirstAsync(u => u.BankAccounts.Any(ba => ba.Id == accountTo.Id));
 
-		if (accountFrom.Balance - amount > 1)
+		if (accountFrom.Balance - model.Amount > 1)
 		{
-			var transaction = _context.Database.BeginTransaction();
+			IDbContextTransaction transaction = _context.Database.BeginTransaction();
 
 			try
 			{
-				accountFrom.Balance -= amount;
+				accountFrom.Balance -= model.Amount;
 
-				accountTo.Balance += amount;
+				accountTo.Balance += model.Amount;
+
+				Transaction newTransac = await AddTransactionAsync(model, userFrom, userTo);
+
+				accountFrom.TransactionHistory.Add(newTransac);
+				accountTo.TransactionHistory.Add(newTransac);
 
 				await _context.SaveChangesAsync();
 
@@ -255,12 +264,12 @@ public class BankAccountService : IBankAccountService
 				await _emailSender.SendEmailAsync(
 					userFrom.Email!,
 					"NRB - Successful Transaction",
-					$"You successfully sent ${amount} to {userTo.UserName}!");
+					$"You successfully sent ${model.Amount} to {userTo.UserName}!");
 
 				await _emailSender.SendEmailAsync(
 					userTo.Email!,
 					"NRB - Successful Transaction Received",
-					$"You just recieved ${amount} from {userTo.UserName}!");
+					$"You just recieved ${model.Amount} from {userTo.UserName}!");
 
 				return PaymentResult.Successful;
 			}
@@ -271,6 +280,29 @@ public class BankAccountService : IBankAccountService
 		}
 
 		return PaymentResult.InsufficientFunds;
+	}
+
+	private async Task<Transaction> AddTransactionAsync(
+		TransactionNewViewModel model,
+		ApplicationUser userFrom,
+		ApplicationUser userTo)
+	{
+		Transaction transaction = new()
+		{
+			Description = model.Description,
+			Amount = model.Amount,
+			TransactionDate = DateTime.UtcNow,
+			AccountFrom = userFrom,
+			AccountFromId = userFrom.Id,
+			AccountTo = userTo,
+			AccountToId = userTo.Id
+		};
+
+		await _context.Transactions.AddAsync(transaction);
+
+		await _context.SaveChangesAsync();
+
+		return transaction;
 	}
 
 	private static string GenerateIBAN()
@@ -295,7 +327,7 @@ public class BankAccountService : IBankAccountService
 		return new string(randomString);
 	}
 
-	public Task<List<BankAccountDisplayViewModel>> GetAllAccounts()
+	public Task<List<BankAccountDisplayViewModel>> GetAllBankAccountsAsync()
 		=> _context.BankAccounts
 			.Select(ba => new BankAccountDisplayViewModel
 			{

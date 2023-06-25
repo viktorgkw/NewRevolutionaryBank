@@ -11,9 +11,9 @@ using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
 	?? throw new InvalidOperationException("Connection string was not found!");
 
 IConfigurationRoot configuration = new ConfigurationBuilder()
@@ -78,7 +78,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -88,6 +88,7 @@ if (app.Environment.IsDevelopment())
 else
 {
 	app.UseExceptionHandler("/Home/Error");
+	app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -98,16 +99,16 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
 // Initialize Roles and Administrator profile
-using (var initScope = app.Services.CreateScope())
+using (IServiceScope initScope = app.Services.CreateScope())
 {
-	var roleManager = initScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-	var userManager = initScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+	RoleManager<ApplicationRole> roleManager = 
+		initScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
+	UserManager<ApplicationUser> userManager = 
+		initScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
 	DbSeeder
 		.SeedRolesAndAdministratorAsync(roleManager, userManager, configuration)
@@ -118,7 +119,7 @@ app.UseHangfireDashboard();
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteNotVerified(),
+	(HangfireService service) => service.DeleteNotVerifiedAsync(),
 	Cron.Daily,
 	new RecurringJobOptions
 	{
@@ -127,7 +128,7 @@ RecurringJob.AddOrUpdate(
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteThreeYearOldAccounts(),
+	(HangfireService service) => service.DeleteThreeYearOldAccountsAsync(),
 	Cron.Weekly,
 	new RecurringJobOptions
 	{
@@ -136,7 +137,7 @@ RecurringJob.AddOrUpdate(
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteClosedAccountsAfterYear(),
+	(HangfireService service) => service.DeleteClosedAccountsAfterYearAsync(),
 	Cron.Weekly,
 	new RecurringJobOptions
 	{

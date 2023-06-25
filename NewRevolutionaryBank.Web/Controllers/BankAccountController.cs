@@ -54,7 +54,7 @@ public partial class BankAccountController : Controller
 
 		try
 		{
-			await _bankAccountService.Create(User.Identity!.Name!, model);
+			await _bankAccountService.CreateAsync(User.Identity!.Name!, model);
 
 			return RedirectToAction("MyAccounts", "BankAccount");
 		}
@@ -78,7 +78,7 @@ public partial class BankAccountController : Controller
 			}
 
 			List<BankAccountDisplayViewModel> accounts = await _bankAccountService
-				.GetAllUserAccounts(User.Identity!.Name!);
+				.GetAllUserAccountsAsync(User.Identity!.Name!);
 
 			return View(accounts);
 		}
@@ -112,7 +112,7 @@ public partial class BankAccountController : Controller
 		try
 		{
 			TransactionNewViewModel model = await _bankAccountService
-			.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
 			return View(model);
 		}
@@ -131,13 +131,15 @@ public partial class BankAccountController : Controller
 			TransactionNewViewModel cleanModel = await _bankAccountService
 				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
 
+			ModelState.Remove("SenderAccounts");
+
 			if (!ModelState.IsValid)
 			{
 				return View(cleanModel);
 			}
 
 			PaymentResult paymentResult = await _bankAccountService
-				.BeginPaymentAsync(model.AccountFrom, model.AccountTo, model.Amount);
+				.BeginPaymentAsync(model);
 
 			if (paymentResult != PaymentResult.Successful)
 			{

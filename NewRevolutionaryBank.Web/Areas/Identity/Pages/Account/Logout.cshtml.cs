@@ -10,10 +10,8 @@ public class LogoutModel : PageModel
 {
 	private readonly SignInManager<ApplicationUser> _signInManager;
 
-	public LogoutModel(SignInManager<ApplicationUser> signInManager)
-	{
+	public LogoutModel(SignInManager<ApplicationUser> signInManager) =>
 		_signInManager = signInManager;
-	}
 
 	public async Task<IActionResult> OnGet()
 	{

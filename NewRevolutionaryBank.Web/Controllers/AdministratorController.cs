@@ -22,7 +22,7 @@ public class AdministratorController : Controller
 	{
 		// TODO: Filters
 		List<BankAccountManageViewModel> accounts = await _administratorService
-			.GetAllBankAccounts();
+			.GetAllBankAccountsAsync();
 
 		return View(accounts);
 	}
@@ -32,7 +32,7 @@ public class AdministratorController : Controller
 		try
 		{
 			BankAccountDetailsViewModel account = await _administratorService
-				.GetBankAccountDetails(id);
+				.GetBankAccountDetailsAsync(id);
 
 			return View(account);
 		}
@@ -58,6 +58,21 @@ public class AdministratorController : Controller
 	}
 
 	[HttpGet]
+	public async Task<IActionResult> DeactivateBankAccount(string id)
+	{
+		try
+		{
+			await _administratorService.DeactivateBankAccountByIdAsync(id);
+
+			return RedirectToAction("ManageBankAccounts", "Administrator");
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("ManageBankAccounts", "Administrator");
+		}
+	}
+
+	[HttpGet]
 	public async Task<IActionResult> ManageUserProfiles()
 	{
 		// TODO: Filters
@@ -65,5 +80,45 @@ public class AdministratorController : Controller
 			.GetAllProfilesAsync();
 
 		return View(users);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> ActivateUserProfile(Guid id)
+	{
+		try
+		{
+			await _administratorService.ActivateUserProfileByIdAsync(id);
+
+			return RedirectToAction("ManageUserProfiles", "Administrator");
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
+		
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> DeactivateUserProfile(Guid id)
+	{
+		try
+		{
+			await _administratorService.DeactivateUserProfileByIdAsync(id);
+
+			return RedirectToAction("ManageUserProfiles", "Administrator");
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("Index", "Home");
+		}
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> TransactionsList()
+	{
+		List<TransactionDisplayViewModel> trasactions = await _administratorService
+			.GetAllTransactionsAsync();
+
+		return View(trasactions);
 	}
 }

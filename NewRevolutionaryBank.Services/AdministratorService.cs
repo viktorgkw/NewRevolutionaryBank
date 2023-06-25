@@ -37,7 +37,20 @@ public class AdministratorService : IAdministratorService
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<List<BankAccountManageViewModel>> GetAllBankAccounts() =>
+	public async Task DeactivateBankAccountByIdAsync(string id)
+	{
+		BankAccount? bankAcc = await _context.BankAccounts
+			.FirstOrDefaultAsync(ba => ba.Id.ToString() == id);
+
+		ArgumentNullException.ThrowIfNull(bankAcc);
+
+		bankAcc.IsClosed = true;
+		bankAcc.ClosedDate = DateTime.UtcNow;
+
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task<List<BankAccountManageViewModel>> GetAllBankAccountsAsync() =>
 		await _context.BankAccounts
 			.AsNoTracking()
 			.Include(ba => ba.Owner)
@@ -51,22 +64,38 @@ public class AdministratorService : IAdministratorService
 			})
 			.ToListAsync();
 
-	public async Task<BankAccountDetailsViewModel> GetBankAccountDetails(Guid id)
+	public async Task<BankAccountDetailsViewModel> GetBankAccountDetailsAsync(Guid id)
 	{
-		BankAccount? bankAcc = await _context.BankAccounts
+		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
-			.FirstOrDefaultAsync(ba => ba.Id == id);
+			.Include(a => a.TransactionHistory)
+				.ThenInclude(th => th.AccountFrom)
+			.Include(a => a.TransactionHistory)
+				.ThenInclude(th => th.AccountTo)
+			.SingleOrDefaultAsync(acc => acc.Id == id);
 
-		ArgumentNullException.ThrowIfNull(bankAcc);
+		ArgumentNullException.ThrowIfNull(account);
 
 		return new BankAccountDetailsViewModel
 		{
-			Id = bankAcc.Id,
-			IBAN = bankAcc.IBAN,
-			Balance = bankAcc.Balance,
-			Address = bankAcc.Address,
-			UnifiedCivilNumber = bankAcc.UnifiedCivilNumber,
-			TransactionHistory = bankAcc.TransactionHistory.ToHashSet()
+			Id = account.Id,
+			IBAN = account.IBAN,
+			Address = account.Address,
+			Balance = account.Balance,
+			UnifiedCivilNumber = account.UnifiedCivilNumber,
+			TransactionHistory = account.TransactionHistory
+					.Select(t =>
+					{
+						if (t.Description.Length >= 25)
+						{
+							t.Description = string.Join("",
+								t.Description.Take(25)) + new string('.', 3);
+						}
+
+						return t;
+					})
+					.OrderByDescending(t => t.TransactionDate)
+					.ToHashSet()
 		};
 	}
 
@@ -88,5 +117,49 @@ public class AdministratorService : IAdministratorService
 				DeletedOn = user.DeletedOn,
 				BankAccountsCount = user.BankAccounts.Count
 			})
+			.ToListAsync();
+
+	public async Task ActivateUserProfileByIdAsync(Guid id)
+	{
+		ApplicationUser? user = await _context.Users
+			.FirstOrDefaultAsync(u => u.Id == id);
+
+		ArgumentNullException.ThrowIfNull(user);
+
+		user.IsDeleted = false;
+		user.DeletedOn = null;
+
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task DeactivateUserProfileByIdAsync(Guid id)
+	{
+		ApplicationUser? user = await _context.Users
+			.FirstOrDefaultAsync(u => u.Id == id);
+
+		ArgumentNullException.ThrowIfNull(user);
+
+		user.IsDeleted = true;
+		user.DeletedOn = DateTime.Now;
+
+		await _context.SaveChangesAsync();
+	}
+
+	// -------------------------------
+	//			Transactions
+	// -------------------------------
+
+	public async Task<List<TransactionDisplayViewModel>> GetAllTransactionsAsync() =>
+		await _context.Transactions
+			.Select(t => new TransactionDisplayViewModel
+			{
+				Id = t.Id,
+				Amount = t.Amount,
+				Description = t.Description,
+				TransactionDate = t.TransactionDate,
+				AccountFromUsername = t.AccountFrom.UserName!,
+				AccountToUsername = t.AccountTo.UserName!
+			})
+			.OrderByDescending(t => t.TransactionDate)
 			.ToListAsync();
 }

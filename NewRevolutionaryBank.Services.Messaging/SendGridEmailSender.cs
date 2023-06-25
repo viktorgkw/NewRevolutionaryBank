@@ -26,7 +26,7 @@ public class SendGridEmailSender : IEmailSender
 			throw new ArgumentException("Subject and message should be provided.");
 		}
 
-		var message = new MimeMessage();
+		MimeMessage message = new();
 
 		message.From.Add(new MailboxAddress(
 			_configuration["EmailSender:SenderName"],
@@ -45,7 +45,7 @@ public class SendGridEmailSender : IEmailSender
 
 		message.Body = bodyBuilder.ToMessageBody();
 
-		using var client = new SmtpClient();
+		using SmtpClient client = new();
 
 		try
 		{

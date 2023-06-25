@@ -14,19 +14,19 @@ public class HangfireService : IHangfireService
 		_dbContext = dbContext;
 	}
 
-	public async Task DeleteNotVerified()
+	public async Task DeleteNotVerifiedAsync()
 		=> await _dbContext.Users
 			.Where(u => !u.EmailConfirmed &&
 				u.CreatedOn.Day == DateTime.Now.AddDays(-1).Day)
 			.ExecuteDeleteAsync();
 
-	public async Task DeleteThreeYearOldAccounts()
+	public async Task DeleteThreeYearOldAccountsAsync()
 		=> await _dbContext.Users
 			.Where(u => u.IsDeleted &&
 				u.DeletedOn!.Value.Year == DateTime.Now.AddYears(-3).Year)
 			.ExecuteDeleteAsync();
 
-	public async Task DeleteClosedAccountsAfterYear()
+	public async Task DeleteClosedAccountsAfterYearAsync()
 		=> await _dbContext.BankAccounts
 			.Where(ba => ba.IsClosed && ba.ClosedDate == DateTime.Now.AddYears(-1))
 			.ExecuteDeleteAsync();

@@ -26,7 +26,7 @@
 
 					<p class="fs-4">@userAcc.UserName</p>
 					<p class="fs-5">@userAcc.FirstName @userAcc.LastName</p>
-					<p class="fs-5">@userAcc.BankAccountsCount</p>
+					<p class="fs-5">Bank Accounts: @userAcc.BankAccountsCount</p>
 
 					<a class="btn btn-info text-light fw-bold"
 					   asp-controller="Administrator"
@@ -34,6 +34,20 @@
 					   asp-route-id="@userAcc.Id">
 						Details
 					</a>
+					@if (userAcc.IsDeleted)
+					{
+						<a class="btn btn-success fw-bold activate-button"
+						   data-id="@userAcc.Id">
+							Activate
+						</a>
+					}
+					else
+					{
+						<a class="btn btn-success fw-bold deactivate-button"
+						   data-id="@userAcc.Id">
+							Deactivate
+						</a>
+					}
 				</div>
 			}
 		</div>
@@ -45,3 +59,90 @@
 		<img src="~/gifs/empty.gif" class="website-gif" />
 	}
 </div>
+
+<!-- Modal -->
+<div class="modal fade"
+	 id="exampleModal"
+	 tabindex="-1"
+	 aria-labelledby="exampleModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"
+					id="exampleModalLabel">
+					Profile Status Change
+				</h5>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"></button>
+			</div>
+			<div class="modal-body text-danger">
+				Dynamic!
+			</div>
+			<div class="modal-footer">
+				<button type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal">
+					No
+				</button>
+				<button type="button"
+						class="btn btn-danger yes-button">
+					Yes
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	const modal = document.getElementById('exampleModal');
+
+	const activateButtons = document.querySelectorAll('.activate-button');
+	const deactivateButtons = document.querySelectorAll('.deactivate-button');
+
+	activateButtons.forEach(button => {
+		button.addEventListener('click', function (event) {
+			event.preventDefault();
+
+			const id = this.dataset.id;
+			const url = '@Url.Action("ActivateUserProfile", "Administrator")' + '?id=' + id;
+
+			const modalInstance = new bootstrap.Modal(modal);
+			modalInstance.show();
+
+			const modalBody = modal.querySelector('.modal-body');
+			modalBody.textContent = "Are you sure you want to activate this account?";
+
+			modal.querySelector('.modal-footer')
+				.addEventListener('click', function (event) {
+					if (event.target.classList.contains('btn-danger')) {
+						window.location.href = url;
+					}
+				});
+		});
+	});
+
+	deactivateButtons.forEach(button => {
+		button.addEventListener('click', function (event) {
+			event.preventDefault();
+
+			const id = this.dataset.id;
+			const url = '@Url.Action("DeactivateUserProfile", "Administrator")' + '?id=' + id;
+
+			const modalInstance = new bootstrap.Modal(modal);
+			modalInstance.show();
+
+			const modalBody = modal.querySelector('.modal-body');
+			modalBody.textContent = "Are you sure you want to deactivate this account?";
+
+			modal.querySelector('.modal-footer')
+				.addEventListener('click', function (event) {
+					if (event.target.classList.contains('btn-danger')) {
+						window.location.href = url;
+					}
+				});
+		});
+	});
+</script>

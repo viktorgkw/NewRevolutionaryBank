@@ -20,7 +20,7 @@ public static class DbSeeder
 			"Guest",
 		};
 
-		foreach (var role in roles)
+		foreach (string role in roles)
 		{
 			if (!await roleManager.RoleExistsAsync(role))
 			{
@@ -37,7 +37,7 @@ public static class DbSeeder
 
 		if (adminExists is null)
 		{
-			var adminUser = new ApplicationUser
+			ApplicationUser adminUser = new()
 			{
 				UserName = adminUsername,
 				Email = adminEmail,
@@ -46,7 +46,8 @@ public static class DbSeeder
 				LastName = adminUsername
 			};
 
-			var createdResult = await userManager.CreateAsync(adminUser, adminPassword);
+			IdentityResult createdResult = await userManager
+				.CreateAsync(adminUser, adminPassword);
 
 			if (createdResult.Succeeded)
 			{
