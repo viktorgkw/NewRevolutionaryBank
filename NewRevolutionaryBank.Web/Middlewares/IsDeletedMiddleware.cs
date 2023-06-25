@@ -8,7 +8,7 @@ public class IsDeletedMiddleware
 
 	public IsDeletedMiddleware(RequestDelegate next) => _next = next;
 
-	public async Task InvokeAsync(HttpContext context, ILogoutService logoutService)
+	public async Task InvokeAsync(HttpContext context, IMiddlewareService middlewareService)
 	{
 		if (context.User.Identity is null || !context.User.Identity.IsAuthenticated)
 		{
@@ -16,7 +16,7 @@ public class IsDeletedMiddleware
 			return;
 		}
 
-		bool mustLogout = await logoutService
+		bool mustLogout = await middlewareService
 			.MustLogoutByUsernameAsync(context.User.Identity?.Name ?? string.Empty);
 
 		if (mustLogout)

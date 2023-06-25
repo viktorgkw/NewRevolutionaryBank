@@ -1,12 +1,17 @@
 ﻿namespace NewRevolutionaryBank.Data.Models;
 
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.EntityFrameworkCore;
 
 public class BankSettings
 {
+	public BankSettings() => Id = Guid.NewGuid();
+
+	[Key]
+	[Comment("Уникален идентификатор")]
+	public Guid Id { get; set; }
+
 	[Comment("Такса за транзакция")]
 	public decimal TransactionFee { get; set; }
-
-	[Comment("Такса за обмен на валута")]
-	public decimal CurrencyExchangeFee { get; set; }
 }

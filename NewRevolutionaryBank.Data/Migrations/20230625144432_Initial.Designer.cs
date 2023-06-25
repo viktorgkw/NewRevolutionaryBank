@@ -12,15 +12,15 @@ using NewRevolutionaryBank.Data;
 namespace NewRevolutionaryBank.Data.Migrations
 {
     [DbContext(typeof(NrbDbContext))]
-    [Migration("20230624165228_User_Navigation_Prop_Added")]
-    partial class User_Navigation_Prop_Added
+    [Migration("20230625144432_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.7")
+                .HasAnnotation("ProductVersion", "7.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -209,10 +209,6 @@ namespace NewRevolutionaryBank.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("datetime2")
-                        .HasComment("Дата на последна промяна");
-
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -310,15 +306,17 @@ namespace NewRevolutionaryBank.Data.Migrations
 
             modelBuilder.Entity("NewRevolutionaryBank.Data.Models.BankSettings", b =>
                 {
-                    b.Property<decimal>("CurrencyExchangeFee")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Такса за обмен на валута");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasComment("Уникален идентификатор");
 
                     b.Property<decimal>("TransactionFee")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Такса за транзакция");
+
+                    b.HasKey("Id");
 
                     b.ToTable("BankSettings");
                 });
@@ -343,9 +341,6 @@ namespace NewRevolutionaryBank.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Сума на транзакцията");
 
-                    b.Property<Guid?>("BankAccountId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(120)
@@ -361,8 +356,6 @@ namespace NewRevolutionaryBank.Data.Migrations
                     b.HasIndex("AccountFromId");
 
                     b.HasIndex("AccountToId");
-
-                    b.HasIndex("BankAccountId");
 
                     b.ToTable("Transactions");
                 });
@@ -431,21 +424,17 @@ namespace NewRevolutionaryBank.Data.Migrations
 
             modelBuilder.Entity("NewRevolutionaryBank.Data.Models.Transaction", b =>
                 {
-                    b.HasOne("NewRevolutionaryBank.Data.Models.ApplicationUser", "AccountFrom")
+                    b.HasOne("NewRevolutionaryBank.Data.Models.BankAccount", "AccountFrom")
                         .WithMany()
                         .HasForeignKey("AccountFromId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("NewRevolutionaryBank.Data.Models.ApplicationUser", "AccountTo")
+                    b.HasOne("NewRevolutionaryBank.Data.Models.BankAccount", "AccountTo")
                         .WithMany()
                         .HasForeignKey("AccountToId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.HasOne("NewRevolutionaryBank.Data.Models.BankAccount", null)
-                        .WithMany("TransactionHistory")
-                        .HasForeignKey("BankAccountId");
 
                     b.Navigation("AccountFrom");
 
@@ -455,11 +444,6 @@ namespace NewRevolutionaryBank.Data.Migrations
             modelBuilder.Entity("NewRevolutionaryBank.Data.Models.ApplicationUser", b =>
                 {
                     b.Navigation("BankAccounts");
-                });
-
-            modelBuilder.Entity("NewRevolutionaryBank.Data.Models.BankAccount", b =>
-                {
-                    b.Navigation("TransactionHistory");
                 });
 #pragma warning restore 612, 618
         }

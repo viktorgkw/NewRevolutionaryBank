@@ -1,14 +1,10 @@
 ﻿namespace NewRevolutionaryBank.Web.Controllers;
 
-using System.Text.RegularExpressions;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
-using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 [Authorize]
 public partial class BankAccountController : Controller
@@ -18,26 +14,19 @@ public partial class BankAccountController : Controller
 	public BankAccountController(
 		IBankAccountService bankAccountService) => _bankAccountService = bankAccountService;
 
-	public IActionResult Index()
+	public async Task<IActionResult> Index()
 	{
+		await _bankAccountService.CheckUserRole(User);
+
 		// TODO: with account tiers
 		return View();
 	}
 
 	[HttpGet]
 	[Authorize(Roles = "Guest,AccountHolder")]
-	public async Task<IActionResult> Create()
+	public IActionResult Create()
 	{
-		try
-		{
-			await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
-
-			return View();
-		}
-		catch (ArgumentNullException)
-		{
-			return RedirectToAction("Index", "Home");
-		}
+		return View();
 	}
 
 	[HttpPost]
@@ -67,12 +56,7 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
-			bool isHolder = await _bankAccountService.CheckRoleAsync(User.Identity!.Name!);
-
-			if (!isHolder)
-			{
-				return RedirectToAction("Create", "BankAccount");
-			}
+			await _bankAccountService.CheckUserRole(User);
 
 			List<BankAccountDisplayViewModel> accounts = await _bankAccountService
 				.GetAllUserAccountsAsync(User.Identity!.Name!);
@@ -86,14 +70,18 @@ public partial class BankAccountController : Controller
 	}
 
 	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> Details(Guid id)
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			BankAccountDetailsViewModel? viewModel = await _bankAccountService
 				.GetDetailsByIdAsync(id);
 
 			// TODO: If User is owner
+
 			return View(viewModel);
 		}
 		catch (ArgumentNullException)
@@ -104,16 +92,42 @@ public partial class BankAccountController : Controller
 
 	[HttpGet]
 	[Authorize(Roles = "AccountHolder")]
-	public async Task<IActionResult> NewTransaction()
+	public async Task<IActionResult> Close(Guid id)
+	{
+		await _bankAccountService.CheckUserRole(User);
+
+		// TODO: Validate is owner
+
+		return View(id);
+	}
+
+	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
+	public async Task<IActionResult> CloseConfirmation(Guid id)
+	{
+		await _bankAccountService.CheckUserRole(User);
+
+		// TODO: Validate is owner and if it came from Close
+
+		await _bankAccountService.CloseAccountByIdAsync(id);
+
+		return RedirectToAction("Index", "Home");
+	}
+
+	[HttpGet]
+	[Authorize(Roles = "AccountHolder")]
+	public async Task<IActionResult> Deposit()
 	{
 		try
 		{
-			TransactionNewViewModel model = await _bankAccountService
-				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+			await _bankAccountService.CheckUserRole(User);
+
+			DepositViewModel model = await _bankAccountService
+				.PrepareDepositViewModel(User.Identity!.Name!);
 
 			return View(model);
 		}
-		catch (ArgumentNullException)
+		catch (Exception)
 		{
 			return RedirectToAction("Index", "Home");
 		}
@@ -121,68 +135,32 @@ public partial class BankAccountController : Controller
 
 	[HttpPost]
 	[Authorize(Roles = "AccountHolder")]
-	public async Task<IActionResult> NewTransaction(TransactionNewViewModel model)
+	public async Task<IActionResult> Deposit(DepositViewModel model)
 	{
 		try
 		{
-			TransactionNewViewModel cleanModel = await _bankAccountService
-				.PrepareTransactionModelForUserAsync(User.Identity!.Name!);
+			await _bankAccountService.CheckUserRole(User);
 
-			ModelState.Remove("SenderAccounts");
+			ModelState.Remove("MyAccounts");
+			ModelState.Remove("StripePayment.Id");
+			ModelState.Remove("StripePayment.Currency");
+			ModelState.Remove("StripePayment.Description");
 
 			if (!ModelState.IsValid)
 			{
-				return View(cleanModel);
+				DepositViewModel newModel = await _bankAccountService
+					.PrepareDepositViewModel(User.Identity!.Name!);
+
+				return View(newModel);
 			}
 
-			PaymentResult paymentResult = await _bankAccountService
-				.BeginPaymentAsync(model);
+			await _bankAccountService.DepositAsync(model);
 
-			if (paymentResult != PaymentResult.Successful)
-			{
-				ModelState.AddModelError("",
-					string.Join(" ", Regex.Split(paymentResult.ToString(), "(?<!^)(?=[A-Z])")));
-
-				return View(cleanModel);
-			}
-
-			TempData["RedirectedFromMethod"] = "NewTransaction";
-			return RedirectToAction("TransactionSuccessful", "BankAccount");
+			return RedirectToAction("MyAccounts", "BankAccount");
 		}
-		catch (ArgumentNullException)
+		catch (Exception)
 		{
 			return RedirectToAction("Index", "Home");
 		}
-	}
-
-	[HttpGet]
-	[Authorize(Roles = "AccountHolder")]
-	public IActionResult TransactionSuccessful()
-	{
-		if (TempData["RedirectedFromMethod"] is not null &&
-			TempData["RedirectedFromMethod"]!.ToString() == "NewTransaction")
-		{
-			return View();
-		}
-
-		return RedirectToAction("Index", "Home");
-	}
-
-	[HttpGet]
-	public IActionResult Close(Guid id)
-	{
-		// TODO: Validate is owner
-
-		return View(id);
-	}
-
-	[HttpGet]
-	public async Task<IActionResult> CloseConfirmation(Guid id)
-	{
-		// TODO: Validate is owner and if it came from Close
-
-		await _bankAccountService.CloseAccountByIdAsync(id);
-
-		return RedirectToAction("Index", "Home");
 	}
 }

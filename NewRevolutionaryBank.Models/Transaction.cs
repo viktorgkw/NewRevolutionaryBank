@@ -30,7 +30,7 @@ public class Transaction
 	public Guid AccountFromId { get; set; }
 
 	[Required]
-	public ApplicationUser AccountFrom { get; set; } = null!;
+	public BankAccount AccountFrom { get; set; } = null!;
 
 	[Required]
 	[ForeignKey(nameof(AccountTo))]
@@ -38,5 +38,5 @@ public class Transaction
 	public Guid AccountToId { get; set; }
 
 	[Required]
-	public ApplicationUser AccountTo { get; set; } = null!;
+	public BankAccount AccountTo { get; set; } = null!;
 }

@@ -9,28 +9,17 @@ using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
 
-public class LogoutService : ILogoutService
+public class MiddlewareService : IMiddlewareService
 {
 	private readonly NrbDbContext _context;
 	private readonly SignInManager<ApplicationUser> _signInManager;
 
-	public LogoutService(
+	public MiddlewareService(
 		NrbDbContext context,
 		SignInManager<ApplicationUser> signInManager)
 	{
 		_context = context;
 		_signInManager = signInManager;
-	}
-
-	public async Task<bool> MustLogoutAsync(ApplicationUser? user)
-	{
-		if (user is null || user.IsDeleted)
-		{
-			await _signInManager.SignOutAsync();
-			return true;
-		}
-
-		return false;
 	}
 
 	public async Task<bool> MustLogoutByUsernameAsync(string userName)

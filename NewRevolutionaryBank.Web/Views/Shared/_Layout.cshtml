@@ -97,9 +97,16 @@
 									</li>
 									<li class="py-2">
 										<a class="nav-link text-white fw-bold"
-										   asp-controller="BankAccount"
+										   asp-controller="Transaction"
 										   asp-action="NewTransaction">
 											New Transaction
+										</a>
+									</li>
+									<li class="py-2">
+										<a class="nav-link text-white fw-bold"
+										   asp-controller="BankAccount"
+										   asp-action="Deposit">
+											Deposit
 										</a>
 									</li>
 								</ul>
@@ -122,8 +129,8 @@
 									<li class="py-2">
 										<a class="nav-link text-white fw-bold"
 										   asp-controller="Administrator"
-										   asp-action="ManageBankAccounts">
-											Manage Bank Accounts
+										   asp-action="ManageBankSettings">
+											Manage Bank Settings
 										</a>
 									</li>
 									<li class="py-2">
@@ -131,6 +138,13 @@
 										   asp-controller="Administrator"
 										   asp-action="ManageUserProfiles">
 											Manage User Profiles
+										</a>
+									</li>
+									<li class="py-2">
+										<a class="nav-link text-white fw-bold"
+										   asp-controller="Administrator"
+										   asp-action="ManageBankAccounts">
+											Manage Bank Accounts
 										</a>
 									</li>
 									<li class="py-2">

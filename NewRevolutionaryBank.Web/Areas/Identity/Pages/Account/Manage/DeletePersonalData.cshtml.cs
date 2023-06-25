@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
 

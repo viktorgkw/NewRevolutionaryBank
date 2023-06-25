@@ -1,18 +1,26 @@
 ﻿namespace NewRevolutionaryBank.Web.ViewModels.Administrator;
 
-public class UserProfileManageViewModel
+using NewRevolutionaryBank.Data.Models;
+
+public class UserProfileDetailsViewModel
 {
 	public Guid Id { get; set; }
 
+	public string Email { get; set; } = null!;
+
 	public string UserName { get; set; } = null!;
+
+	public string? PhoneNumber { get; set; }
 
 	public string? FirstName { get; set; }
 
 	public string? LastName { get; set; }
 
+	public DateTime CreatedOn { get; set; }
+
 	public bool IsDeleted { get; set; }
 
 	public DateTime? DeletedOn { get; set; }
 
-	public int BankAccountsCount { get; set; }
+	public List<BankAccount> BankAccounts { get; set; } = null!;
 }

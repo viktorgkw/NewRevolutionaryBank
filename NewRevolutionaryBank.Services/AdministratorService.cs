@@ -2,17 +2,17 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using Microsoft.EntityFrameworkCore;
-
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
-using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 using NewRevolutionaryBank.Web.ViewModels.Administrator;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
 public class AdministratorService : IAdministratorService
 {
+	private const string AdministratorUserName = "Administrator";
+
 	private readonly NrbDbContext _context;
 
 	public AdministratorService(NrbDbContext context) => _context = context;
@@ -65,13 +65,25 @@ public class AdministratorService : IAdministratorService
 	{
 		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
-			.Include(a => a.TransactionHistory)
-				.ThenInclude(th => th.AccountFrom)
-			.Include(a => a.TransactionHistory)
-				.ThenInclude(th => th.AccountTo)
 			.SingleOrDefaultAsync(acc => acc.Id == id);
 
 		ArgumentNullException.ThrowIfNull(account);
+
+		List<Transaction> RecievedTransactions = await _context.Transactions
+			.AsNoTracking()
+			.Include(t => t.AccountTo)
+			.Include(t => t.AccountFrom)
+			.Where(t => t.AccountTo == account)
+			.OrderByDescending(t => t.TransactionDate)
+			.ToListAsync();
+
+		List<Transaction> SentTransactions = await _context.Transactions
+			.AsNoTracking()
+			.Include(t => t.AccountTo)
+			.Include(t => t.AccountFrom)
+			.Where(t => t.AccountFrom == account)
+			.OrderByDescending(t => t.TransactionDate)
+			.ToListAsync();
 
 		return new BankAccountDetailsViewModel
 		{
@@ -80,19 +92,8 @@ public class AdministratorService : IAdministratorService
 			Address = account.Address,
 			Balance = account.Balance,
 			UnifiedCivilNumber = account.UnifiedCivilNumber,
-			TransactionHistory = account.TransactionHistory
-					.Select(t =>
-					{
-						if (t.Description.Length >= 25)
-						{
-							t.Description = string.Join("",
-								t.Description.Take(25)) + new string('.', 3);
-						}
-
-						return t;
-					})
-					.OrderByDescending(t => t.TransactionDate)
-					.ToHashSet()
+			SentTransactions = SentTransactions.ToHashSet(),
+			RecievedTransactions = RecievedTransactions.ToHashSet()
 		};
 	}
 
@@ -100,10 +101,24 @@ public class AdministratorService : IAdministratorService
 	//				Profiles
 	// ------------------------------------
 
-	public async Task<List<UserProfileManageViewModel>> GetAllProfilesAsync() =>
-		await _context.Users
+	public async Task<List<UserProfileManageViewModel>> GetAllProfilesAsync(
+		string order,
+		string? searchName)
+	{
+		IQueryable<ApplicationUser> usersQuery = _context.Users
 			.AsNoTracking()
 			.Include(user => user.BankAccounts)
+			.Where(user => user.UserName != AdministratorUserName);
+
+		usersQuery = usersQuery = order switch
+		{
+			"active" => usersQuery.Where(u => !u.IsDeleted),
+			"deleted" => usersQuery.Where(u => u.IsDeleted),
+			_ => usersQuery,
+		};
+
+		return await usersQuery
+			.Where(u => u.UserName!.ToLower().Contains(searchName ?? ""))
 			.Select(user => new UserProfileManageViewModel
 			{
 				Id = user.Id,
@@ -115,6 +130,30 @@ public class AdministratorService : IAdministratorService
 				BankAccountsCount = user.BankAccounts.Count
 			})
 			.ToListAsync();
+	}
+
+	public async Task<UserProfileDetailsViewModel> GetUserProfileDetailsByIdAsync(Guid id)
+	{
+		ApplicationUser? user = await _context.Users
+			.Include(u => u.BankAccounts)
+			.FirstOrDefaultAsync(u => u.Id == id);
+
+		ArgumentNullException.ThrowIfNull(user);
+
+		return new UserProfileDetailsViewModel
+		{
+			Id = user.Id,
+			Email = user.Email!,
+			UserName = user.UserName!,
+			FirstName = user.FirstName,
+			LastName = user.LastName,
+			PhoneNumber = user.PhoneNumber,
+			CreatedOn = user.CreatedOn,
+			IsDeleted = user.IsDeleted,
+			DeletedOn = user.DeletedOn,
+			BankAccounts = user.BankAccounts.ToList()
+		};
+	}
 
 	public async Task ActivateUserProfileByIdAsync(Guid id)
 	{
@@ -160,9 +199,32 @@ public class AdministratorService : IAdministratorService
 				Amount = t.Amount,
 				Description = t.Description,
 				TransactionDate = t.TransactionDate,
-				AccountFromUsername = t.AccountFrom.UserName!,
-				AccountToUsername = t.AccountTo.UserName!
+				AccountFromUsername = t.AccountFrom.IBAN,
+				AccountToUsername = t.AccountTo.IBAN
 			})
 			.OrderByDescending(t => t.TransactionDate)
 			.ToListAsync();
+
+	// -------------------------------
+	//			Bank Settings
+	// -------------------------------
+
+	public async Task<BankSettingsDisplayViewModel> GetBankSettingsAsync()
+	{
+		BankSettings settings = await _context.BankSettings.FirstAsync();
+
+		return new BankSettingsDisplayViewModel
+		{
+			TransactionFee = settings.TransactionFee
+		};
+	}
+
+	public async Task EditTransactionFeeAsync(decimal decimalValue)
+	{
+		BankSettings settings = await _context.BankSettings.FirstAsync();
+
+		settings.TransactionFee = decimalValue;
+
+		await _context.SaveChangesAsync();
+	}
 }

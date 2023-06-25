@@ -9,10 +9,7 @@ public class HangfireService : IHangfireService
 {
 	private readonly NrbDbContext _dbContext;
 
-	public HangfireService(NrbDbContext dbContext)
-	{
-		_dbContext = dbContext;
-	}
+	public HangfireService(NrbDbContext dbContext) => _dbContext = dbContext;
 
 	public async Task DeleteNotVerifiedAsync()
 		=> await _dbContext.Users

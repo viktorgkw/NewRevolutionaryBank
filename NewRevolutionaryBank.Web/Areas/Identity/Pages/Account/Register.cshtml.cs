@@ -96,8 +96,7 @@ public class RegisterModel : PageModel
 					"NRB - Confirm your email",
 					$"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
 
-				return RedirectToPage("RegisterConfirmation",
-					new { email = Input.Email });
+				return RedirectToPage("RegisterConfirmation");
 			}
 
 			foreach (IdentityError error in result.Errors)

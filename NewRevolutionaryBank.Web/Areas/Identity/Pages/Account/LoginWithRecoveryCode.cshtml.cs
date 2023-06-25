@@ -5,5 +5,5 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 public class LoginWithRecoveryCodeModel : PageModel
 {
-    public IActionResult OnGet() => RedirectToAction("Index", "Home");
+	public IActionResult OnGet() => RedirectToAction("Index", "Home");
 }

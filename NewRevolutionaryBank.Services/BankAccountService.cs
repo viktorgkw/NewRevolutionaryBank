@@ -2,37 +2,39 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
-using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
-using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
 public class BankAccountService : IBankAccountService
 {
 	private readonly NrbDbContext _context;
 	private readonly UserManager<ApplicationUser> _userManager;
 	private readonly SignInManager<ApplicationUser> _signInManager;
+	private readonly IStripeService _stripeService;
 	private readonly IEmailSender _emailSender;
 
 	public BankAccountService(
 		NrbDbContext context,
 		UserManager<ApplicationUser> userManager,
 		SignInManager<ApplicationUser> signInManager,
-		IEmailSender emailSender)
+		IEmailSender emailSender,
+		IStripeService stripeService)
 	{
 		_context = context;
 		_userManager = userManager;
 		_signInManager = signInManager;
 		_emailSender = emailSender;
+		_stripeService = stripeService;
 	}
 
 	public async Task CreateAsync(string userName, BankAccountCreateViewModel model)
@@ -108,13 +110,25 @@ public class BankAccountService : IBankAccountService
 	{
 		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
-			.Include(a => a.TransactionHistory)
-				.ThenInclude(th => th.AccountFrom)
-			.Include(a => a.TransactionHistory)
-				.ThenInclude(th => th.AccountTo)
-			.SingleOrDefaultAsync(acc => acc.Id == id);
+			.FirstOrDefaultAsync(acc => acc.Id == id);
 
 		ArgumentNullException.ThrowIfNull(account);
+
+		List<Transaction> RecievedTransactions = await _context.Transactions
+			.AsNoTracking()
+			.Include(t => t.AccountTo)
+			.Include(t => t.AccountFrom)
+			.Where(t => t.AccountTo == account)
+			.OrderByDescending(t => t.TransactionDate)
+			.ToListAsync();
+
+		List<Transaction> SentTransactions = await _context.Transactions
+			.AsNoTracking()
+			.Include(t => t.AccountTo)
+			.Include(t => t.AccountFrom)
+			.Where(t => t.AccountFrom == account)
+			.OrderByDescending(t => t.TransactionDate)
+			.ToListAsync();
 
 		return new BankAccountDetailsViewModel
 		{
@@ -123,74 +137,9 @@ public class BankAccountService : IBankAccountService
 			Address = account.Address,
 			Balance = account.Balance,
 			UnifiedCivilNumber = account.UnifiedCivilNumber,
-			TransactionHistory = account.TransactionHistory
-					.Select(t =>
-					{
-						if (t.Description.Length >= 25)
-						{
-							t.Description = string.Join("",
-								t.Description.Take(25)) + new string('.', 3);
-						}
-
-						return t;
-					})
-					.OrderByDescending(t => t.TransactionDate)
-					.ToHashSet()
+			SentTransactions = SentTransactions.ToHashSet(),
+			RecievedTransactions = RecievedTransactions.ToHashSet()
 		};
-	}
-
-	public async Task<TransactionNewViewModel> PrepareTransactionModelForUserAsync(
-		string userName)
-	{
-		ApplicationUser? foundUser = await _context.Users
-			.AsNoTracking()
-			.Include(u => u.BankAccounts)
-			.FirstOrDefaultAsync(user => user.UserName == userName);
-
-		ArgumentNullException.ThrowIfNull(foundUser);
-
-		List<TransactionSenderViewModel> userAccounts = foundUser!.BankAccounts
-			.Where(ba => !ba.IsClosed)
-			.Select(ba => new TransactionSenderViewModel
-			{
-				Id = ba.Id,
-				IBAN = ba.IBAN,
-				Balance = ba.Balance,
-			})
-			.ToList();
-
-		return new()
-		{
-			SenderAccounts = userAccounts
-		};
-	}
-
-	public async Task<bool> CheckRoleAsync(string userName)
-	{
-		ApplicationUser? foundUser = await _context.Users
-			.Include(u => u.BankAccounts)
-			.FirstOrDefaultAsync(user => user.UserName == userName);
-
-		ArgumentNullException.ThrowIfNull(foundUser);
-
-		IList<string> userRoles = await _userManager.GetRolesAsync(foundUser);
-		await _userManager.RemoveFromRolesAsync(foundUser, userRoles);
-
-		int accountsCount = foundUser.BankAccounts
-			.Count(ba => !ba.IsClosed);
-
-		if (accountsCount < 1)
-		{
-			await _userManager.AddToRoleAsync(foundUser, "Guest");
-		}
-		else
-		{
-			await _userManager.AddToRoleAsync(foundUser, "AccountHolder");
-		}
-
-		await _signInManager.RefreshSignInAsync(foundUser);
-
-		return accountsCount > 0;
 	}
 
 	public async Task CloseAccountByIdAsync(Guid id)
@@ -211,104 +160,8 @@ public class BankAccountService : IBankAccountService
 		await _context.SaveChangesAsync();
 	}
 
-	public async Task<PaymentResult> BeginPaymentAsync(TransactionNewViewModel model)
-	{
-		BankAccount? accountFrom = await _context.BankAccounts
-			.Include(af => af.TransactionHistory)
-			.SingleOrDefaultAsync(acc => acc.Id.ToString() == model.AccountFrom);
-
-		BankAccount? accountTo = await _context.BankAccounts
-			.Include(af => af.TransactionHistory)
-			.SingleOrDefaultAsync(acc => acc.IBAN == model.AccountTo);
-
-		if (accountFrom is null || accountFrom.IsClosed)
-		{
-			return PaymentResult.SenderNotFound;
-		}
-
-		if (accountTo is null || accountTo.IsClosed)
-		{
-			return PaymentResult.RecieverNotFound;
-		}
-
-		if (accountFrom == accountTo)
-		{
-			return PaymentResult.NoSelfTransactions;
-		}
-
-		ApplicationUser userFrom = await _context.Users
-			.FirstAsync(u => u.BankAccounts.Any(ba => ba.Id == accountFrom.Id));
-
-		ApplicationUser userTo = await _context.Users
-			.FirstAsync(u => u.BankAccounts.Any(ba => ba.Id == accountTo.Id));
-
-		if (accountFrom.Balance - model.Amount > 1)
-		{
-			IDbContextTransaction transaction = _context.Database.BeginTransaction();
-
-			try
-			{
-				accountFrom.Balance -= model.Amount;
-
-				accountTo.Balance += model.Amount;
-
-				Transaction newTransac = await AddTransactionAsync(model, userFrom, userTo);
-
-				accountFrom.TransactionHistory.Add(newTransac);
-				accountTo.TransactionHistory.Add(newTransac);
-
-				await _context.SaveChangesAsync();
-
-				await transaction.CommitAsync();
-
-				await _emailSender.SendEmailAsync(
-					userFrom.Email!,
-					"NRB - Successful Transaction",
-					$"You successfully sent ${model.Amount} to {userTo.UserName}!");
-
-				await _emailSender.SendEmailAsync(
-					userTo.Email!,
-					"NRB - Successful Transaction Received",
-					$"You just recieved ${model.Amount} from {userTo.UserName}!");
-
-				return PaymentResult.Successful;
-			}
-			catch
-			{
-				await transaction.RollbackAsync();
-			}
-		}
-
-		return PaymentResult.InsufficientFunds;
-	}
-
-	private async Task<Transaction> AddTransactionAsync(
-		TransactionNewViewModel model,
-		ApplicationUser userFrom,
-		ApplicationUser userTo)
-	{
-		Transaction transaction = new()
-		{
-			Description = model.Description,
-			Amount = model.Amount,
-			TransactionDate = DateTime.UtcNow,
-			AccountFrom = userFrom,
-			AccountFromId = userFrom.Id,
-			AccountTo = userTo,
-			AccountToId = userTo.Id
-		};
-
-		await _context.Transactions.AddAsync(transaction);
-
-		await _context.SaveChangesAsync();
-
-		return transaction;
-	}
-
-	private static string GenerateIBAN()
-	{
-		return $"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
-	}
+	private static string GenerateIBAN() =>
+		$"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
 
 	private static string GenerateRandomIbanPart()
 	{
@@ -336,4 +189,87 @@ public class BankAccountService : IBankAccountService
 				Balance = ba.Balance
 			})
 			.ToListAsync();
+
+	public async Task CheckUserRole(ClaimsPrincipal User)
+	{
+		if (User.IsInRole("AccountHolder"))
+		{
+			ApplicationUser? user = await _context.Users
+			.Include(u => u.BankAccounts)
+			.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
+
+			if (user is null)
+			{
+				return;
+			}
+
+			int userBankAccounts = user.BankAccounts
+			.Count(ba => !ba.IsClosed);
+
+			if (userBankAccounts == 0)
+			{
+				IList<string> roles = await _userManager.GetRolesAsync(user);
+
+				await _userManager.RemoveFromRolesAsync(user, roles);
+
+				await _userManager.AddToRoleAsync(user, "Guest");
+
+				await _signInManager.RefreshSignInAsync(user);
+			}
+		}
+	}
+
+	public async Task<DepositViewModel> PrepareDepositViewModel(string userName)
+	{
+		ApplicationUser? user = await _context.Users
+			.Include(u => u.BankAccounts)
+			.FirstOrDefaultAsync(u => u.UserName == userName);
+
+		ArgumentNullException.ThrowIfNull(user);
+
+		List<BankAccountDepositViewModel> userAccounts = user.BankAccounts
+			.Where(ba => !ba.IsClosed)
+			.Select(ba => new BankAccountDepositViewModel
+			{
+				Id = ba.Id,
+				IBAN = ba.IBAN,
+				Balance = ba.Balance
+			})
+			.ToList();
+
+		return new DepositViewModel
+		{
+			MyAccounts = userAccounts,
+			StripePayment = new()
+			{
+				Id = Guid.NewGuid().ToString(),
+				Currency = "usd",
+				Description = "Deposit into bank account"
+			}
+		};
+	}
+
+	public async Task DepositAsync(DepositViewModel model)
+	{
+		try
+		{
+			_stripeService.MakePaymentAsync(model.StripePayment);
+		}
+		catch
+		{
+			// It will always explode because it's not configured for real environment.
+		}
+
+		BankAccount? bankAcc = await _context.BankAccounts
+						.FirstOrDefaultAsync(ba => ba.Id == model.DepositTo);
+
+		if (bankAcc is null)
+		{
+			return;
+		}
+
+		bankAcc.Balance += model.Amount;
+
+		await _context.SaveChangesAsync();
+	}
 }

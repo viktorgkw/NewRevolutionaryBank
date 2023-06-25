@@ -13,7 +13,7 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 	public override DbSet<ApplicationRole> Roles { get; set; } = null!;
 
-    public DbSet<BankSettings> BankSettings { get; set; } = null!;
+	public DbSet<BankSettings> BankSettings { get; set; } = null!;
 
 	public DbSet<BankAccount> BankAccounts { get; set; } = null!;
 
@@ -21,19 +21,9 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
-		builder.Entity<BankSettings>(options =>
-		{
-			options
-				.HasNoKey();
-
-			options
+		builder.Entity<BankSettings>(options => options
 				.Property(b => b.TransactionFee)
-				.HasPrecision(18, 2);
-
-			options
-				.Property(b => b.CurrencyExchangeFee)
-				.HasPrecision(18, 2);
-		});
+				.HasPrecision(18, 2));
 
 		builder.Entity<BankAccount>()
 			.Property(b => b.Balance)
@@ -49,7 +39,13 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 				.HasOne(t => t.AccountTo)
 				.WithMany()
 				.HasForeignKey(t => t.AccountToId)
-				.OnDelete(DeleteBehavior.NoAction);
+				.OnDelete(DeleteBehavior.Restrict);
+
+			options
+				.HasOne(t => t.AccountFrom)
+				.WithMany()
+				.HasForeignKey(t => t.AccountFromId)
+				.OnDelete(DeleteBehavior.Restrict);
 		});
 
 		base.OnModelCreating(builder);

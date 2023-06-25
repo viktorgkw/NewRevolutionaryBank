@@ -22,9 +22,6 @@ public class ApplicationUser : IdentityUser<Guid>
 	[Comment("Дата на създаване")]
 	public DateTime CreatedOn { get; set; }
 
-	[Comment("Дата на последна промяна")]
-	public DateTime? ModifiedOn { get; set; }
-
 	[Comment("Флаг дали профила е изтрит")]
 	public bool IsDeleted { get; set; }
 

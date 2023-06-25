@@ -1,12 +1,9 @@
 ﻿namespace NewRevolutionaryBank.Web.Areas.Identity.Pages.Account.Manage;
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;

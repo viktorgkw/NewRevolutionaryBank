@@ -2,10 +2,9 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
 using NewRevolutionaryBank.Services.Contracts;
-using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 using NewRevolutionaryBank.Web.ViewModels.Administrator;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
 [Authorize(Roles = "Administrator")]
 public class AdministratorController : Controller
@@ -71,13 +70,33 @@ public class AdministratorController : Controller
 	}
 
 	[HttpGet]
-	public async Task<IActionResult> ManageUserProfiles()
+	public async Task<IActionResult> ManageUserProfiles(
+		string order,
+		string? searchName)
 	{
-		// TODO: Filters
+		order ??= "active";
+		searchName = searchName?.ToLower();
+
 		List<UserProfileManageViewModel> users = await _administratorService
-			.GetAllProfilesAsync();
+			.GetAllProfilesAsync(order, searchName);
 
 		return View(users);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> UserProfileDetails(Guid id)
+	{
+		try
+		{
+			UserProfileDetailsViewModel model = await _administratorService
+				.GetUserProfileDetailsByIdAsync(id);
+
+			return View(model);
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction("ManageUserProfiles", "Administrator");
+		}
 	}
 
 	[HttpGet]
@@ -118,5 +137,25 @@ public class AdministratorController : Controller
 			.GetAllTransactionsAsync();
 
 		return View(trasactions);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> ManageBankSettings()
+	{
+		BankSettingsDisplayViewModel model = await _administratorService
+			.GetBankSettingsAsync();
+
+		return View(model);
+	}
+
+	[HttpGet]
+	public IActionResult EditTransactionFee() => View();
+
+	[HttpPost]
+	public async Task<IActionResult> EditTransactionFee(decimal decimalValue)
+	{
+		await _administratorService.EditTransactionFeeAsync(decimalValue);
+
+		return RedirectToAction("ManageBankSettings", "Administrator");
 	}
 }

@@ -14,5 +14,7 @@ public class BankAccountDetailsViewModel
 
 	public string Address { get; set; } = null!;
 
-	public HashSet<Transaction> TransactionHistory { get; set; } = null!;
+	public HashSet<Transaction> SentTransactions { get; set; } = null!;
+
+	public HashSet<Transaction> RecievedTransactions { get; set; } = null!;
 }

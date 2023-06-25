@@ -68,15 +68,20 @@ builder.Services.AddHangfireServer();
 builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
 builder.Services.AddScoped<IHangfireService, HangfireService>();
-builder.Services.AddScoped<ILogoutService, LogoutService>();
+builder.Services.AddScoped<IStripeService, StripeService>();
+builder.Services.AddScoped<IMiddlewareService, MiddlewareService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Stripe Configuration
+Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
 
 WebApplication app = builder.Build();
 
@@ -108,13 +113,14 @@ app.MapRazorPages();
 // Initialize Roles and Administrator profile
 using (IServiceScope initScope = app.Services.CreateScope())
 {
-	RoleManager<ApplicationRole> roleManager = 
+	RoleManager<ApplicationRole> roleManager =
 		initScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-	UserManager<ApplicationUser> userManager = 
+	UserManager<ApplicationUser> userManager =
 		initScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+	NrbDbContext context = initScope.ServiceProvider.GetRequiredService<NrbDbContext>();
 
 	DbSeeder
-		.SeedRolesAndAdministratorAsync(roleManager, userManager, configuration)
+		.SeedRolesAndAdministratorAsync(roleManager, userManager, context, configuration)
 		.Wait();
 }
 

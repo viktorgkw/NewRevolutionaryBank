@@ -1,0 +1,39 @@
+﻿@model BankSettingsDisplayViewModel
+@{
+	ViewData["Title"] = "Manage Bank Settings";
+}
+
+<div class="text-center">
+	<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+	<hr />
+	<br />
+
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark">
+		<p class="fs-3 text-white">Settings</p>
+
+		<table class="table table-light table-hover table-responsive">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+					<th>Manage</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-info">
+					<td>
+						Transaction Fee
+					</td>
+					<td>
+						@Model.TransactionFee
+					</td>
+					<td>
+						<a class="btn btn-info text-white fw-bold w-100"
+						   asp-controller="Administrator"
+						   asp-action="EditTransactionFee">Edit</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

@@ -7,5 +7,5 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 public class LoginWith2faModel : PageModel
 #pragma warning restore S101 // Types should be named in PascalCase
 {
-    public IActionResult OnGet() => RedirectToAction("Index", "Home");
+	public IActionResult OnGet() => RedirectToAction("Index", "Home");
 }

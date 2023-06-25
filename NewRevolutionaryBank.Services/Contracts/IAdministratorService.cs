@@ -1,7 +1,7 @@
 ﻿namespace NewRevolutionaryBank.Services.Contracts;
 
-using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 using NewRevolutionaryBank.Web.ViewModels.Administrator;
+using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
 public interface IAdministratorService
 {
@@ -21,7 +21,11 @@ public interface IAdministratorService
 	//			User Profiles
 	// -------------------------------
 
-	Task<List<UserProfileManageViewModel>> GetAllProfilesAsync();
+	Task<List<UserProfileManageViewModel>> GetAllProfilesAsync(
+		string order,
+		string? searchName);
+
+	Task<UserProfileDetailsViewModel> GetUserProfileDetailsByIdAsync(Guid id);
 
 	Task ActivateUserProfileByIdAsync(Guid id);
 
@@ -32,4 +36,12 @@ public interface IAdministratorService
 	// -------------------------------
 
 	Task<List<TransactionDisplayViewModel>> GetAllTransactionsAsync();
+
+	// --------------------------------
+	//			Bank Settings
+	// --------------------------------
+
+	Task<BankSettingsDisplayViewModel> GetBankSettingsAsync();
+
+	Task EditTransactionFeeAsync(decimal decimalValue);
 }

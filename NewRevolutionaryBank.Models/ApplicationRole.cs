@@ -7,10 +7,7 @@ using Microsoft.EntityFrameworkCore;
 public class ApplicationRole : IdentityRole<Guid>
 {
 	public ApplicationRole(string name)
-		: base(name)
-	{
-		CreatedOn = DateTime.UtcNow;
-	}
+		: base(name) => CreatedOn = DateTime.UtcNow;
 
 	[Comment("Дата на създаване на ролята")]
 	public DateTime CreatedOn { get; set; }

@@ -2,9 +2,8 @@
 
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using MimeKit;
 using Microsoft.Extensions.Configuration;
-
+using MimeKit;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
 public class SendGridEmailSender : IEmailSender

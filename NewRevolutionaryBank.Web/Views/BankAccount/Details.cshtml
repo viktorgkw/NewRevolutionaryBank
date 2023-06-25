@@ -22,8 +22,40 @@
 	</div>
 
 	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark" style="overflow-x: auto;">
-		<p class="fs-2 text-info">Transaction History</p>
-		@if (Model.TransactionHistory.Count > 0)
+		<p class="fs-2 text-info">Sent Transactions</p>
+		@if (Model.SentTransactions.Count > 0)
+		{
+			<table class="table table-light table-hover table-responsive">
+				<thead>
+					<tr>
+						<th>Amount</th>
+						<th>Date</th>
+						<th>Description</th>
+						<th>To</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var transaction in Model.SentTransactions)
+					{
+						<tr class="text-info">
+							<td>@transaction.Amount</td>
+							<td>@transaction.TransactionDate</td>
+							<td>@transaction.Description</td>
+							<td>@transaction.AccountTo.IBAN</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<p class="text-light fw-bold fs-5">You have not sent transactions!</p>
+		}
+	</div>
+
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark" style="overflow-x: auto;">
+		<p class="fs-2 text-info">Recieved Transactions</p>
+		@if (Model.RecievedTransactions.Count > 0)
 		{
 			<table class="table table-light table-hover table-responsive">
 				<thead>
@@ -32,18 +64,16 @@
 						<th>Date</th>
 						<th>Description</th>
 						<th>From</th>
-						<th>To</th>
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var transaction in Model.TransactionHistory)
+					@foreach (var transaction in Model.RecievedTransactions)
 					{
 						<tr class="text-info">
 							<td>@transaction.Amount</td>
 							<td>@transaction.TransactionDate</td>
 							<td>@transaction.Description</td>
-							<td>@transaction.AccountFrom.UserName</td>
-							<td>@transaction.AccountTo.UserName</td>
+							<td>@transaction.AccountFrom.IBAN</td>
 						</tr>
 					}
 				</tbody>
@@ -51,7 +81,7 @@
 		}
 		else
 		{
-			<p class="text-light fw-bold fs-5">No transactions yet!</p>
+			<p class="text-light fw-bold fs-5">You have not recieved any transactions!</p>
 		}
 	</div>
 

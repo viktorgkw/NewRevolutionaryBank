@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Models\NewRevolutionaryBank.Data.Models.csproj" />
   </ItemGroup>
 

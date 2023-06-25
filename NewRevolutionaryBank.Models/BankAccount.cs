@@ -2,6 +2,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using Microsoft.EntityFrameworkCore;
 
 [Comment("Банква сметка")]
@@ -12,7 +13,6 @@ public class BankAccount
 		Id = Guid.NewGuid();
 		Balance = 0m;
 		IsClosed = false;
-		TransactionHistory = new HashSet<Transaction>();
 	}
 
 	[Key]
@@ -50,6 +50,4 @@ public class BankAccount
 
 	[Comment("Дата на закриване на сметка")]
 	public DateTime? ClosedDate { get; set; }
-
-	public ICollection<Transaction> TransactionHistory { get; set; }
 }
