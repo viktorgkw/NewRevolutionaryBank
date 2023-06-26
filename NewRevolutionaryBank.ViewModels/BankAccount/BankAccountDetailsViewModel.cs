@@ -17,4 +17,6 @@ public class BankAccountDetailsViewModel
 	public HashSet<Transaction> SentTransactions { get; set; } = null!;
 
 	public HashSet<Transaction> RecievedTransactions { get; set; } = null!;
+
+    public HashSet<Deposit> Deposits { get; set; } = null!;
 }

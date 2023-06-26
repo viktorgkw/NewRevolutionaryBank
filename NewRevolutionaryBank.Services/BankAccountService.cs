@@ -2,12 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
@@ -130,6 +132,12 @@ public class BankAccountService : IBankAccountService
 			.OrderByDescending(t => t.TransactionDate)
 			.ToListAsync();
 
+		List<Deposit> Deposits = await _context.Deposits
+			.AsNoTracking()
+			.Where(d => d.AccountToId == account.Id)
+			.OrderByDescending(d => d.DepositedAt)
+			.ToListAsync();
+
 		return new BankAccountDetailsViewModel
 		{
 			Id = account.Id,
@@ -138,7 +146,8 @@ public class BankAccountService : IBankAccountService
 			Balance = account.Balance,
 			UnifiedCivilNumber = account.UnifiedCivilNumber,
 			SentTransactions = SentTransactions.ToHashSet(),
-			RecievedTransactions = RecievedTransactions.ToHashSet()
+			RecievedTransactions = RecievedTransactions.ToHashSet(),
+			Deposits = Deposits.ToHashSet(),
 		};
 	}
 
@@ -242,34 +251,51 @@ public class BankAccountService : IBankAccountService
 			MyAccounts = userAccounts,
 			StripePayment = new()
 			{
-				Id = Guid.NewGuid().ToString(),
-				Currency = "usd",
-				Description = "Deposit into bank account"
+				Id = Guid.NewGuid().ToString()
 			}
 		};
 	}
 
 	public async Task DepositAsync(DepositViewModel model)
 	{
-		try
-		{
-			_stripeService.MakePaymentAsync(model.StripePayment);
-		}
-		catch
-		{
-			// It will always explode because it's not configured for real environment.
-		}
+		string paymentResult = _stripeService.MakePayment(model.StripePayment);
 
-		BankAccount? bankAcc = await _context.BankAccounts
+		if (paymentResult == "succeeded")
+		{
+			BankAccount? bankAcc = await _context.BankAccounts
 						.FirstOrDefaultAsync(ba => ba.Id == model.DepositTo);
 
-		if (bankAcc is null)
-		{
-			return;
+			if (bankAcc is null)
+			{
+				return;
+			}
+
+			IDbContextTransaction transaction = _context.Database.BeginTransaction();
+
+			try
+			{
+				bankAcc.Balance += model.Amount;
+
+				await _context.Deposits.AddAsync(new()
+				{
+					AccountTo = bankAcc,
+					AccountToId = bankAcc.Id,
+					Amount = model.Amount,
+					CVC = model.StripePayment.CVC,
+					CardNumber = model.StripePayment.CardNumber,
+					ExpYear = model.StripePayment.ExpYear,
+					ExpMonth = model.StripePayment.ExpMonth,
+					DepositedAt = DateTime.UtcNow
+				});
+
+				await _context.SaveChangesAsync();
+
+				transaction.Commit();
+			}
+			catch
+			{
+				transaction.Rollback();
+			}
 		}
-
-		bankAcc.Balance += model.Amount;
-
-		await _context.SaveChangesAsync();
 	}
 }

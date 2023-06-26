@@ -24,10 +24,7 @@ public partial class BankAccountController : Controller
 
 	[HttpGet]
 	[Authorize(Roles = "Guest,AccountHolder")]
-	public IActionResult Create()
-	{
-		return View();
-	}
+	public IActionResult Create() => View();
 
 	[HttpPost]
 	[Authorize(Roles = "Guest,AccountHolder")]

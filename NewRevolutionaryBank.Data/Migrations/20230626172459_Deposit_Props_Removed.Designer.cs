@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewRevolutionaryBank.Data;
 
@@ -11,9 +12,11 @@ using NewRevolutionaryBank.Data;
 namespace NewRevolutionaryBank.Data.Migrations
 {
     [DbContext(typeof(NrbDbContext))]
-    partial class NrbDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230626172459_Deposit_Props_Removed")]
+    partial class Deposit_Props_Removed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

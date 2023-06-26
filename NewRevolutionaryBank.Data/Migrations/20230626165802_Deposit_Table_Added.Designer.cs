@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewRevolutionaryBank.Data;
 
@@ -11,9 +12,11 @@ using NewRevolutionaryBank.Data;
 namespace NewRevolutionaryBank.Data.Migrations
 {
     [DbContext(typeof(NrbDbContext))]
-    partial class NrbDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230626165802_Deposit_Table_Added")]
+    partial class Deposit_Table_Added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,8 +342,13 @@ namespace NewRevolutionaryBank.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DepositedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ExpMonth")
                         .IsRequired()

@@ -19,8 +19,14 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 	public DbSet<Transaction> Transactions { get; set; } = null!;
 
+	public DbSet<Deposit> Deposits { get; set; } = null!;
+
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
+		builder.Entity<Deposit>(options => options
+				.Property(b => b.Amount)
+				.HasPrecision(18, 2));
+
 		builder.Entity<BankSettings>(options => options
 				.Property(b => b.TransactionFee)
 				.HasPrecision(18, 2));

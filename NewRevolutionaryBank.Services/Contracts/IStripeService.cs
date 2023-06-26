@@ -4,5 +4,5 @@ using NewRevolutionaryBank.Data.Models;
 
 public interface IStripeService
 {
-	string MakePaymentAsync(StripePayment paymentInfo);
+	string MakePayment(StripePayment paymentInfo);
 }

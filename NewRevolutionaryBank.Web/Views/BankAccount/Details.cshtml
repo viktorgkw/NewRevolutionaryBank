@@ -85,6 +85,36 @@
 		}
 	</div>
 
+	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark" style="overflow-x: auto;">
+		<p class="fs-2 text-info">Account Deposits</p>
+		@if (Model.Deposits.Count > 0)
+		{
+			<table class="table table-light table-hover table-responsive">
+				<thead>
+					<tr>
+						<th>Amount</th>
+						<th>Card Number</th>
+						<th>Deposited At</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var deposit in Model.Deposits)
+					{
+						<tr class="text-info">
+							<td>@deposit.Amount</td>
+							<td>@deposit.CardNumber</td>
+							<td>@deposit.DepositedAt</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+		else
+		{
+			<p class="text-light fw-bold fs-5">This bank account has no deposits!</p>
+		}
+	</div>
+
 	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark">
 		<p class="fs-2 text-danger">Closing your account</p>
 		<a class="btn btn-outline-danger w-100 fw-bold text-white"
