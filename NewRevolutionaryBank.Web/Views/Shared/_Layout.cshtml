@@ -165,14 +165,73 @@
 		</nav>
 	</header>
 
+	<!-- Body -->
 	<div class="container min-vh-100">
 		@RenderBody()
 	</div>
 
-	<footer class="bg-dark footer text-light position-static py-2">
-		<div class="container text-center">
-			<span class="fw-bold">&copy; 2023 New Revolutionary Bank. All rights reserved.</span>
+	<!-- Footer -->
+	<footer class="text-center bg-dark">
+		<div class="container">
+			<!-- Section: Links -->
+			<section class="mt-5">
+				<div class="row text-center d-flex justify-content-center pt-5">
+					<div class="col-md-2">
+						<a asp-action="Privacy"
+						   class="text-white text-uppercase text-decoration-none">
+							Privacy Policy
+						</a>
+					</div>
+
+					<div class="col-md-2">
+						<a asp-action="Contacts"
+						   class="text-white text-uppercase text-decoration-none">
+							Contacts
+						</a>
+					</div>
+
+					<div class="col-md-2">
+						<a asp-action="FindUs"
+						   class="text-white text-uppercase text-decoration-none">
+							Find Us
+						</a>
+					</div>
+
+					<div class="col-md-2">
+						<a asp-action="Support"
+						   class="text-white text-uppercase text-decoration-none">
+							Support
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<hr class="my-3" />
+
+			<!-- Section: Social -->
+			<section class="text-center mb-3">
+				<!-- Linkedin -->
+				<a class="btn text-light"
+				   href="https://www.linkedin.com/in/viktor-g-891aa4254/"
+				   role="button">
+					<i class="fa fa-linkedin"></i>
+				</a>
+
+				<!-- Github -->
+				<a class="btn text-light"
+				   href="https://github.com/viktorgkw/NewRevolutionaryBank"
+				   role="button">
+					<i class="fa fa-github"></i>
+				</a>
+			</section>
+
 		</div>
+
+		<!-- Copyright -->
+		<div class="text-center p-3 bg-dark text-info">
+			&copy; @DateTime.UtcNow.Year Copyright: New Revolutionary Bank
+		</div>
+
 	</footer>
 
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>

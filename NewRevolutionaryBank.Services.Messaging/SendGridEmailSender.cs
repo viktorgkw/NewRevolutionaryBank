@@ -10,10 +10,7 @@ public class SendGridEmailSender : IEmailSender
 {
 	private readonly IConfiguration _configuration;
 
-	public SendGridEmailSender(IConfiguration configuration)
-	{
-		_configuration = configuration;
-	}
+	public SendGridEmailSender(IConfiguration configuration) => _configuration = configuration;
 
 	public async Task SendEmailAsync(
 		string toEmail,

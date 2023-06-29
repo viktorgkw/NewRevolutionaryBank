@@ -1,0 +1,42 @@
+﻿@{
+	ViewData["Title"] = "Support";
+}
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-secondary fw-bold text-dark pt-3">
+			@ViewData["Title"]
+		</h1>
+		<hr />
+		<br />
+	</div>
+
+	<div class="rounded bg-dark text-white py-3">
+		<div class="align-items-center my-1">
+			<img src="~/gifs/contacts.gif"
+				 class="website-gif" />
+
+			<form class="d-flex flex-column align-items-center form-group">
+				<input class="mb-3 py-2 text-center fw-bold w-50"
+					   minlength="12"
+					   name="emailFrom"
+					   placeholder="Your email"
+					   required />
+				<input class="mb-3 py-2 text-center fw-bold w-50"
+					   name="subject"
+					   minlength="5"
+					   placeholder="Subject"
+					   required />
+				<textarea class="mb-3 py-2 text-center fw-bold w-50"
+						  style="resize: none"
+						  name="description"
+						  placeholder="Description"
+						  required></textarea>
+				<button type="submit"
+						class="btn btn-info text-white fw-bold">
+					Submit
+				</button>
+			</form>
+		</div>
+	</div>
+</div>

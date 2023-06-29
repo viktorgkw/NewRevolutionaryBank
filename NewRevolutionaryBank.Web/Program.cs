@@ -33,20 +33,30 @@ builder.Services
 	.AddIdentity<ApplicationUser, ApplicationRole>(cfg =>
 	{
 		// Password settings
-		cfg.Password.RequireDigit = true;
-		cfg.Password.RequireLowercase = true;
-		cfg.Password.RequireUppercase = true;
-		cfg.Password.RequireNonAlphanumeric = true;
-		cfg.Password.RequiredLength = 8;
-		cfg.Password.RequiredUniqueChars = 3;
+		cfg.Password.RequireDigit = Convert.ToBoolean(
+			configuration["IdentitySettings:RequireDigit"]);
+		cfg.Password.RequireLowercase = Convert.ToBoolean(
+			configuration["IdentitySettings:RequireLowercase"]);
+		cfg.Password.RequireUppercase = Convert.ToBoolean(
+			configuration["IdentitySettings:RequireUppercase"]);
+		cfg.Password.RequireNonAlphanumeric = Convert.ToBoolean(
+			configuration["IdentitySettings:RequireNonAlphanumeric"]);
+		cfg.Password.RequiredLength = Convert.ToInt32(
+			configuration["IdentitySettings:RequiredLength"]);
+		cfg.Password.RequiredUniqueChars = Convert.ToInt32(
+			configuration["IdentitySettings:RequiredUniqueChars"]);
 
 		// Lockout settings
-		cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-		cfg.Lockout.MaxFailedAccessAttempts = 5;
-		cfg.Lockout.AllowedForNewUsers = true;
+		cfg.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(
+			Convert.ToDouble(configuration["IdentitySettings:DefaultLockoutTimeSpan"]));
+		cfg.Lockout.MaxFailedAccessAttempts = Convert.ToInt32(
+			configuration["IdentitySettings:MaxFailedAccessAttempts"]);
+		cfg.Lockout.AllowedForNewUsers = Convert.ToBoolean(
+			configuration["IdentitySettings:AllowedForNewUsers"]);
 
 		// User settings
-		cfg.User.RequireUniqueEmail = true;
+		cfg.User.RequireUniqueEmail = Convert.ToBoolean(
+			configuration["IdentitySettings:RequireUniqueEmail"]);
 	})
 	.AddEntityFrameworkStores<NrbDbContext>()
 	.AddDefaultTokenProviders()
@@ -56,7 +66,8 @@ builder.Services
 builder.Services.ConfigureApplicationCookie(options =>
 {
 	options.Cookie.HttpOnly = true;
-	options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
+	options.ExpireTimeSpan = TimeSpan.FromMinutes(
+		Convert.ToDouble(configuration["ApplicationCookieConfiguration:ExpireTimeSpan"]));
 	options.SlidingExpiration = true;
 });
 
@@ -81,14 +92,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 // Stripe Configuration
-Stripe.StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
+Stripe.StripeConfiguration.ApiKey = configuration["Stripe:ApiKey"];
 
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
 	app.UseDeveloperExceptionPage();
-	app.UseMigrationsEndPoint();
 }
 else
 {
@@ -113,11 +123,12 @@ app.MapRazorPages();
 // Initialize Roles and Administrator profile
 using (IServiceScope initScope = app.Services.CreateScope())
 {
-	RoleManager<ApplicationRole> roleManager =
-		initScope.ServiceProvider.GetRequiredService<RoleManager<ApplicationRole>>();
-	UserManager<ApplicationUser> userManager =
-		initScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-	NrbDbContext context = initScope.ServiceProvider.GetRequiredService<NrbDbContext>();
+	RoleManager<ApplicationRole> roleManager = initScope.ServiceProvider
+		.GetRequiredService<RoleManager<ApplicationRole>>();
+	UserManager<ApplicationUser> userManager = initScope.ServiceProvider
+		.GetRequiredService<UserManager<ApplicationUser>>();
+	NrbDbContext context = initScope.ServiceProvider
+		.GetRequiredService<NrbDbContext>();
 
 	DbSeeder
 		.SeedRolesAndAdministratorAsync(roleManager, userManager, context, configuration)
@@ -153,4 +164,4 @@ RecurringJob.AddOrUpdate(
 		TimeZone = TimeZoneInfo.Utc
 	});
 
-app.Run();
+await app.RunAsync();
