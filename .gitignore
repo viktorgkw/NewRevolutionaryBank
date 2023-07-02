@@ -359,3 +359,6 @@ FodyWeavers.xsd
 /NewRevolutionaryBank.Web/appsettings.json
 /NewRevolutionaryBank.Web/appsettings.Development.json
 /NewRevolutionaryBank.Web/appsettings.Production.json
+/NewRevolutionaryBank.Web/appsettings.Development.json
+/NewRevolutionaryBank.Web/appsettings.json
+/NewRevolutionaryBank.Web/appsettings.Production.json
