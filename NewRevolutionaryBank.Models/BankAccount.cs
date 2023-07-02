@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
-[Comment("Банква сметка")]
+[Comment("Банкова сметка")]
 public class BankAccount
 {
 	public BankAccount()

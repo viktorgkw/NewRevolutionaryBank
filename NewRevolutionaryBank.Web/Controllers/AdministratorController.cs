@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Administrator;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
@@ -17,7 +18,6 @@ public class AdministratorController : Controller
 	[HttpGet]
 	public async Task<IActionResult> ManageBankAccounts()
 	{
-		// TODO: Filters
 		List<BankAccountManageViewModel> accounts = await _administratorService
 			.GetAllBankAccountsAsync();
 
@@ -35,7 +35,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("ManageBankAccounts", "Administrator");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -50,7 +59,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("ManageBankAccounts", "Administrator");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -65,7 +83,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("ManageBankAccounts", "Administrator");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -95,7 +122,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("ManageUserProfiles", "Administrator");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -110,7 +146,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 
 	}
@@ -126,7 +171,16 @@ public class AdministratorController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 

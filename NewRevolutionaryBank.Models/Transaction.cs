@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
+[Comment("Банкова транзакция")]
 public class Transaction
 {
 	public Transaction() => Id = Guid.NewGuid();

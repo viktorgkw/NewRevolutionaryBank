@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.EntityFrameworkCore;
 
+[Comment("Банкови настройки")]
 public class BankSettings
 {
 	public BankSettings() => Id = Guid.NewGuid();

@@ -29,7 +29,16 @@ public class TransactionController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -65,7 +74,16 @@ public class TransactionController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -79,6 +97,15 @@ public class TransactionController : Controller
 			return View();
 		}
 
-		return RedirectToAction("Index", "Home");
+		return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 	}
 }

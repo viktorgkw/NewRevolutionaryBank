@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
@@ -108,13 +107,25 @@ public class BankAccountService : IBankAccountService
 			.ToList();
 	}
 
-	public async Task<BankAccountDetailsViewModel?> GetDetailsByIdAsync(Guid id)
+	public async Task<BankAccountDetailsViewModel?> GetDetailsByIdAsync(
+		Guid id,
+		string userName)
 	{
 		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
+			.Include(acc => acc.Owner)
 			.FirstOrDefaultAsync(acc => acc.Id == id);
 
 		ArgumentNullException.ThrowIfNull(account);
+
+		ApplicationUser? foundUser = await _userManager.FindByNameAsync(userName);
+
+		ArgumentNullException.ThrowIfNull(foundUser);
+
+		if (account.Owner.Id != foundUser.Id)
+		{
+			throw new InvalidOperationException();
+		}
 
 		List<Transaction> RecievedTransactions = await _context.Transactions
 			.AsNoTracking()
@@ -269,4 +280,8 @@ public class BankAccountService : IBankAccountService
 			}
 		}
 	}
+
+	public Task<bool> IsOwner(Guid id, string userName) =>
+		_context.BankAccounts
+			.AnyAsync(ba => ba.Id == id && ba.Owner.UserName == userName);
 }

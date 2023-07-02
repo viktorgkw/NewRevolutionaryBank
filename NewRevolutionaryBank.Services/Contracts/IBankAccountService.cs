@@ -15,7 +15,7 @@ public interface IBankAccountService
 		string userName);
 
 	Task<BankAccountDetailsViewModel?> GetDetailsByIdAsync(
-		Guid id);
+		Guid id, string userName);
 
 	Task CloseAccountByIdAsync(Guid id);
 
@@ -24,4 +24,6 @@ public interface IBankAccountService
 	Task<DepositViewModel> PrepareDepositViewModel(string userName);
 
 	Task DepositAsync(DepositViewModel model);
+
+	Task<bool> IsOwner(Guid id, string userName);
 }

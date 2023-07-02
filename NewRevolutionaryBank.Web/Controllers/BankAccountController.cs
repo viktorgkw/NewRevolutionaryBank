@@ -35,7 +35,16 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -52,7 +61,29 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
+		}
+		catch (InvalidOperationException)
+		{
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -63,15 +94,22 @@ public partial class BankAccountController : Controller
 		try
 		{
 			BankAccountDetailsViewModel? viewModel = await _bankAccountService
-				.GetDetailsByIdAsync(id);
-
-			// TODO: If User is owner
+				.GetDetailsByIdAsync(id, User.Identity!.Name!);
 
 			return View(viewModel);
 		}
 		catch (ArgumentNullException)
 		{
-			return RedirectToAction("MyAccounts", "BankAccount");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -79,7 +117,21 @@ public partial class BankAccountController : Controller
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> Close(Guid id)
 	{
-		// TODO: Validate is owner
+		bool isOwner = await _bankAccountService.IsOwner(id, User.Identity!.Name!);
+
+		if (!isOwner)
+		{
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
+		}
 
 		return View(id);
 	}
@@ -88,11 +140,25 @@ public partial class BankAccountController : Controller
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> CloseConfirmation(Guid id)
 	{
-		// TODO: Validate is owner and if it came from Close
+		try
+		{
+			await _bankAccountService.CloseAccountByIdAsync(id);
 
-		await _bankAccountService.CloseAccountByIdAsync(id);
-
-		return RedirectToAction("Index", "Home");
+			return RedirectToAction("Index", "Home");
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
+		}
 	}
 
 	[HttpGet]
@@ -108,7 +174,16 @@ public partial class BankAccountController : Controller
 		}
 		catch (Exception)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 
@@ -137,7 +212,16 @@ public partial class BankAccountController : Controller
 		}
 		catch (Exception)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 	}
 }

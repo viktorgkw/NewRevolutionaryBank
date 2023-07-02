@@ -28,7 +28,16 @@ public class RatingController : Controller
 
 		if (hasRated)
 		{
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "You have already rated!",
+					description = "If you have not and there is a problem, please contact our support!",
+					isNotFound = false
+				}
+			);
 		}
 
 		return View();
@@ -41,8 +50,16 @@ public class RatingController : Controller
 
 		if (currUser is null)
 		{
-			// TODO: Error page
-			return RedirectToAction("Index", "Home");
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
 		}
 
 		model.RatedBy = currUser;

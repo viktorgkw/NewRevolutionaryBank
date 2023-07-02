@@ -54,17 +54,19 @@
 					   class="form-control"
 					   aria-required="true" />
 				<span asp-validation-for="StripePayment.CardNumber"
-				class="text-danger"></span>
+					  class="text-danger"></span>
 			</div>
 
 			<div class="form-group mb-3">
 				<label asp-for="StripePayment.ExpYear"
 					   class="fw-bold fs-5">Expiration Year</label>
 				<input asp-for="StripePayment.ExpYear"
+					   minvalue="@DateTime.Now.Year"
 					   class="form-control"
+					   type="number"
 					   aria-required="true" />
 				<span asp-validation-for="StripePayment.ExpYear"
-				class="text-danger"></span>
+					  class="text-danger"></span>
 			</div>
 
 			<div class="form-group mb-3">
@@ -74,7 +76,7 @@
 					   class="form-control"
 					   aria-required="true" />
 				<span asp-validation-for="StripePayment.ExpMonth"
-				class="text-danger"></span>
+					  class="text-danger"></span>
 			</div>
 
 			<div class="form-group mb-3">
@@ -84,7 +86,7 @@
 					   class="form-control"
 					   aria-required="true" />
 				<span asp-validation-for="StripePayment.CVC"
-				class="text-danger"></span>
+					  class="text-danger"></span>
 			</div>
 
 			<button type="submit" class="btn btn-success fw-bold send-btn">Deposit</button>

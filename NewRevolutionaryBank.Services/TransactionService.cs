@@ -77,6 +77,8 @@ public class TransactionService : ITransactionService
 		ApplicationUser userTo = await _context.Users
 			.FirstAsync(u => u.BankAccounts.Any(ba => ba.Id == accountTo.Id));
 
+		BankSettings bankSettings = await _context.BankSettings.FirstAsync();
+
 		if (accountFrom.Balance - model.Amount > 1)
 		{
 			IDbContextTransaction transaction = _context.Database.BeginTransaction();
@@ -86,7 +88,7 @@ public class TransactionService : ITransactionService
 				Transaction newTransac = new()
 				{
 					Description = model.Description,
-					Amount = model.Amount,
+					Amount = model.Amount - bankSettings.TransactionFee,
 					TransactionDate = DateTime.UtcNow,
 					AccountFrom = accountFrom,
 					AccountFromId = accountFrom.Id,

@@ -1,13 +1,12 @@
 ﻿namespace NewRevolutionaryBank.Web.Controllers;
 
-using System.Diagnostics;
-
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
+using NewRevolutionaryBank.Web.ViewModels.Home;
 
 [AllowAnonymous]
 public class HomeController : Controller
@@ -64,5 +63,12 @@ public class HomeController : Controller
 		return View();
 	}
 
-	//[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+	public IActionResult Error(string title, string description, bool isNotFound) =>
+		View(new ErrorViewModel
+			{
+				Title = title,
+				Description = description,
+				IsNotFound = isNotFound
+			});
 }

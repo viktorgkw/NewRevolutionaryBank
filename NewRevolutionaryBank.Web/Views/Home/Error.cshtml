@@ -1,0 +1,31 @@
+﻿@model ErrorViewModel
+@{
+	ViewData["Title"] = "Problem occured!";
+}
+
+<div class="text-center">
+	@if (Model.IsNotFound)
+	{
+		<h1 class="display-4 text-warning fw-bold py-3">
+			@Model.Title
+		</h1>
+		<hr />
+		<br />
+
+		<p class="text-secondary fw-bold my-3 fs-4">@Model.Description</p>
+
+		<img src="~/gifs/page-not-found.gif" class="website-gif rounded" alt="Not found gif" />
+	}
+	else
+	{
+		<h1 class="display-4 text-danger fw-bold py-3">
+			@Model.Title
+		</h1>
+		<hr />
+		<br />
+
+		<p class="text-secondary fw-bold my-3 fs-4">@Model.Description</p>
+
+		<img src="~/gifs/error.gif" class="website-gif rounded" alt="Error gif" />
+	}
+</div>
