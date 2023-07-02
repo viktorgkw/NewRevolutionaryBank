@@ -356,3 +356,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/NewRevolutionaryBank.Web/appsettings.json
+/NewRevolutionaryBank.Web/appsettings.Development.json
+/NewRevolutionaryBank.Web/appsettings.Production.json
