@@ -21,6 +21,8 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 
 	public DbSet<Deposit> Deposits { get; set; } = null!;
 
+	public DbSet<Rating> Ratings { get; set; } = null!;
+
 	protected override void OnModelCreating(ModelBuilder builder)
 	{
 		builder.Entity<Deposit>(options => options

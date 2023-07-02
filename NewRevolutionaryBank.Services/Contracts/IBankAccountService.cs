@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
@@ -21,8 +20,6 @@ public interface IBankAccountService
 	Task CloseAccountByIdAsync(Guid id);
 
 	Task<List<BankAccountDisplayViewModel>> GetAllBankAccountsAsync();
-
-	Task CheckUserRole(ClaimsPrincipal User);
 
 	Task<DepositViewModel> PrepareDepositViewModel(string userName);
 

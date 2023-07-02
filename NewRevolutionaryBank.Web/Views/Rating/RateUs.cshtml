@@ -1,0 +1,40 @@
+﻿@model Rating
+@{
+	ViewData["Title"] = "Rate us!";
+}
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-secondary fw-bold text-dark pt-3">
+			@ViewData["Title"]
+		</h1>
+		<hr />
+		<br />
+	</div>
+
+	<div class="rounded bg-dark text-white py-3">
+		<div class="align-items-center my-1">
+			<img src="~/gifs/rating.gif"
+				 class="website-gif-small" />
+
+			<form class="d-flex flex-column align-items-center form-group pb-3"
+				  method="post">
+
+				<select asp-for="RateValue"
+						class="form-select"
+						required>
+					<option value="5">5 - Excellent experience</option>
+					<option value="4">4 - Impressive and reliable</option>
+					<option value="3">3 - Decent service</option>
+					<option value="2">2 - Needs significant improvement</option>
+					<option value="1">1 - Extremely disappointing</option>
+				</select>
+
+				<button type="submit"
+						class="btn btn-warning text-white fw-bold">
+					Submit Rating
+				</button>
+			</form>
+		</div>
+	</div>
+</div>

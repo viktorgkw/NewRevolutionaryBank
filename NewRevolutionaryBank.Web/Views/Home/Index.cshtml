@@ -1,4 +1,5 @@
-﻿@{
+﻿@model List<Rating>
+@{
 	ViewData["Title"] = "Home Page";
 }
 
@@ -44,7 +45,7 @@
 	</button>
 </div>
 
-<section class="border border-2 my-3 p-3 bg-dark text-light">
+<section class="border border-2 my-3 p-3 bg-dark text-white">
 	<div class="row d-flex justify-content-center">
 		<div class="col-md-10 col-xl-8 text-center">
 			<p class="mb-4 text-white fw-bold fs-2">Recent client reviews</p>
@@ -52,23 +53,38 @@
 	</div>
 
 	<div class="row text-center">
-		<div class="col-md-4 mb-0">
-			<div class="d-flex justify-content-center mb-4">
-				<img src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(9).webp"
-					 class="rounded-circle shadow-1-strong" width="150" height="150" />
+		@if (Model.Count == 0)
+		{
+			<p class="fs-5">No ratings.</p>
+		}
+		else
+		{
+			<div class="col-md-4 mb-0">
+				@foreach (var rating in Model)
+				{
+					<div class="d-flex justify-content-center mb-4">
+						<img src="~/images/default-user-avatar.png"
+							 class="rounded-circle shadow-1-strong" width="150" height="150" />
+					</div>
+
+					<h5 class="mb-3 text-info">@rating.RatedBy.UserName</h5>
+
+					<div class="list-unstyled d-flex justify-content-center mb-0">
+						@for (int i = 1; i <= rating.RateValue; i++)
+						{
+							<i class="fa fa-star fa-sm text-warning mx-1"></i>
+						}
+					</div>
+				}
 			</div>
-			<h5 class="mb-3 text-info">John Smith</h5>
-			<div class="list-unstyled d-flex justify-content-center mb-0">
-				<i class="fa fa-star fa-sm text-warning mx-1"></i>
-				<i class="fa fa-star fa-sm text-warning mx-1"></i>
-				<i class="fa fa-star fa-sm text-warning mx-1"></i>
-				<i class="fa fa-star fa-sm text-warning mx-1"></i>
-				<i class="fa fa-star fa-sm text-warning mx-1"></i>
-			</div>
-		</div>
+		}
 	</div>
 
 	<div class="mt-5 d-flex justify-content-center">
-		<a class="btn btn-outline-light w-25 fw-bold">RATE US</a>
+		<a class="btn btn-outline-light w-25 fw-bold"
+		   asp-controller="Rating"
+		   asp-action="RateUs">
+			RATE US
+		</a>
 	</div>
 </section>

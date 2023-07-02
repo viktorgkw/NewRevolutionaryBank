@@ -26,3 +26,8 @@ body {
     max-width: 80%;
     height: 100%;
 }
+
+.website-gif-small {
+    max-width: 40%;
+    max-height: 40%;
+}

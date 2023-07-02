@@ -199,35 +199,6 @@ public class BankAccountService : IBankAccountService
 			})
 			.ToListAsync();
 
-	public async Task CheckUserRole(ClaimsPrincipal User)
-	{
-		if (User.IsInRole("AccountHolder"))
-		{
-			ApplicationUser? user = await _context.Users
-			.Include(u => u.BankAccounts)
-			.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
-
-			if (user is null)
-			{
-				return;
-			}
-
-			int userBankAccounts = user.BankAccounts
-			.Count(ba => !ba.IsClosed);
-
-			if (userBankAccounts == 0)
-			{
-				IList<string> roles = await _userManager.GetRolesAsync(user);
-
-				await _userManager.RemoveFromRolesAsync(user, roles);
-
-				await _userManager.AddToRoleAsync(user, "Guest");
-
-				await _signInManager.RefreshSignInAsync(user);
-			}
-		}
-	}
-
 	public async Task<DepositViewModel> PrepareDepositViewModel(string userName)
 	{
 		ApplicationUser? user = await _context.Users

@@ -4,21 +4,32 @@ using System.Diagnostics;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
-using NewRevolutionaryBank.Web.ViewModels.Home;
 
 [AllowAnonymous]
 public class HomeController : Controller
 {
 	private readonly IEmailSender _emailSender;
+	private readonly IRatingService _ratingService;
 
-    public HomeController(IEmailSender emailSender)
-    {
+	public HomeController(
+		IEmailSender emailSender,
+		IRatingService ratingService)
+	{
 		_emailSender = emailSender;
+		_ratingService = ratingService;
 	}
 
-    [HttpGet]
-	public IActionResult Index() => View();
+	[HttpGet]
+	public async Task<IActionResult> Index()
+	{
+		List<Rating> ratings = await _ratingService.GetAll();
+
+		return View(ratings);
+	}
 
 	[HttpGet]
 	public IActionResult Privacy() => View();
@@ -53,10 +64,5 @@ public class HomeController : Controller
 		return View();
 	}
 
-	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-	public IActionResult Error() =>
-		View(new ErrorViewModel
-		{
-			RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
-		});
+	//[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 }

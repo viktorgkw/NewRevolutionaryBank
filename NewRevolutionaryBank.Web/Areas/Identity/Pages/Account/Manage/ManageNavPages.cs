@@ -40,7 +40,7 @@ public static class ManageNavPages
 			?? Path.GetFileNameWithoutExtension(viewContext.ActionDescriptor.DisplayName);
 
 		return string.Equals(activePage, page, StringComparison.OrdinalIgnoreCase)
-			? "text-light bg-dark"
+			? "text-white bg-dark"
 			: "text-info";
 	}
 }

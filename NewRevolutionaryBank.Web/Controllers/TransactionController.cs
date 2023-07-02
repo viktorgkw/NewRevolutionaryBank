@@ -1,8 +1,10 @@
 ﻿namespace NewRevolutionaryBank.Web.Controllers;
 
 using System.Text.RegularExpressions;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Transaction;

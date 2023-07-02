@@ -14,18 +14,18 @@
 	{
 		<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark">
 			<p class="fs-2 text-info">This profile is deleted!</p>
-			<p class="fs-5 text-light">Deleted On - @Model.DeletedOn</p>
+			<p class="fs-5 text-white">Deleted On - @Model.DeletedOn</p>
 		</div>
 	}
 
 	<div class="fw-bold border border-dark rounded p-4 bg-dark mb-5">
 		<p class="fs-2 text-info">Personal Data</p>
-		<p class="fs-5 text-light">CreatedOn - @Model.CreatedOn</p>
-		<p class="fs-5 text-light">Email - @Model.Email</p>
-		<p class="fs-5 text-light">UserName - @Model.UserName</p>
-		<p class="fs-5 text-light">PhoneNumber - @(Model.PhoneNumber ?? "None")</p>
-		<p class="fs-5 text-light">FirstName - @(Model.FirstName ?? "None")</p>
-		<p class="fs-5 text-light">LastName - @(Model.LastName ?? "None")</p>
+		<p class="fs-5 text-white">CreatedOn - @Model.CreatedOn</p>
+		<p class="fs-5 text-white">Email - @Model.Email</p>
+		<p class="fs-5 text-white">UserName - @Model.UserName</p>
+		<p class="fs-5 text-white">PhoneNumber - @(Model.PhoneNumber ?? "None")</p>
+		<p class="fs-5 text-white">FirstName - @(Model.FirstName ?? "None")</p>
+		<p class="fs-5 text-white">LastName - @(Model.LastName ?? "None")</p>
 	</div>
 
 	<div class="fw-bold border border-dark rounded p-4 mb-5 bg-dark" style="overflow-x: auto;">
@@ -49,7 +49,7 @@
 							<td>@bankAcc.Balance</td>
 							<td>@bankAcc.IsClosed</td>
 							<td>
-								<a class="btn btn-info text-light fw-bold"
+								<a class="btn btn-info text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="BankAccountDetails"
 								   asp-route-id="@bankAcc.Id">
@@ -63,7 +63,7 @@
 		}
 		else
 		{
-			<p class="text-light fw-bold fs-5">No bank accounts!</p>
+			<p class="text-white fw-bold fs-5">No bank accounts!</p>
 		}
 	</div>
 </div>
