@@ -131,7 +131,7 @@ using (IServiceScope initScope = app.Services.CreateScope())
 	NrbDbContext context = initScope.ServiceProvider
 		.GetRequiredService<NrbDbContext>();
 
-	DbSeeder
+	new DbSeeder()
 		.SeedRolesAndAdministratorAsync(roleManager, userManager, context, configuration)
 		.Wait();
 }
