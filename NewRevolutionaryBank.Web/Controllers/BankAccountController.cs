@@ -16,7 +16,12 @@ public partial class BankAccountController : Controller
 
 	[HttpGet]
 	[Authorize(Roles = "Guest,AccountHolder")]
-	public IActionResult Create() => View();
+	public async Task<IActionResult> Create()
+	{
+		await _bankAccountService.CheckUserRole(User);
+
+		return View();
+	}
 
 	[HttpPost]
 	[Authorize(Roles = "Guest,AccountHolder")]
@@ -54,6 +59,8 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			List<BankAccountDisplayViewModel> accounts = await _bankAccountService
 				.GetAllUserAccountsAsync(User.Identity!.Name!);
 
@@ -93,6 +100,8 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			BankAccountDetailsViewModel? viewModel = await _bankAccountService
 				.GetDetailsByIdAsync(id, User.Identity!.Name!);
 
@@ -117,6 +126,8 @@ public partial class BankAccountController : Controller
 	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> Close(Guid id)
 	{
+		await _bankAccountService.CheckUserRole(User);
+
 		bool isOwner = await _bankAccountService.IsOwner(id, User.Identity!.Name!);
 
 		if (!isOwner)
@@ -142,6 +153,8 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			await _bankAccountService.CloseAccountByIdAsync(id);
 
 			return RedirectToAction("Index", "Home");
@@ -167,6 +180,8 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			DepositViewModel model = await _bankAccountService
 				.PrepareDepositViewModel(User.Identity!.Name!);
 
@@ -193,6 +208,8 @@ public partial class BankAccountController : Controller
 	{
 		try
 		{
+			await _bankAccountService.CheckUserRole(User);
+
 			ModelState.Remove("MyAccounts");
 			ModelState.Remove("StripePayment.Id");
 			ModelState.Remove("StripePayment.Currency");

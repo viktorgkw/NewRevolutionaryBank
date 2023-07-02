@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
@@ -180,26 +181,6 @@ public class BankAccountService : IBankAccountService
 		await _context.SaveChangesAsync();
 	}
 
-	private static string GenerateIBAN() =>
-		$"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
-
-	private static string GenerateRandomIbanPart()
-	{
-		int ibanPart = 10;
-		string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-		char[] randomString = new char[ibanPart];
-
-		Random random = new();
-
-		for (int i = 0; i < ibanPart; i++)
-		{
-			randomString[i] = characters[random.Next(characters.Length)];
-		}
-
-		return new string(randomString);
-	}
-
 	public Task<List<BankAccountDisplayViewModel>> GetAllBankAccountsAsync()
 		=> _context.BankAccounts
 			.Select(ba => new BankAccountDisplayViewModel
@@ -273,4 +254,48 @@ public class BankAccountService : IBankAccountService
 	public Task<bool> IsOwner(Guid id, string userName) =>
 		_context.BankAccounts
 			.AnyAsync(ba => ba.Id == id && ba.Owner.UserName == userName);
+
+	public async Task CheckUserRole(ClaimsPrincipal User)
+	{
+		if (User.IsInRole("AccountHolder"))
+		{
+			ApplicationUser? user = await _context.Users
+				.Include(u => u.BankAccounts)
+				.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
+
+			if (user is null)
+			{
+				return;
+			}
+
+			int userBankAccounts = user.BankAccounts.Count(ba => !ba.IsClosed);
+
+			if (userBankAccounts == 0)
+			{
+				await _userManager.RemoveFromRoleAsync(user, "AccountHolder");
+				await _userManager.AddToRoleAsync(user, "Guest");
+				await _signInManager.RefreshSignInAsync(user);
+			}
+		}
+	}
+
+	private static string GenerateIBAN() =>
+		$"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
+
+	private static string GenerateRandomIbanPart()
+	{
+		int ibanPart = 10;
+		string characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+		char[] randomString = new char[ibanPart];
+
+		Random random = new();
+
+		for (int i = 0; i < ibanPart; i++)
+		{
+			randomString[i] = characters[random.Next(characters.Length)];
+		}
+
+		return new string(randomString);
+	}
 }

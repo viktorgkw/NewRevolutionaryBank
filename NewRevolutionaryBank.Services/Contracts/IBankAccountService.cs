@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
@@ -26,4 +27,6 @@ public interface IBankAccountService
 	Task DepositAsync(DepositViewModel model);
 
 	Task<bool> IsOwner(Guid id, string userName);
+
+	Task CheckUserRole(ClaimsPrincipal User)
 }
