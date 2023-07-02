@@ -1,15 +1,14 @@
-﻿namespace NewRevolutionaryBank.Services;
+﻿namespace NewRevolutionaryBank.Web.Hangfire;
 
 using Microsoft.EntityFrameworkCore;
 
 using NewRevolutionaryBank.Data;
-using NewRevolutionaryBank.Services.Contracts;
 
-public class HangfireService : IHangfireService
+public class HangfireJobs
 {
 	private readonly NrbDbContext _dbContext;
 
-	public HangfireService(NrbDbContext dbContext) => _dbContext = dbContext;
+	public HangfireJobs(NrbDbContext dbContext) => _dbContext = dbContext;
 
 	public async Task DeleteNotVerifiedAsync()
 		=> await _dbContext.Users

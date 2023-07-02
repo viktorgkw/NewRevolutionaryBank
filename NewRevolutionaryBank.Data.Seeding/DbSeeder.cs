@@ -151,8 +151,21 @@ public class DbSeeder
 			ClosedDate = DateTime.UtcNow
 		};
 
+		Transaction transaction = new()
+		{
+			Amount = 12.5m,
+			Description = "Seeded description.",
+			TransactionDate = DateTime.UtcNow,
+			AccountFrom = bankAcc,
+			AccountFromId = bankAcc.Id,
+			AccountTo = bankAccTwo,
+			AccountToId = bankAccTwo.Id,
+		};
+
 		await context.BankAccounts.AddAsync(bankAcc);
 		await context.BankAccounts.AddAsync(bankAccTwo);
+
+		await context.Transactions.AddAsync(transaction);
 
 		testUser.BankAccounts.Add(bankAcc);
 		testUser.BankAccounts.Add(bankAccTwo);

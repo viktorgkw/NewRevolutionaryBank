@@ -2,7 +2,9 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Microsoft.EntityFrameworkCore;
+
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
@@ -105,6 +107,8 @@ public class AdministratorService : IAdministratorService
 		string order,
 		string? searchName)
 	{
+		searchName = searchName?.ToLower() ?? string.Empty;
+
 		IQueryable<ApplicationUser> usersQuery = _context.Users
 			.AsNoTracking()
 			.Include(user => user.BankAccounts)
@@ -117,7 +121,7 @@ public class AdministratorService : IAdministratorService
 			_ => usersQuery,
 		};
 
-		return await usersQuery
+		List<UserProfileManageViewModel> result = await usersQuery
 			.Where(u => u.UserName!.ToLower().Contains(searchName ?? ""))
 			.Select(user => new UserProfileManageViewModel
 			{
@@ -130,6 +134,8 @@ public class AdministratorService : IAdministratorService
 				BankAccountsCount = user.BankAccounts.Count
 			})
 			.ToListAsync();
+
+		return result;
 	}
 
 	public async Task<UserProfileDetailsViewModel> GetUserProfileDetailsByIdAsync(Guid id)

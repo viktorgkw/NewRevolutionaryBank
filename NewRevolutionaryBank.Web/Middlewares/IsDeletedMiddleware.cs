@@ -1,6 +1,6 @@
 ﻿namespace NewRevolutionaryBank.Web.Middlewares;
 
-using NewRevolutionaryBank.Services.Contracts;
+using NewRevolutionaryBank.Web.Handlers;
 
 public class IsDeletedMiddleware
 {
@@ -8,7 +8,7 @@ public class IsDeletedMiddleware
 
 	public IsDeletedMiddleware(RequestDelegate next) => _next = next;
 
-	public async Task InvokeAsync(HttpContext context, IMiddlewareService middlewareService)
+	public async Task InvokeAsync(HttpContext context, IsDeletedHandler middlewareHandler)
 	{
 		if (context.User.Identity is null || !context.User.Identity.IsAuthenticated)
 		{
@@ -16,7 +16,7 @@ public class IsDeletedMiddleware
 			return;
 		}
 
-		bool mustLogout = await middlewareService
+		bool mustLogout = await middlewareHandler
 			.MustLogoutByUsernameAsync(context.User.Identity?.Name ?? string.Empty);
 
 		if (mustLogout)

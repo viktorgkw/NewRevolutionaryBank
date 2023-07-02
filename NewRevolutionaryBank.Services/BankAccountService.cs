@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
@@ -118,7 +117,8 @@ public class BankAccountService : IBankAccountService
 
 		ArgumentNullException.ThrowIfNull(account);
 
-		ApplicationUser? foundUser = await _userManager.FindByNameAsync(userName);
+		ApplicationUser? foundUser = await _context.Users
+			.FirstOrDefaultAsync(u => u.UserName == userName);
 
 		ArgumentNullException.ThrowIfNull(foundUser);
 
@@ -131,7 +131,7 @@ public class BankAccountService : IBankAccountService
 			.AsNoTracking()
 			.Include(t => t.AccountTo)
 			.Include(t => t.AccountFrom)
-			.Where(t => t.AccountTo == account)
+			.Where(t => t.AccountToId == account.Id)
 			.OrderByDescending(t => t.TransactionDate)
 			.ToListAsync();
 
@@ -139,7 +139,7 @@ public class BankAccountService : IBankAccountService
 			.AsNoTracking()
 			.Include(t => t.AccountTo)
 			.Include(t => t.AccountFrom)
-			.Where(t => t.AccountFrom == account)
+			.Where(t => t.AccountFromId == account.Id)
 			.OrderByDescending(t => t.TransactionDate)
 			.ToListAsync();
 
@@ -252,32 +252,21 @@ public class BankAccountService : IBankAccountService
 				return;
 			}
 
-			IDbContextTransaction transaction = _context.Database.BeginTransaction();
+			bankAcc.Balance += model.Amount;
 
-			try
+			await _context.Deposits.AddAsync(new()
 			{
-				bankAcc.Balance += model.Amount;
+				AccountTo = bankAcc,
+				AccountToId = bankAcc.Id,
+				Amount = model.Amount,
+				CVC = model.StripePayment.CVC,
+				CardNumber = model.StripePayment.CardNumber,
+				ExpYear = model.StripePayment.ExpYear,
+				ExpMonth = model.StripePayment.ExpMonth,
+				DepositedAt = DateTime.UtcNow
+			});
 
-				await _context.Deposits.AddAsync(new()
-				{
-					AccountTo = bankAcc,
-					AccountToId = bankAcc.Id,
-					Amount = model.Amount,
-					CVC = model.StripePayment.CVC,
-					CardNumber = model.StripePayment.CardNumber,
-					ExpYear = model.StripePayment.ExpYear,
-					ExpMonth = model.StripePayment.ExpMonth,
-					DepositedAt = DateTime.UtcNow
-				});
-
-				await _context.SaveChangesAsync();
-
-				transaction.Commit();
-			}
-			catch
-			{
-				transaction.Rollback();
-			}
+			await _context.SaveChangesAsync();
 		}
 	}
 

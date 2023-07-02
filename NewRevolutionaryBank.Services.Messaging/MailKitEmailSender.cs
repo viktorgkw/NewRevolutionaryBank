@@ -4,13 +4,14 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
+
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
-public class SendGridEmailSender : IEmailSender
+public class MailKitEmailSender : IEmailSender
 {
 	private readonly IConfiguration _configuration;
 
-	public SendGridEmailSender(IConfiguration configuration) => _configuration = configuration;
+	public MailKitEmailSender(IConfiguration configuration) => _configuration = configuration;
 
 	public async Task SendEmailAsync(
 		string toEmail,

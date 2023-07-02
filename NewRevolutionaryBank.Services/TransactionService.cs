@@ -2,6 +2,7 @@
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Data.Models.Enums;
@@ -81,46 +82,35 @@ public class TransactionService : ITransactionService
 
 		if (accountFrom.Balance - model.Amount > 1)
 		{
-			IDbContextTransaction transaction = _context.Database.BeginTransaction();
-
-			try
+			Transaction newTransac = new()
 			{
-				Transaction newTransac = new()
-				{
-					Description = model.Description,
-					Amount = model.Amount - bankSettings.TransactionFee,
-					TransactionDate = DateTime.UtcNow,
-					AccountFrom = accountFrom,
-					AccountFromId = accountFrom.Id,
-					AccountTo = accountTo,
-					AccountToId = accountTo.Id
-				};
+				Description = model.Description,
+				Amount = model.Amount,
+				TransactionDate = DateTime.UtcNow,
+				AccountFrom = accountFrom,
+				AccountFromId = accountFrom.Id,
+				AccountTo = accountTo,
+				AccountToId = accountTo.Id
+			};
 
-				await _context.Transactions.AddAsync(newTransac);
+			await _context.Transactions.AddAsync(newTransac);
 
-				accountFrom.Balance -= model.Amount;
-				accountTo.Balance += model.Amount;
+			accountFrom.Balance -= model.Amount + bankSettings.TransactionFee;
+			accountTo.Balance += model.Amount;
 
-				await _context.SaveChangesAsync();
+			await _context.SaveChangesAsync();
 
-				await transaction.CommitAsync();
+			await _emailSender.SendEmailAsync(
+			userFrom.Email!,
+				"NRB - Successful Transaction",
+				$"You successfully sent ${model.Amount} to {userTo.UserName}!");
 
-				await _emailSender.SendEmailAsync(
-				userFrom.Email!,
-					"NRB - Successful Transaction",
-					$"You successfully sent ${model.Amount} to {userTo.UserName}!");
+			await _emailSender.SendEmailAsync(
+				userTo.Email!,
+				"NRB - Successful Transaction Received",
+				$"You just recieved ${model.Amount} from {userTo.UserName}!");
 
-				await _emailSender.SendEmailAsync(
-					userTo.Email!,
-					"NRB - Successful Transaction Received",
-					$"You just recieved ${model.Amount} from {userTo.UserName}!");
-
-				return PaymentResult.Successful;
-			}
-			catch
-			{
-				await transaction.RollbackAsync();
-			}
+			return PaymentResult.Successful;
 		}
 
 		return PaymentResult.InsufficientFunds;

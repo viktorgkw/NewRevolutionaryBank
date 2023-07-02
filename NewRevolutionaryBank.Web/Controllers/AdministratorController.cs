@@ -102,7 +102,6 @@ public class AdministratorController : Controller
 		string? searchName)
 	{
 		order ??= "active";
-		searchName = searchName?.ToLower();
 
 		List<UserProfileManageViewModel> users = await _administratorService
 			.GetAllProfilesAsync(order, searchName);

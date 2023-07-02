@@ -10,6 +10,8 @@ using NewRevolutionaryBank.Services;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
+using NewRevolutionaryBank.Web.Handlers;
+using NewRevolutionaryBank.Web.Hangfire;
 using NewRevolutionaryBank.Web.Middlewares;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -77,10 +79,10 @@ builder.Services.AddHangfireServer();
 
 // Configuring Services
 builder.Services.AddSingleton<IConfiguration>(configuration);
-builder.Services.AddScoped<IEmailSender, SendGridEmailSender>();
-builder.Services.AddScoped<IHangfireService, HangfireService>();
+builder.Services.AddScoped<HangfireJobs>();
+builder.Services.AddScoped<IsDeletedHandler>();
+builder.Services.AddScoped<IEmailSender, MailKitEmailSender>();
 builder.Services.AddScoped<IStripeService, StripeService>();
-builder.Services.AddScoped<IMiddlewareService, MiddlewareService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
@@ -140,7 +142,7 @@ app.UseHangfireDashboard();
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteNotVerifiedAsync(),
+	(HangfireJobs service) => service.DeleteNotVerifiedAsync(),
 	Cron.Daily,
 	new RecurringJobOptions
 	{
@@ -149,7 +151,7 @@ RecurringJob.AddOrUpdate(
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteThreeYearOldAccountsAsync(),
+	(HangfireJobs service) => service.DeleteThreeYearOldAccountsAsync(),
 	Cron.Weekly,
 	new RecurringJobOptions
 	{
@@ -158,7 +160,7 @@ RecurringJob.AddOrUpdate(
 
 RecurringJob.AddOrUpdate(
 	Guid.NewGuid().ToString(),
-	(HangfireService service) => service.DeleteClosedAccountsAfterYearAsync(),
+	(HangfireJobs service) => service.DeleteClosedAccountsAfterYearAsync(),
 	Cron.Weekly,
 	new RecurringJobOptions
 	{
