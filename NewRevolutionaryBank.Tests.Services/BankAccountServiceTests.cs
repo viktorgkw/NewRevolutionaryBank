@@ -467,9 +467,11 @@ public class BankAccountServiceTests
 		_dbContext.BankAccounts.Add(bankAccount);
 		await _dbContext.SaveChangesAsync();
 
+		DepositViewModel? model = null;
+
 		// Act & Assert
 		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-			await _bankAccountService.DepositAsync(null));
+			await _bankAccountService.DepositAsync(model!));
 	}
 
 	[Fact]

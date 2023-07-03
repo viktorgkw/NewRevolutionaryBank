@@ -274,7 +274,7 @@ public class TransactionServiceTests
 			UnifiedCivilNumber = "0123456789"
 		};
 
-		TransactionNewViewModel model = new TransactionNewViewModel
+		TransactionNewViewModel model = new()
 		{
 			AccountFrom = accountFrom.Id.ToString(),
 			AccountTo = accountFrom.IBAN,

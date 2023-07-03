@@ -6,9 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 using NewRevolutionaryBank.Data.Models;
 
-public class DbSeeder
+public static class DbSeeder
 {
-	public async Task SeedRolesAndAdministratorAsync(
+	public static async Task SeedRolesAndAdministratorAsync(
 		RoleManager<ApplicationRole> roleManager,
 		UserManager<ApplicationUser> userManager,
 		NrbDbContext context,

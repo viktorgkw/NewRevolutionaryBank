@@ -1,40 +1,34 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿namespace NewRevolutionaryBank.Data.Migrations;
 
-#nullable disable
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace NewRevolutionaryBank.Data.Migrations
+public partial class Deposit_Props_Removed : Migration
 {
-    /// <inheritdoc />
-    public partial class Deposit_Props_Removed : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropColumn(
-                name: "CustomerName",
-                table: "Deposits");
+        migrationBuilder.DropColumn(
+            name: "CustomerName",
+            table: "Deposits");
 
-            migrationBuilder.DropColumn(
-                name: "Description",
-                table: "Deposits");
-        }
+        migrationBuilder.DropColumn(
+            name: "Description",
+            table: "Deposits");
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.AddColumn<string>(
-                name: "CustomerName",
-                table: "Deposits",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.AddColumn<string>(
+            name: "CustomerName",
+            table: "Deposits",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
 
-            migrationBuilder.AddColumn<string>(
-                name: "Description",
-                table: "Deposits",
-                type: "nvarchar(max)",
-                nullable: false,
-                defaultValue: "");
-        }
+        migrationBuilder.AddColumn<string>(
+            name: "Description",
+            table: "Deposits",
+            type: "nvarchar(max)",
+            nullable: false,
+            defaultValue: "");
     }
 }
