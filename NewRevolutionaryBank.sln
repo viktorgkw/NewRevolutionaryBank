@@ -27,7 +27,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{819C9BC5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Tests.Services", "NewRevolutionaryBank.Tests.Services\NewRevolutionaryBank.Tests.Services.csproj", "{ACB66E2C-918F-4525-A782-5A153198F990}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Tests.Data", "NewRevolutionaryBank.Tests.Data\NewRevolutionaryBank.Tests.Data.csproj", "{38BB243E-3AC9-4909-A631-670073BCBC6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Tests.Data", "NewRevolutionaryBank.Tests.Data\NewRevolutionaryBank.Tests.Data.csproj", "{38BB243E-3AC9-4909-A631-670073BCBC6F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Tests.Models", "NewRevolutionaryBank.Tests.Models\NewRevolutionaryBank.Tests.Models.csproj", "{4A61425F-6ABE-4443-BB40-185C77345C6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Tests.ViewModels", "NewRevolutionaryBank.Tests.ViewModels\NewRevolutionaryBank.Tests.ViewModels.csproj", "{FD936204-BC3B-4F1A-98ED-56F37E42FB48}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,14 @@ Global
 		{38BB243E-3AC9-4909-A631-670073BCBC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{38BB243E-3AC9-4909-A631-670073BCBC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{38BB243E-3AC9-4909-A631-670073BCBC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A61425F-6ABE-4443-BB40-185C77345C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A61425F-6ABE-4443-BB40-185C77345C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A61425F-6ABE-4443-BB40-185C77345C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A61425F-6ABE-4443-BB40-185C77345C6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD936204-BC3B-4F1A-98ED-56F37E42FB48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD936204-BC3B-4F1A-98ED-56F37E42FB48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD936204-BC3B-4F1A-98ED-56F37E42FB48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD936204-BC3B-4F1A-98ED-56F37E42FB48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +97,8 @@ Global
 		{16E6E951-A012-4B12-AC23-112A0B6DF02B} = {0ED7BA04-D6D5-44BB-8A77-C3EF13102770}
 		{ACB66E2C-918F-4525-A782-5A153198F990} = {819C9BC5-F3D5-406A-BDE8-C5EAE6E21DAC}
 		{38BB243E-3AC9-4909-A631-670073BCBC6F} = {819C9BC5-F3D5-406A-BDE8-C5EAE6E21DAC}
+		{4A61425F-6ABE-4443-BB40-185C77345C6B} = {819C9BC5-F3D5-406A-BDE8-C5EAE6E21DAC}
+		{FD936204-BC3B-4F1A-98ED-56F37E42FB48} = {819C9BC5-F3D5-406A-BDE8-C5EAE6E21DAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EFB89EF2-8F0C-4AB2-A8E3-672D62572DB0}

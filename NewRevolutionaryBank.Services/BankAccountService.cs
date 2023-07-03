@@ -45,6 +45,8 @@ public class BankAccountService : IBankAccountService
 			.FirstOrDefaultAsync(user => user.UserName == userName);
 
 		ArgumentNullException.ThrowIfNull(foundUser);
+		ArgumentNullException.ThrowIfNull(model.UnifiedCivilNumber);
+		ArgumentNullException.ThrowIfNull(model.Address);
 
 		if (foundUser.BankAccounts.Count(ba => !ba.IsClosed) >= 5)
 		{
@@ -221,6 +223,10 @@ public class BankAccountService : IBankAccountService
 
 	public async Task DepositAsync(DepositViewModel model)
 	{
+		ArgumentNullException.ThrowIfNull(model);
+
+		ArgumentNullException.ThrowIfNull(model.StripePayment);
+
 		string paymentResult = _stripeService.MakePayment(model.StripePayment);
 
 		if (paymentResult == "succeeded")
@@ -228,7 +234,7 @@ public class BankAccountService : IBankAccountService
 			BankAccount? bankAcc = await _context.BankAccounts
 						.FirstOrDefaultAsync(ba => ba.Id == model.DepositTo);
 
-			if (bankAcc is null)
+			if (bankAcc is null || model.Amount <= 0)
 			{
 				return;
 			}

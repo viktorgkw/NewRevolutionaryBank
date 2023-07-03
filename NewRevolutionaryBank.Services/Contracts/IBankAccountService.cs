@@ -28,5 +28,5 @@ public interface IBankAccountService
 
 	Task<bool> IsOwner(Guid id, string userName);
 
-	Task CheckUserRole(ClaimsPrincipal User)
+	Task CheckUserRole(ClaimsPrincipal User);
 }

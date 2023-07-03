@@ -1,5 +1,7 @@
 ﻿namespace NewRevolutionaryBank.Tests.Services;
 
+using System.Security.Claims;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -21,8 +23,8 @@ public class BankAccountServiceTests
 	private readonly DbContextOptions<NrbDbContext> _dbContextOptions;
 	private readonly NrbDbContext _dbContext;
 	private readonly BankAccountService _bankAccountService;
-	private readonly UserManager<ApplicationUser> _userManager;
-	private readonly SignInManager<ApplicationUser> _signInManager;
+	private readonly Mock<UserManager<ApplicationUser>> _userManager;
+	private readonly Mock<SignInManager<ApplicationUser>> _signInManager;
 	private readonly IStripeService _stripeService;
 	private readonly IEmailSender _emailSender;
 
@@ -34,7 +36,7 @@ public class BankAccountServiceTests
 
 		_dbContext = new NrbDbContext(_dbContextOptions);
 
-		Mock<UserManager<ApplicationUser>> userManagerMock = new(
+		_userManager = new(
 			new Mock<IUserStore<ApplicationUser>>().Object,
 			new Mock<IOptions<IdentityOptions>>().Object,
 			new Mock<IPasswordHasher<ApplicationUser>>().Object,
@@ -45,19 +47,21 @@ public class BankAccountServiceTests
 			new Mock<IServiceProvider>().Object,
 			new Mock<ILogger<UserManager<ApplicationUser>>>().Object);
 
-		Mock<SignInManager<ApplicationUser>> signInManagerMock = new(
-			userManagerMock.Object,
+		_signInManager = new(
+			_userManager.Object,
 			new Mock<IHttpContextAccessor>().Object,
 			new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>().Object,
 			new Mock<IOptions<IdentityOptions>>().Object,
 			null, null);
 
-		_userManager = userManagerMock.Object;
-		_signInManager = signInManagerMock.Object;
-
 		_stripeService = new StripeService();
 		_emailSender = new MockEmailSender();
-		_bankAccountService = new BankAccountService(_dbContext, _userManager, _signInManager, _emailSender, _stripeService);
+		_bankAccountService = new BankAccountService(
+			_dbContext,
+			_userManager.Object,
+			_signInManager.Object,
+			_emailSender,
+			_stripeService);
 	}
 
 	[Fact]
@@ -73,6 +77,81 @@ public class BankAccountServiceTests
 		// Act & Assert
 		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
 			await _bankAccountService.CreateAsync("NonExistingUserName", model));
+	}
+
+	[Fact]
+	public async Task CreateAsync_ShouldThrowException_WhenAddressIsNull()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testUser"
+		};
+
+		_dbContext.Users.Add(user);
+		await _dbContext.SaveChangesAsync();
+
+		BankAccountCreateViewModel model = new()
+		{
+			UnifiedCivilNumber = "123456789"
+		};
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.CreateAsync(user.UserName, model));
+	}
+
+	[Fact]
+	public async Task CreateAsync_ShouldThrowException_WhenUCNIsNull()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testUser"
+		};
+
+		_dbContext.Users.Add(user);
+		await _dbContext.SaveChangesAsync();
+
+		BankAccountCreateViewModel model = new()
+		{
+			Address = "Test Address"
+		};
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.CreateAsync(user.UserName, model));
+	}
+
+	[Fact]
+	public async Task CreateAsync_ShouldNotAddNew_WhenUserHasMaxBankAccounts()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testUser"
+		};
+
+		_dbContext.Users.Add(user);
+		await _dbContext.SaveChangesAsync();
+
+		// Act
+		for (int i = 1; i <= 6; i++)
+		{
+			await _bankAccountService.CreateAsync(user.UserName, new()
+			{
+				UnifiedCivilNumber = "123456789",
+				Address = "Test Address"
+			});
+		}
+
+		ApplicationUser foundUser = await _dbContext.Users
+			.Include(u => u.BankAccounts)
+			.FirstAsync(u => u.UserName == user.UserName);
+
+		// Assert
+		Assert.NotNull(foundUser.BankAccounts);
+		Assert.Equal(5, foundUser.BankAccounts.Count);
 	}
 
 	[Fact]
@@ -109,7 +188,7 @@ public class BankAccountServiceTests
 		Assert.Equal(model.UnifiedCivilNumber, acc.UnifiedCivilNumber);
 		Assert.Equal(model.Address, acc.Address);
 
-		Assert.False(await _userManager.IsInRoleAsync(foundUser, "Guest"));
+		Assert.False(await _userManager.Object.IsInRoleAsync(foundUser, "Guest"));
 	}
 
 	[Fact]
@@ -149,6 +228,31 @@ public class BankAccountServiceTests
 
 		// Assert
 		Assert.Equal(2, result.Count);
+	}
+
+	[Fact]
+	public async Task GetAllUserAccountsAsync_ReturnsEmptyList_WhenUserHasNoAccounts()
+	{
+		// Arrange
+		string userName = "testUser";
+
+		ApplicationUser user = new()
+		{
+			UserName = userName
+		};
+
+		_dbContext.Users.Add(user);
+		await _dbContext.SaveChangesAsync();
+
+		int expectedCount = 0;
+
+		// Act
+		List<BankAccountDisplayViewModel> result = await
+			_bankAccountService.GetAllUserAccountsAsync(userName);
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal(expectedCount, result.Count);
 	}
 
 	[Fact]
@@ -279,6 +383,38 @@ public class BankAccountServiceTests
 	}
 
 	[Fact]
+	public async Task CloseAccountByIdAsync_DoesNotCloseAlreadyClosedAccount()
+	{
+		// Arrange
+		Guid id = Guid.NewGuid();
+
+		BankAccount account = new()
+		{
+			Id = id,
+			IsClosed = false,
+			Address = "TestAddress",
+			IBAN = "TestIBAN",
+			UnifiedCivilNumber = "TestUCN"
+		};
+
+		_dbContext.BankAccounts.Add(account);
+		await _dbContext.SaveChangesAsync();
+
+		// Act
+		await _bankAccountService.CloseAccountByIdAsync(id);
+
+		BankAccount acc = await _dbContext.BankAccounts.FirstAsync();
+		DateTime? deletedAt = acc.ClosedDate;
+
+		await _bankAccountService.CloseAccountByIdAsync(id);
+		acc = await _dbContext.BankAccounts.FirstAsync();
+		DateTime? deletedAtLate = acc.ClosedDate;
+
+		// Assert
+		Assert.Equal(deletedAt, deletedAtLate);
+	}
+
+	[Fact]
 	public async Task DepositAsync_MakesDepositToBankAccount()
 	{
 		// Arrange
@@ -313,6 +449,91 @@ public class BankAccountServiceTests
 
 		// Assert
 		Assert.Equal(100.0m, bankAccount.Balance);
+	}
+
+	[Fact]
+	public async Task DepositAsync_ShouldThrowArgumentNullException_WhenModelIsNull()
+	{
+		// Arrange
+		BankAccount bankAccount = new()
+		{
+			Id = Guid.NewGuid(),
+			Address = "TestAddress",
+			IBAN = "TestIBAN",
+			UnifiedCivilNumber = "TestUCN",
+			Balance = 0.00m
+		};
+
+		_dbContext.BankAccounts.Add(bankAccount);
+		await _dbContext.SaveChangesAsync();
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.DepositAsync(null));
+	}
+
+	[Fact]
+	public async Task DepositAsync_ShouldNotMakeDeposit_WhenAmountIsLessOrEqualToZero()
+	{
+		// Arrange
+		DepositViewModel model = new()
+		{
+			DepositTo = Guid.NewGuid(),
+			Amount = 0.00m,
+			StripePayment = new StripePayment
+			{
+				Id = Guid.NewGuid().ToString(),
+				CardNumber = "123456789",
+				CVC = "12345",
+				ExpYear = "2026",
+				ExpMonth = "4"
+			}
+		};
+
+		BankAccount bankAccount = new()
+		{
+			Id = model.DepositTo,
+			Address = "TestAddress",
+			IBAN = "TestIBAN",
+			UnifiedCivilNumber = "TestUCN",
+			Balance = 0.00m
+		};
+
+		_dbContext.BankAccounts.Add(bankAccount);
+		await _dbContext.SaveChangesAsync();
+
+		// Act
+		await _bankAccountService.DepositAsync(model);
+
+		// Assert
+		Assert.Equal(0.00m, bankAccount.Balance);
+	}
+
+	[Fact]
+	public async Task DepositAsync_ShouldThrowArgumentNullException_WhenStripePaymentIsNull()
+	{
+		// Arrange
+		DepositViewModel model = new()
+		{
+			DepositTo = Guid.NewGuid(),
+			Amount = 0.00m
+		};
+
+		BankAccount bankAccount = new()
+		{
+			Id = model.DepositTo,
+			Address = "TestAddress",
+			IBAN = "TestIBAN",
+			UnifiedCivilNumber = "TestUCN",
+			Balance = 0.00m
+		};
+
+		_dbContext.BankAccounts.Add(bankAccount);
+		await _dbContext.SaveChangesAsync();
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.DepositAsync(model));
 	}
 
 	[Fact]
@@ -362,4 +583,129 @@ public class BankAccountServiceTests
 		// Assert
 		Assert.False(result);
 	}
+
+	[Fact]
+	public async Task CheckUserRole_AccountHolderWithNoBankAccounts_BecomesGuest()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testuser",
+		};
+
+		await _userManager.Object.CreateAsync(user);
+		await _userManager.Object.AddToRoleAsync(user, "AccountHolder");
+
+		ClaimsPrincipal claimsPrincipal = new(new ClaimsIdentity(new[]
+		{
+			new Claim(ClaimTypes.Name, user.UserName),
+			new Claim(ClaimTypes.Role, "AccountHolder")
+		}));
+
+		// Act
+		await CheckUserRole(claimsPrincipal);
+
+		// Assert
+		ApplicationUser? updatedUser = await _userManager.Object
+			.FindByNameAsync(user.UserName);
+
+		_userManager
+			.Setup(m => m.IsInRoleAsync(updatedUser!, "AccountHolder"))
+			.ReturnsAsync(false);
+
+		bool isInAccountHolderRole = await _userManager.Object
+			.IsInRoleAsync(updatedUser!, "AccountHolder");
+
+		_userManager
+			.Setup(m => m.IsInRoleAsync(updatedUser!, "Guest"))
+			.ReturnsAsync(true);
+
+		bool isInGuestRole = await _userManager.Object
+			.IsInRoleAsync(updatedUser!, "Guest");
+
+		Assert.False(isInAccountHolderRole);
+		Assert.True(isInGuestRole);
+	}
+
+	[Fact]
+	public async Task CheckUserRole_AccountHolderWithOpenBankAccounts_RetainsAccountHolderRole()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testuser",
+		};
+
+		await _userManager.Object.CreateAsync(user);
+		await _userManager.Object.AddToRoleAsync(user, "AccountHolder");
+
+		BankAccount account = new()
+		{
+			IsClosed = false
+		};
+
+		user.BankAccounts.Add(account);
+		await _dbContext.SaveChangesAsync();
+
+		ClaimsPrincipal claimsPrincipal = new(new ClaimsIdentity(new[]
+		{
+			new Claim(ClaimTypes.Name, user.UserName),
+			new Claim(ClaimTypes.Role, "AccountHolder")
+		}));
+
+		// Act
+		await CheckUserRole(claimsPrincipal);
+
+		// Assert
+		ApplicationUser? updatedUser = await _userManager.Object
+			.FindByNameAsync(user.UserName);
+
+		_userManager
+			.Setup(m => m.IsInRoleAsync(updatedUser!, "Guest"))
+			.ReturnsAsync(false);
+
+		bool isInGuestRole = await _userManager.Object
+			.IsInRoleAsync(updatedUser!, "Guest");
+
+		Assert.False(isInGuestRole);
+	}
+
+	[Fact]
+	public async Task CheckUserRole_NonAccountHolder_DoesNotModifyRoles()
+	{
+		// Arrange
+		ApplicationUser user = new()
+		{
+			UserName = "testuser",
+		};
+
+		await _userManager.Object.CreateAsync(user);
+		await _userManager.Object.AddToRoleAsync(user, "Guest");
+
+		ClaimsPrincipal claimsPrincipal = new(
+			new ClaimsIdentity(new[]
+			{
+				new Claim(ClaimTypes.Name, user.UserName),
+				new Claim(ClaimTypes.Role, "Guest")
+			}));
+
+		// Act
+		await CheckUserRole(claimsPrincipal);
+
+		// Assert
+		ApplicationUser? updatedUser = await _userManager.Object
+			.FindByNameAsync(user.UserName);
+
+		_userManager
+			.Setup(m => m.IsInRoleAsync(updatedUser!, "Guest"))
+			.ReturnsAsync(true);
+
+		bool isInGuestRole = await _userManager.Object
+			.IsInRoleAsync(updatedUser!, "Guest");
+
+		Assert.True(isInGuestRole);
+	}
+
+	private async Task CheckUserRole(ClaimsPrincipal user) =>
+		await _bankAccountService.CheckUserRole(user);
 }
