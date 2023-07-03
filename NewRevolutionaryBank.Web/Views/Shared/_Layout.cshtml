@@ -57,6 +57,13 @@
 								Home
 							</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link text-white fw-bold"
+							   asp-controller="ExchangeCurrency"
+							   asp-action="All">
+								Currency Exchange Rates
+							</a>
+						</li>
 						@if (User.IsInRole("Guest"))
 						{
 							<li class="nav-item">

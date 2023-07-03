@@ -82,6 +82,7 @@ builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddScoped<HangfireJobs>();
 builder.Services.AddScoped<IsDeletedHandler>();
 builder.Services.AddScoped<IEmailSender, MailKitEmailSender>();
+builder.Services.AddScoped<IExchangeCurrencyService, ExchangeCurrencyService>();
 builder.Services.AddScoped<IStripeService, StripeService>();
 builder.Services.AddScoped<IBankAccountService, BankAccountService>();
 builder.Services.AddScoped<IAdministratorService, AdministratorService>();
@@ -133,7 +134,7 @@ using (IServiceScope initScope = app.Services.CreateScope())
 	NrbDbContext context = initScope.ServiceProvider
 		.GetRequiredService<NrbDbContext>();
 
-	new DbSeeder()
+	DbSeeder
 		.SeedRolesAndAdministratorAsync(roleManager, userManager, context, configuration)
 		.Wait();
 }

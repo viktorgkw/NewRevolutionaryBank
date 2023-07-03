@@ -1,0 +1,43 @@
+﻿@model ConversionRate?
+@{
+	ViewData["Title"] = "Currency Exchange Rates";
+}
+
+<div class="text-center">
+	<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+
+	<hr />
+	<br />
+
+	@if (Model is null)
+	{
+		<h3 class="fw-bold text-danger">There was an error loading the exchange rates!</h3>
+		<i class="text-warning d-block">Please contact support if this doesn't resolve in 5 minutes!</i>
+
+		<img src="~/gifs/empty.gif"
+			 class="website-gif-small mb-5" alt="gif" />
+	}
+	else
+	{
+		<img src="~/gifs/currency-exchange.gif"
+			 class="website-gif-small mb-5" alt="gif" />
+
+		<table class="table table-dark table-striped fs-5">
+			<thead>
+				<tr>
+					<th scope="col">Currency</th>
+					<th scope="col">Rate</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var property in typeof(ConversionRate).GetProperties())
+				{
+					<tr>
+						<td>@property.Name</td>
+						<td>@property.GetValue(Model)</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	}
+</div>

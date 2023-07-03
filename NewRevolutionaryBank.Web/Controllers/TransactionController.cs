@@ -9,6 +9,7 @@ using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
+[Authorize(Roles = "AccountHolder")]
 public class TransactionController : Controller
 {
 	private readonly ITransactionService _transactionService;
@@ -17,7 +18,6 @@ public class TransactionController : Controller
 		_transactionService = transactionService;
 
 	[HttpGet]
-	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> NewTransaction()
 	{
 		try
@@ -43,7 +43,6 @@ public class TransactionController : Controller
 	}
 
 	[HttpPost]
-	[Authorize(Roles = "AccountHolder")]
 	public async Task<IActionResult> NewTransaction(TransactionNewViewModel model)
 	{
 		try
@@ -88,7 +87,6 @@ public class TransactionController : Controller
 	}
 
 	[HttpGet]
-	[Authorize(Roles = "AccountHolder")]
 	public IActionResult TransactionSuccessful()
 	{
 		if (TempData["RedirectedFromMethod"] is not null &&
