@@ -17,6 +17,7 @@ using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Tests.Services.Mocks;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
+using System.Reflection;
 
 public class BankAccountServiceTests
 {
@@ -184,7 +185,7 @@ public class BankAccountServiceTests
 		// Assert
 		Assert.NotNull(foundUser);
 
-		Assert.Equal(1, foundUser.BankAccounts.Count);
+		Assert.Single(foundUser.BankAccounts);
 		Assert.Equal(model.UnifiedCivilNumber, acc.UnifiedCivilNumber);
 		Assert.Equal(model.Address, acc.Address);
 
@@ -706,6 +707,36 @@ public class BankAccountServiceTests
 			.IsInRoleAsync(updatedUser!, "Guest");
 
 		Assert.True(isInGuestRole);
+	}
+
+	[Fact]
+	public void GenerateIBAN_Returns_StringWithLength25()
+	{
+		// Act
+		MethodInfo method = typeof(BankAccountService)
+			.GetMethod("GenerateIBAN", BindingFlags.NonPublic | BindingFlags.Static)!;
+
+		int expectedIbanLength = 25;
+		object iban = method.Invoke(_bankAccountService, null)!;
+
+		// Assert
+		Assert.NotNull(iban);
+		Assert.Equal(expectedIbanLength, iban.ToString()!.Length);
+	}
+
+	[Fact]
+	public void GenerateRandomIbanPart_Returns_StringWithLength10()
+	{
+		// Act
+		MethodInfo method = typeof(BankAccountService)
+			.GetMethod("GenerateRandomIbanPart", BindingFlags.NonPublic | BindingFlags.Static)!;
+
+		int expectedIbanLength = 10;
+		object ibanPart = method.Invoke(_bankAccountService, null)!;
+
+		// Assert
+		Assert.NotNull(ibanPart);
+		Assert.Equal(expectedIbanLength, ibanPart.ToString()!.Length);
 	}
 
 	private async Task CheckUserRole(ClaimsPrincipal user) =>
