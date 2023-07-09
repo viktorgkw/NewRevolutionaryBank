@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
+using static NewRevolutionaryBank.Common.ModelsConstants;
+
 [Comment("Банкова транзакция")]
 public class Transaction
 {
@@ -18,11 +20,15 @@ public class Transaction
 	public DateTime TransactionDate { get; set; }
 
 	[Comment("Сума на транзакцията")]
+	[Range(TransactionConstants.AmountMin, TransactionConstants.AmountMax)]
 	public decimal Amount { get; set; }
 
 	[Required]
 	[Comment("Описание на транзакцията")]
-	[StringLength(120, MinimumLength = 5)]
+	[StringLength(
+		TransactionConstants.DescriptionMaxLength,
+		MinimumLength = TransactionConstants.DescriptionMinLength,
+		ErrorMessage = "Description must be long between {0} and {1} characters.")]
 	public string Description { get; set; } = null!;
 
 	[Required]

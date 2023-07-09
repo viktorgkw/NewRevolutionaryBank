@@ -15,4 +15,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj" />
+  </ItemGroup>
+
 </Project>

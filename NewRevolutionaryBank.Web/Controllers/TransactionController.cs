@@ -52,6 +52,8 @@ public class TransactionController : Controller
 
 			ModelState.Remove("SenderAccounts");
 
+			model.Description = model.Description.Trim();
+
 			if (!ModelState.IsValid)
 			{
 				return View(cleanModel);

@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 using Microsoft.EntityFrameworkCore;
 
+using static NewRevolutionaryBank.Common.ModelsConstants;
+
 [Comment("Рейтинг на уебсайта")]
 public class Rating
 {
@@ -13,6 +15,7 @@ public class Rating
 	[Comment("Уникален идентификатор")]
 	public Guid Id { get; set; }
 
+	[Range(RatingConstants.RateValueMin, RatingConstants.RateValueMax)]
 	[Comment("Стойност на рейтинга")]
 	public int RateValue { get; set; }
 

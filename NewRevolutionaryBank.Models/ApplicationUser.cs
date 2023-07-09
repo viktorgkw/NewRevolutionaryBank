@@ -1,7 +1,11 @@
 ﻿namespace NewRevolutionaryBank.Data.Models;
 
+using System.ComponentModel.DataAnnotations;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+using static NewRevolutionaryBank.Common.ModelsConstants;
 
 [Comment("Потребителски акаунт")]
 public class ApplicationUser : IdentityUser<Guid>
@@ -14,9 +18,17 @@ public class ApplicationUser : IdentityUser<Guid>
 	}
 
 	[Comment("Собствено име")]
+	[StringLength(
+		UserConstants.FirstNameMaxLength,
+		MinimumLength = UserConstants.FirstNameMinLength,
+		ErrorMessage = "First name should be between {0} and {1}!")]
 	public string? FirstName { get; set; }
 
 	[Comment("Фамилия")]
+	[StringLength(
+		UserConstants.LastNameMaxLength,
+		MinimumLength = UserConstants.LastNameMinLength,
+		ErrorMessage = "Last name should be between {0} and {1}!")]
 	public string? LastName { get; set; }
 
 	[Comment("Дата на създаване")]

@@ -2,6 +2,7 @@
 
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+
 using NewRevolutionaryBank.Data.Models;
 
 public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>

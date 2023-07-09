@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
+using static NewRevolutionaryBank.Common.ModelsConstants;
+
 [Comment("Банкова сметка")]
 public class BankAccount
 {
@@ -21,7 +23,9 @@ public class BankAccount
 
 	[Required]
 	[Comment("ИБАН на сметката")]
-	[StringLength(25, MinimumLength = 25)]
+	[StringLength(
+		BankAccountConstants.IBAN_Length,
+		MinimumLength = BankAccountConstants.IBAN_Length)]
 	public string IBAN { get; set; } = null!;
 
 	[Comment("Салдо на сметката")]
@@ -37,12 +41,16 @@ public class BankAccount
 
 	[Required]
 	[Comment("ЕГН на потребителя")]
-	[StringLength(10, MinimumLength = 10)]
+	[StringLength(
+		BankAccountConstants.UCN_Length,
+		MinimumLength = BankAccountConstants.UCN_Length)]
 	public string UnifiedCivilNumber { get; set; } = null!;
 
 	[Required]
 	[Comment("Адрес на потребителя")]
-	[StringLength(40, MinimumLength = 8)]
+	[StringLength(
+		BankAccountConstants.AddressMaxLength,
+		MinimumLength = BankAccountConstants.AddressMinLength)]
 	public string Address { get; set; } = null!;
 
 	[Comment("Флаг дали сметката е закрита")]

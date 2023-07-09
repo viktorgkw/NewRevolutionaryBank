@@ -69,6 +69,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Data.Seeding\NewRevolutionaryBank.Data.Seeding.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Data\NewRevolutionaryBank.Data.csproj" />
     <ProjectReference Include="..\NewRevolutionaryBank.Models\NewRevolutionaryBank.Data.Models.csproj" />
