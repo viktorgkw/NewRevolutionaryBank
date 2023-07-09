@@ -7,6 +7,7 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
+    <RunSettingsFilePath>D:\Projects\NewRevolutionaryBank\NewRevolutionaryBank.Tests.Data\bin\Debug\net7.0\fine-code-coverage\coverage-tool-output\NewRevolutionaryBank.Tests.Data-fcc-mscodecoverage-generated.runsettings</RunSettingsFilePath>
   </PropertyGroup>
 
   <ItemGroup>
