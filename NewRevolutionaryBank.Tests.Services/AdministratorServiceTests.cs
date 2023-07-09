@@ -85,7 +85,7 @@ public class AdministratorServiceTests
 
 		// Act
 		BankAccountDetailsViewModel accountDetails = await
-			_administratorService.GetBankAccountDetailsAsync(accountId);
+			_administratorService.GetBankAccountDetailsByIdAsync(accountId);
 
 		// Assert
 		Assert.NotNull(accountDetails);

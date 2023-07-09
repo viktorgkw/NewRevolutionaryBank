@@ -13,6 +13,10 @@ public class MailKitEmailSender : IEmailSender
 
 	public MailKitEmailSender(IConfiguration configuration) => _configuration = configuration;
 
+	/// <param name="toEmail">Email of the reciever.</param>
+	/// <param name="subject">Subject of the email.</param>
+	/// <param name="htmlContent">Content of the email.</param>
+	/// <exception cref="ArgumentException"></exception>
 	public async Task SendEmailAsync(
 		string toEmail,
 		string subject,
@@ -56,6 +60,11 @@ public class MailKitEmailSender : IEmailSender
 				_configuration["EmailSender:SenderPassword"]);
 
 			await client.SendAsync(message);
+		}
+		catch
+		{
+			client.Disconnect(true);
+			return;
 		}
 		finally
 		{

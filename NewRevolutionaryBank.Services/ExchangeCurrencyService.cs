@@ -15,6 +15,10 @@ public class ExchangeCurrencyService : IExchangeCurrencyService
 	public ExchangeCurrencyService(IConfiguration configuration) =>
 		api_url = configuration["ExchangeCurrencyApi:URL"]!;
 
+	/// <summary>
+	/// Fetches all the currency rates from an API.
+	/// </summary>
+	/// <returns>Returns the fetched rates.</returns>
 	public async Task<ConversionRate> GetRates()
 	{
 		using HttpClient client = new();

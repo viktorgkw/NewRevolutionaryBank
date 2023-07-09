@@ -23,6 +23,11 @@ public class AdministratorService : IAdministratorService
 	//				Bank Accounts
 	// ------------------------------------
 
+	/// <summary>
+	/// Activates bank account by id if it's not null.
+	/// </summary>
+	/// <param name="id">Id of the bank account.</param>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task ActivateBankAccountByIdAsync(string id)
 	{
 		BankAccount? bankAcc = await _context.BankAccounts
@@ -36,6 +41,11 @@ public class AdministratorService : IAdministratorService
 		await _context.SaveChangesAsync();
 	}
 
+	/// <summary>
+	/// Deactivates bank account by id if it's not null.
+	/// </summary>
+	/// <param name="id">Id of the bank account.</param>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task DeactivateBankAccountByIdAsync(string id)
 	{
 		BankAccount? bankAcc = await _context.BankAccounts
@@ -49,6 +59,7 @@ public class AdministratorService : IAdministratorService
 		await _context.SaveChangesAsync();
 	}
 
+	/// <returns>List of all the bank accounts.</returns>
 	public async Task<List<BankAccountManageViewModel>> GetAllBankAccountsAsync() =>
 		await _context.BankAccounts
 			.AsNoTracking()
@@ -63,7 +74,10 @@ public class AdministratorService : IAdministratorService
 			})
 			.ToListAsync();
 
-	public async Task<BankAccountDetailsViewModel> GetBankAccountDetailsAsync(Guid id)
+	/// <param name="id">Id of the bank account.</param>
+	/// <returns>Bank account details.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
+	public async Task<BankAccountDetailsViewModel> GetBankAccountDetailsByIdAsync(Guid id)
 	{
 		BankAccount? account = await _context.BankAccounts
 			.AsNoTracking()
@@ -103,6 +117,12 @@ public class AdministratorService : IAdministratorService
 	//				Profiles
 	// ------------------------------------
 
+	/// <summary>
+	/// This methods returns all the profiles by given order and search name if given.
+	/// </summary>
+	/// <param name="order">Order of the profiles.</param>
+	/// <param name="searchName">Optional string that could be contained in a username.</param>
+	/// <returns>All user profiles.</returns>
 	public async Task<List<UserProfileManageViewModel>> GetAllProfilesAsync(
 		string order,
 		string? searchName)
@@ -138,6 +158,9 @@ public class AdministratorService : IAdministratorService
 		return result;
 	}
 
+	/// <param name="id">The id of the user profile.</param>
+	/// <returns>The found user profile.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task<UserProfileDetailsViewModel> GetUserProfileDetailsByIdAsync(Guid id)
 	{
 		ApplicationUser? user = await _context.Users
@@ -161,6 +184,11 @@ public class AdministratorService : IAdministratorService
 		};
 	}
 
+	/// <summary>
+	/// Activates the user profile by id or throws exception if not found.
+	/// </summary>
+	/// <param name="id">The user profile id.</param>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task ActivateUserProfileByIdAsync(Guid id)
 	{
 		ApplicationUser? user = await _context.Users
@@ -174,6 +202,11 @@ public class AdministratorService : IAdministratorService
 		await _context.SaveChangesAsync();
 	}
 
+	/// <summary>
+	/// Deactivates the user profile or throws exception if not found.
+	/// </summary>
+	/// <param name="id">Id of the user profile.</param>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task DeactivateUserProfileByIdAsync(Guid id)
 	{
 		ApplicationUser? user = await _context.Users
@@ -197,6 +230,7 @@ public class AdministratorService : IAdministratorService
 	//			Transactions
 	// -------------------------------
 
+	/// <returns>All the transactions if any.</returns>
 	public async Task<List<TransactionDisplayViewModel>> GetAllTransactionsAsync() =>
 		await _context.Transactions
 			.Select(t => new TransactionDisplayViewModel
@@ -215,6 +249,7 @@ public class AdministratorService : IAdministratorService
 	//			Bank Settings
 	// -------------------------------
 
+	/// <returns>All the bank settings.</returns>
 	public async Task<BankSettingsDisplayViewModel> GetBankSettingsAsync()
 	{
 		BankSettings settings = await _context.BankSettings.FirstAsync();
@@ -225,6 +260,10 @@ public class AdministratorService : IAdministratorService
 		};
 	}
 
+	/// <summary>
+	/// Edits the transaction fee with a given value.
+	/// </summary>
+	/// <param name="decimalValue">New fee value.</param>
 	public async Task EditTransactionFeeAsync(decimal decimalValue)
 	{
 		BankSettings settings = await _context.BankSettings.FirstAsync();

@@ -29,7 +29,7 @@ public class AdministratorController : Controller
 		try
 		{
 			BankAccountDetailsViewModel account = await _administratorService
-				.GetBankAccountDetailsAsync(id);
+				.GetBankAccountDetailsByIdAsync(id);
 
 			return View(account);
 		}

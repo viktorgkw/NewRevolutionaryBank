@@ -15,7 +15,7 @@ public interface IAdministratorService
 
 	Task<List<BankAccountManageViewModel>> GetAllBankAccountsAsync();
 
-	Task<BankAccountDetailsViewModel> GetBankAccountDetailsAsync(Guid id);
+	Task<BankAccountDetailsViewModel> GetBankAccountDetailsByIdAsync(Guid id);
 
 	// -------------------------------
 	//			User Profiles

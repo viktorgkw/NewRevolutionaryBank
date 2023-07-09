@@ -38,6 +38,10 @@ public class BankAccountService : IBankAccountService
 		_stripeService = stripeService;
 	}
 
+	/// <summary>
+	/// Creates the bank account if provided data is valid.
+	/// </summary>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task CreateAsync(string userName, BankAccountCreateViewModel model)
 	{
 		ApplicationUser? foundUser = await _context.Users
@@ -89,6 +93,9 @@ public class BankAccountService : IBankAccountService
 			"Your new bank account is ready to use!");
 	}
 
+	/// <param name="userName">Username of bank accounts owner.</param>
+	/// <returns>List of the user bank accounts if any.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task<List<BankAccountDisplayViewModel>> GetAllUserAccountsAsync(string userName)
 	{
 		ApplicationUser? foundUser = await _context.Users
@@ -109,6 +116,12 @@ public class BankAccountService : IBankAccountService
 			.ToList();
 	}
 
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <returns></returns>
+	/// <exception cref="ArgumentNullException"></exception>
+	/// <exception cref="InvalidOperationException"></exception>
 	public async Task<BankAccountDetailsViewModel?> GetDetailsByIdAsync(
 		Guid id,
 		string userName)
@@ -165,6 +178,11 @@ public class BankAccountService : IBankAccountService
 		};
 	}
 
+	/// <summary>
+	/// Closes a bank account.
+	/// </summary>
+	/// <param name="id">Id of the bank account.</param>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task CloseAccountByIdAsync(Guid id)
 	{
 		BankAccount? account = await _context.BankAccounts
@@ -183,6 +201,7 @@ public class BankAccountService : IBankAccountService
 		await _context.SaveChangesAsync();
 	}
 
+	/// <returns>All bank accounts.</returns>
 	public Task<List<BankAccountDisplayViewModel>> GetAllBankAccountsAsync()
 		=> _context.BankAccounts
 			.Select(ba => new BankAccountDisplayViewModel
@@ -193,6 +212,8 @@ public class BankAccountService : IBankAccountService
 			})
 			.ToListAsync();
 
+	/// <returns>Model for depositing amount into bank account.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task<DepositViewModel> PrepareDepositViewModel(string userName)
 	{
 		ApplicationUser? user = await _context.Users
@@ -221,6 +242,10 @@ public class BankAccountService : IBankAccountService
 		};
 	}
 
+	/// <summary>
+	/// Deposits amount into bank account.
+	/// </summary>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task DepositAsync(DepositViewModel model)
 	{
 		ArgumentNullException.ThrowIfNull(model);
@@ -257,10 +282,18 @@ public class BankAccountService : IBankAccountService
 		}
 	}
 
+	/// <param name="id">Id of the bank account.</param>
+	/// <param name="userName">Username of the user.</param>
+	/// <returns>True or false if the user is owner of a bank account.</returns>
 	public Task<bool> IsOwner(Guid id, string userName) =>
 		_context.BankAccounts
 			.AnyAsync(ba => ba.Id == id && ba.Owner.UserName == userName);
 
+	/// <summary>
+	/// Checks if the user role is correct,
+	/// because if the user has no bank accounts
+	/// his role will be switched back to Guest.
+	/// </summary>
 	public async Task CheckUserRole(ClaimsPrincipal User)
 	{
 		if (User.IsInRole("AccountHolder"))
@@ -285,9 +318,17 @@ public class BankAccountService : IBankAccountService
 		}
 	}
 
+	/// <summary>
+	/// Generates unique IBAN for a bank account.
+	/// </summary>
+	/// <returns>The generated unique IBAN.</returns>
 	private static string GenerateIBAN() =>
 		$"BG{GenerateRandomIbanPart()}NRB{GenerateRandomIbanPart()}";
 
+	/// <summary>
+	/// Generates single part of the IBAN.
+	/// </summary>
+	/// <returns>The generated part for the IBAN.</returns>
 	private static string GenerateRandomIbanPart()
 	{
 		int ibanPart = 10;

@@ -1,7 +1,6 @@
 ﻿namespace NewRevolutionaryBank.Services;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
@@ -23,6 +22,8 @@ public class TransactionService : ITransactionService
 		_emailSender = emailSender;
 	}
 
+	/// <returns>Prepared model for new transaction.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task<TransactionNewViewModel> PrepareTransactionModelForUserAsync(
 		string userName)
 	{
@@ -49,6 +50,7 @@ public class TransactionService : ITransactionService
 		};
 	}
 
+	/// <returns>The payment result of the transaction.</returns>
 	public async Task<PaymentResult> BeginPaymentAsync(TransactionNewViewModel model)
 	{
 		BankAccount? accountFrom = await _context.BankAccounts
