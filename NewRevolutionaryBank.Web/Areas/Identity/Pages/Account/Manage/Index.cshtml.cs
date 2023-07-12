@@ -66,6 +66,14 @@ public class IndexModel : PageModel
 			return Page();
 		}
 
+		if (string.IsNullOrEmpty(Input.PhoneNumber) ||
+			string.IsNullOrWhiteSpace(Input.PhoneNumber))
+		{
+			StatusMessage = "Error: The phone number cannot be white space!";
+
+			return RedirectToPage();
+		}
+
 		string? phoneNumber = await _userManager.GetPhoneNumberAsync(user);
 
 		if (Input.PhoneNumber != phoneNumber)

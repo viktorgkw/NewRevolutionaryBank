@@ -36,6 +36,14 @@ public class RegisterModel : PageModel
 	public class InputModel
 	{
 		[Required]
+		[Display(Name = "First Name")]
+		public string FirstName { get; set; } = null!;
+
+		[Required]
+		[Display(Name = "Last Name")]
+		public string LastName { get; set; } = null!;
+
+		[Required]
 		[Display(Name = "UserName")]
 		public string UserName { get; set; } = null!;
 
@@ -71,6 +79,9 @@ public class RegisterModel : PageModel
 		if (ModelState.IsValid)
 		{
 			ApplicationUser user = CreateUser();
+
+			user.FirstName = Input.FirstName;
+			user.LastName = Input.LastName;
 
 			await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
 			await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

@@ -10,6 +10,7 @@ using NewRevolutionaryBank.Services;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
+using NewRevolutionaryBank.Web.Extensions;
 using NewRevolutionaryBank.Web.Handlers;
 using NewRevolutionaryBank.Web.Hangfire;
 using NewRevolutionaryBank.Web.Middlewares;
@@ -78,16 +79,11 @@ builder.Services.AddHangfire(config => config.UseSqlServerStorage(connectionStri
 builder.Services.AddHangfireServer();
 
 // Configuring Services
+builder.Services.ServiceConfigurator();
 builder.Services.AddSingleton<IConfiguration>(configuration);
 builder.Services.AddScoped<HangfireJobs>();
 builder.Services.AddScoped<IsDeletedHandler>();
 builder.Services.AddScoped<IEmailSender, MailKitEmailSender>();
-builder.Services.AddScoped<IExchangeCurrencyService, ExchangeCurrencyService>();
-builder.Services.AddScoped<IStripeService, StripeService>();
-builder.Services.AddScoped<IBankAccountService, BankAccountService>();
-builder.Services.AddScoped<IAdministratorService, AdministratorService>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<IRatingService, RatingService>();
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
