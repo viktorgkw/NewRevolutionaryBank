@@ -86,7 +86,9 @@ public class BankAccountServiceTests
 		// Arrange
 		ApplicationUser user = new()
 		{
-			UserName = "testUser"
+			UserName = "testUser",
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		_dbContext.Users.Add(user);
@@ -108,7 +110,9 @@ public class BankAccountServiceTests
 		// Arrange
 		ApplicationUser user = new()
 		{
-			UserName = "testUser"
+			UserName = "testUser",
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		_dbContext.Users.Add(user);
@@ -130,7 +134,9 @@ public class BankAccountServiceTests
 		// Arrange
 		ApplicationUser user = new()
 		{
-			UserName = "testUser"
+			UserName = "testUser",
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		_dbContext.Users.Add(user);
@@ -161,7 +167,9 @@ public class BankAccountServiceTests
 		// Arrange
 		ApplicationUser user = new()
 		{
-			UserName = "testUser"
+			UserName = "testUser",
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		_dbContext.Users.Add(user);
@@ -201,6 +209,8 @@ public class BankAccountServiceTests
 		ApplicationUser user = new()
 		{
 			UserName = userName,
+			FirstName = "FirstName",
+			LastName = "LastName",
 			BankAccounts = new List<BankAccount>
 			{
 				new BankAccount()
@@ -239,7 +249,9 @@ public class BankAccountServiceTests
 
 		ApplicationUser user = new()
 		{
-			UserName = userName
+			UserName = userName,
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		_dbContext.Users.Add(user);
@@ -263,7 +275,9 @@ public class BankAccountServiceTests
 		ApplicationUser owner = new()
 		{
 			Id = Guid.NewGuid(),
-			UserName = "testuser"
+			UserName = "testuser",
+			FirstName = "FirstName",
+			LastName = "LastName"
 		};
 
 		BankAccount accountOne = new()
@@ -549,7 +563,12 @@ public class BankAccountServiceTests
 		BankAccount account = new()
 		{
 			Id = id,
-			Owner = new ApplicationUser { UserName = userName },
+			Owner = new ApplicationUser
+			{
+				UserName = userName,
+				FirstName = "FirstName",
+				LastName = "LastName"
+			},
 			Address = "TestAddress",
 			IBAN = "TestIBAN",
 			UnifiedCivilNumber = "TestUCN"
@@ -571,7 +590,12 @@ public class BankAccountServiceTests
 		// Arrange
 		BankAccount account = new()
 		{
-			Owner = new ApplicationUser { UserName = "Josh" },
+			Owner = new ApplicationUser
+			{
+				UserName = "Josh",
+				FirstName = "FirstName",
+				LastName = "LastName"
+			},
 			Address = "TestAddress",
 			IBAN = "TestIBAN",
 			UnifiedCivilNumber = "TestUCN"

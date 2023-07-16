@@ -36,8 +36,6 @@ public class AvatarModel : PageModel
 			return RedirectToPage();
 		}
 
-		// TODO: load current avatar if any
-
 		return Page();
 	}
 

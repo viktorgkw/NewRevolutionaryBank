@@ -15,9 +15,14 @@ public class ProfileService : IProfileService
 
 	public ProfileService(NrbDbContext context) => _context = context;
 
+	/// <returns>View model of the user profile.</returns>
+	/// <exception cref="ArgumentNullException"></exception>
 	public async Task<MyProfileViewModel> GetProfileDataAsync(string userName)
 	{
-		ApplicationUser user = await _context.Users.FirstAsync(u => u.UserName == userName);
+		ApplicationUser? user = await _context.Users
+			.FirstOrDefaultAsync(u => u.UserName == userName);
+
+		ArgumentNullException.ThrowIfNull(user);
 
 		return new MyProfileViewModel
 		{

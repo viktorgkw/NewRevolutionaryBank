@@ -38,6 +38,8 @@ public class TransactionServiceTests
 		ApplicationUser user = new()
 		{
 			UserName = userName,
+			FirstName = "FirstName",
+			LastName = "LastName",
 			BankAccounts = new List<BankAccount>
 			{
 				new()
@@ -90,8 +92,18 @@ public class TransactionServiceTests
 			UnifiedCivilNumber = "0123456789"
 		};
 
-		ApplicationUser userFrom = new() { Email = "from@test.com" };
-		ApplicationUser userTo = new() { Email = "to@test.com" };
+		ApplicationUser userFrom = new()
+		{
+			Email = "from@test.com",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
+		ApplicationUser userTo = new()
+		{
+			Email = "to@test.com",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
 		BankSettings bankSettings = new() { TransactionFee = 1 };
 
 		userFrom.BankAccounts.Add(accountFrom);
@@ -140,8 +152,18 @@ public class TransactionServiceTests
 		string accFromIBAN = "1234567891011121314151617";
 		string accToIBAN = "1716151413121110987654321";
 
-		ApplicationUser userFrom = new() { Email = "from@test.com" };
-		ApplicationUser userTo = new() { Email = "to@test.com" };
+		ApplicationUser userFrom = new()
+		{
+			Email = "from@test.com",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
+		ApplicationUser userTo = new()
+		{
+			Email = "to@test.com",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
 
 		BankAccount accountFrom = new()
 		{

@@ -16,11 +16,40 @@ public class ProfileController : Controller
 
 	public async Task<IActionResult> MyProfile()
 	{
-		MyProfileViewModel profile = await _profileService
+		try
+		{
+			MyProfileViewModel profile = await _profileService
 			.GetProfileDataAsync(User.Identity!.Name!);
 
-		ViewData["Title"] = $"{profile.FirstName}'s profile";
+			ViewData["Title"] = $"{profile.FirstName}'s profile";
 
-		return View(profile);
+			return View(profile);
+		}
+		catch (ArgumentNullException)
+		{
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "User profile error occurred!",
+					description = "There might be a problem with your profile, contact support as soon as possible so we can fix the problem!",
+					isNotFound = false
+				}
+			);
+		}
+		catch
+		{
+			return RedirectToAction(
+				"Error",
+				"Home",
+				new
+				{
+					title = "Unknown error occurred!",
+					description = "Contact support the details for help!",
+					isNotFound = false
+				}
+			);
+		}
 	}
 }

@@ -53,6 +53,8 @@ public class DatabaseTests
 			ApplicationUser user = new()
 			{
 				UserName = "TestUser",
+				FirstName = "FirstTestUser",
+				LastName = "LastTestUser",
 				Email = "testuseremail@example.com",
 				EmailConfirmed = true
 			};

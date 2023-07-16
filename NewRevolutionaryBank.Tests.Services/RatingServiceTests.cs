@@ -29,8 +29,24 @@ public class RatingServiceTests
 		// Arrange
 		using NrbDbContext context = new(_dbContextOptions);
 
-		Rating rating1 = new() { RatedBy = new ApplicationUser { UserName = "TestUser1" } };
-		Rating rating2 = new() { RatedBy = new ApplicationUser { UserName = "TestUser2" } };
+		Rating rating1 = new()
+		{
+			RatedBy = new ApplicationUser
+			{
+				UserName = "TestUser1",
+				FirstName = "FirstName",
+				LastName = "LastName"
+			}
+		};
+		Rating rating2 = new()
+		{
+			RatedBy = new ApplicationUser
+			{
+				UserName = "TestUser2",
+				FirstName = "FirstName",
+				LastName = "LastName"
+			}
+		};
 
 		context.Ratings.AddRange(rating1, rating2);
 
@@ -56,7 +72,12 @@ public class RatingServiceTests
 		string userName = "TestUser";
 		Rating rating = new()
 		{
-			RatedBy = new ApplicationUser { UserName = userName }
+			RatedBy = new ApplicationUser
+			{
+				UserName = userName,
+				FirstName = "FirstName",
+				LastName = "LastName"
+			}
 		};
 		context.Ratings.Add(rating);
 		await context.SaveChangesAsync();

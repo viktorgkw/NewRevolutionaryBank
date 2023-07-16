@@ -236,6 +236,8 @@ public class AdministratorServiceTests
 		{
 			Id = Guid.NewGuid(),
 			UserName = "TestUserOne",
+			FirstName = "FirstName",
+			LastName = "LastName",
 			Email = "testuser1@example.com",
 			IsDeleted = false
 		};
@@ -244,6 +246,8 @@ public class AdministratorServiceTests
 		{
 			Id = Guid.NewGuid(),
 			UserName = "TestUserTwo",
+			FirstName = "FirstName",
+			LastName = "LastName",
 			Email = "testuser2@example.com",
 			IsDeleted = false
 		};
