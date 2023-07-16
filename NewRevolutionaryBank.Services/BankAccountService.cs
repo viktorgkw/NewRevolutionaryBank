@@ -49,8 +49,6 @@ public class BankAccountService : IBankAccountService
 			.FirstOrDefaultAsync(user => user.UserName == userName);
 
 		ArgumentNullException.ThrowIfNull(foundUser);
-		ArgumentNullException.ThrowIfNull(model.UnifiedCivilNumber);
-		ArgumentNullException.ThrowIfNull(model.Address);
 
 		if (foundUser.BankAccounts.Count(ba => !ba.IsClosed) >= 5)
 		{

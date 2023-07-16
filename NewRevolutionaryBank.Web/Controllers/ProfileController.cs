@@ -19,7 +19,7 @@ public class ProfileController : Controller
 		try
 		{
 			MyProfileViewModel profile = await _profileService
-			.GetProfileDataAsync(User.Identity!.Name!);
+				.GetProfileDataAsync(User.Identity!.Name!);
 
 			ViewData["Title"] = $"{profile.FirstName}'s profile";
 

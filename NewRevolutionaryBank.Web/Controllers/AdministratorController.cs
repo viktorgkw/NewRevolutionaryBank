@@ -40,8 +40,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);
@@ -64,8 +64,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);
@@ -88,8 +88,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);
@@ -126,8 +126,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);
@@ -150,8 +150,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);
@@ -175,8 +175,8 @@ public class AdministratorController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Id!",
+					description = $"Account with Id {id} does not exist!",
 					isNotFound = false
 				}
 			);

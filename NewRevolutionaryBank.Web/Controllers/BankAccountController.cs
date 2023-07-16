@@ -45,8 +45,8 @@ public partial class BankAccountController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Problem occurred while creating a bank account!",
+					description = "User profile does not exist!",
 					isNotFound = false
 				}
 			);
@@ -73,21 +73,8 @@ public partial class BankAccountController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
-					isNotFound = false
-				}
-			);
-		}
-		catch (InvalidOperationException)
-		{
-			return RedirectToAction(
-				"Error",
-				"Home",
-				new
-				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Problem occurred while retrieving bank accounts!",
+					description = "User profile does not exist!",
 					isNotFound = false
 				}
 			);
@@ -114,8 +101,8 @@ public partial class BankAccountController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Bank Account!",
+					description = $"Bank account with id {id} is not found!",
 					isNotFound = false
 				}
 			);
@@ -137,7 +124,7 @@ public partial class BankAccountController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
+					title = "Invalid bank account data!",
 					description = "Contact support the details for help!",
 					isNotFound = false
 				}
@@ -166,8 +153,8 @@ public partial class BankAccountController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Invalid Bank Account!",
+					description = $"Bank account with id {id} is not found!",
 					isNotFound = false
 				}
 			);
@@ -187,15 +174,15 @@ public partial class BankAccountController : Controller
 
 			return View(model);
 		}
-		catch (Exception)
+		catch (ArgumentNullException)
 		{
 			return RedirectToAction(
 				"Error",
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "Problem occurred while trying to deposit!",
+					description = "User profile does not exist!",
 					isNotFound = false
 				}
 			);

@@ -46,20 +46,12 @@ public class RatingController : Controller
 	[HttpPost]
 	public async Task<IActionResult> RateUs(Rating model)
 	{
-		ApplicationUser? currUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
+		ApplicationUser? currUser = await _userManager
+			.FindByNameAsync(User.Identity!.Name!);
 
 		if (currUser is null)
 		{
-			return RedirectToAction(
-				"Error",
-				"Home",
-				new
-				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
-					isNotFound = false
-				}
-			);
+			return Unauthorized();
 		}
 
 		model.RatedBy = currUser;

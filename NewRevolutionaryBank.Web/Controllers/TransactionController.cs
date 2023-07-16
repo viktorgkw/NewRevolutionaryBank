@@ -34,8 +34,8 @@ public class TransactionController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "User not found!",
+					description = "There might be problem with your profile! Contact our support the details for help!",
 					isNotFound = false
 				}
 			);
@@ -80,8 +80,8 @@ public class TransactionController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
+					title = "User not found!",
+					description = "There might be problem with your profile! Contact our support the details for help!",
 					isNotFound = false
 				}
 			);
@@ -102,9 +102,9 @@ public class TransactionController : Controller
 				"Home",
 				new
 				{
-					title = "Unknown error occurred!",
-					description = "Contact support the details for help!",
-					isNotFound = false
+					title = "404",
+					description = "The page you are trying to access does not exist!",
+					isNotFound = true
 				}
 			);
 	}

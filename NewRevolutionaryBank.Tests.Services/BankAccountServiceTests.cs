@@ -83,54 +83,6 @@ public class BankAccountServiceTests
 	}
 
 	[Fact]
-	public async Task CreateAsync_ShouldThrowException_WhenAddressIsNull()
-	{
-		// Arrange
-		ApplicationUser user = new()
-		{
-			UserName = "testUser",
-			FirstName = "FirstName",
-			LastName = "LastName"
-		};
-
-		_dbContext.Users.Add(user);
-		await _dbContext.SaveChangesAsync();
-
-		BankAccountCreateViewModel model = new()
-		{
-			UnifiedCivilNumber = "123456789"
-		};
-
-		// Act & Assert
-		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-			await _bankAccountService.CreateAsync(user.UserName, model));
-	}
-
-	[Fact]
-	public async Task CreateAsync_ShouldThrowException_WhenUCNIsNull()
-	{
-		// Arrange
-		ApplicationUser user = new()
-		{
-			UserName = "testUser",
-			FirstName = "FirstName",
-			LastName = "LastName"
-		};
-
-		_dbContext.Users.Add(user);
-		await _dbContext.SaveChangesAsync();
-
-		BankAccountCreateViewModel model = new()
-		{
-			Address = "Test Address"
-		};
-
-		// Act & Assert
-		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-			await _bankAccountService.CreateAsync(user.UserName, model));
-	}
-
-	[Fact]
 	public async Task CreateAsync_ShouldNotAddNew_WhenUserHasMaxBankAccounts()
 	{
 		// Arrange

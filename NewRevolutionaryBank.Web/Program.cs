@@ -108,6 +108,7 @@ app.UseStaticFiles();
 
 // Middlewares
 app.UseMiddleware<IsDeletedMiddleware>();
+app.UseMiddleware<NotFoundMiddleware>();
 
 app.UseRouting();
 
