@@ -14,12 +14,21 @@
 			aria-labelledby="dropdownProfile">
 			<li class="py-2">
 				<a class="nav-link text-white fw-bold"
+				   asp-controller="Profile"
+				   asp-action="MyProfile">
+					My Profile
+				</a>
+			</li>
+
+			<li class="py-2">
+				<a class="nav-link text-white fw-bold"
 				   asp-area="Identity"
 				   asp-page="/Account/Manage/Index"
 				   title="Manage">
 					Settings
 				</a>
 			</li>
+
 			<li class="py-2">
 				<a class="nav-link text-white fw-bold"
 				   asp-area="Identity"

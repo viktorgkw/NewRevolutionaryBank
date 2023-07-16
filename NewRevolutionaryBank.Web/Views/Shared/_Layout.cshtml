@@ -59,12 +59,34 @@
 								Home
 							</a>
 						</li>
-						<li class="nav-item">
-							<a class="nav-link text-white fw-bold"
-							   asp-controller="ExchangeCurrency"
-							   asp-action="All">
-								Currency Exchange Rates
+
+						<li class="dropdown">
+							<a class="btn btn-close-white dropdown-toggle fw-bold"
+							   href="#"
+							   role="button"
+							   id="dropdownProfile"
+							   data-bs-toggle="dropdown"
+							   aria-expanded="false">
+								Currencies
 							</a>
+
+							<ul class="dropdown-menu dropdown-menu-end bg-dark"
+								aria-labelledby="dropdownProfile">
+								<li class="py-2">
+									<a class="nav-link text-white fw-bold"
+									   asp-controller="ExchangeCurrency"
+									   asp-action="All">
+										Currency Exchange Rates
+									</a>
+								</li>
+								<li class="py-2">
+									<a class="nav-link text-white fw-bold"
+									   asp-controller="ExchangeCurrency"
+									   asp-action="CurrencyCalculator">
+										Currency Calculator
+									</a>
+								</li>
+							</ul>
 						</li>
 						@if (User.IsInRole("Guest"))
 						{

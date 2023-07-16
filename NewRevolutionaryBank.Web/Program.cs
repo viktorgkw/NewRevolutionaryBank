@@ -12,6 +12,7 @@ using NewRevolutionaryBank.Web.Extensions;
 using NewRevolutionaryBank.Web.Handlers;
 using NewRevolutionaryBank.Web.Hangfire;
 using NewRevolutionaryBank.Web.Middlewares;
+using Stripe;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -78,10 +79,8 @@ builder.Services.AddHangfireServer();
 
 // Configuring Services
 builder.Services.ServiceConfigurator();
+builder.Services.ConfigureOtherServices();
 builder.Services.AddSingleton<IConfiguration>(configuration);
-builder.Services.AddScoped<HangfireJobs>();
-builder.Services.AddScoped<IsDeletedHandler>();
-builder.Services.AddScoped<IEmailSender, MailKitEmailSender>();
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -128,9 +127,11 @@ using (IServiceScope initScope = app.Services.CreateScope())
 	NrbDbContext context = initScope.ServiceProvider
 		.GetRequiredService<NrbDbContext>();
 
-	DbSeeder
-		.SeedRolesAndAdministratorAsync(roleManager, userManager, context, configuration)
-		.Wait();
+	await DbSeeder.SeedRolesAndAdministratorAsync(
+		roleManager,
+		userManager,
+		context,
+		configuration);
 }
 
 app.UseHangfireDashboard();

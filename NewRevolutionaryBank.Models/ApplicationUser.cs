@@ -22,14 +22,14 @@ public class ApplicationUser : IdentityUser<Guid>
 		UserConstants.FirstNameMaxLength,
 		MinimumLength = UserConstants.FirstNameMinLength,
 		ErrorMessage = "First name should be between {0} and {1}!")]
-	public string? FirstName { get; set; }
+	public string FirstName { get; set; } = null!;
 
 	[Comment("Фамилия")]
 	[StringLength(
 		UserConstants.LastNameMaxLength,
 		MinimumLength = UserConstants.LastNameMinLength,
 		ErrorMessage = "Last name should be between {0} and {1}!")]
-	public string? LastName { get; set; }
+	public string LastName { get; set; } = null!;
 
 	[Comment("Дата на създаване")]
 	public DateTime CreatedOn { get; set; }

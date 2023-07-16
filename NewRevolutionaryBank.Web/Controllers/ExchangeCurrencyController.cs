@@ -28,4 +28,19 @@ public class ExchangeCurrencyController : Controller
 			return View(null);
 		}
 	}
+
+	[AllowAnonymous]
+	public async Task<IActionResult> CurrencyCalculator()
+	{
+		try
+		{
+			ConversionRate rates = await _currencyService.GetRates();
+
+			return View(rates);
+		}
+		catch (InvalidOperationException)
+		{
+			return View(null);
+		}
+	}
 }

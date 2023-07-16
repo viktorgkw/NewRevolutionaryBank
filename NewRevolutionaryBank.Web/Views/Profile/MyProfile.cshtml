@@ -1,0 +1,48 @@
+﻿@model MyProfileViewModel
+
+<div class="text-center">
+	<div>
+		<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+		<hr />
+		<br />
+	</div>
+
+	<div class="d-flex flex-column align-items-center">
+		<div>
+			@if (Model.Avatar is null)
+			{
+				<img class="rounded mb-5"
+					 src="~/images/default-user-avatar.png"
+					 alt="Avatar"
+					 width="200"
+					 height="200">
+			}
+			else
+			{
+				<img class="rounded mb-5"
+					 src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Avatar!))"
+					 alt="Avatar"
+					 width="200"
+					 height="200">
+			}
+		</div>
+
+		<div class="border border-success py-3 px-5 mb-5">
+			<p class="fs-4 text-success mb-0">Created On: @Model.CreatedOn</p>
+		</div>
+
+		<div class="border border-info py-3 px-5 mb-5">
+			<p class="fs-4 text-info">Username: @Model.UserName</p>
+			<p class="fs-4 text-info">First Name: @Model.FirstName</p>
+			<p class="fs-4 text-info mb-0">Last Name: @Model.LastName</p>
+		</div>
+
+		<div class="border border-warning py-3 px-5 mb-5">
+			@if (Model.PhoneNumber is not null)
+			{
+				<p class="fs-4 text-warning">PhoneNumber: @Model.PhoneNumber</p>
+			}
+			<p class="fs-4 text-warning mb-0">Email: @Model.Email</p>
+		</div>
+	</div>
+</div>

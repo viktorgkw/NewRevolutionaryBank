@@ -1,0 +1,74 @@
+﻿@model ConversionRate
+@{
+	ViewData["Title"] = "Currency Calculator";
+
+	List<SelectListItem> items = new();
+
+	@foreach (var property in typeof(ConversionRate).GetProperties())
+	{
+		items.Add(new()
+				{
+					Text = $"{property.Name} {property.GetValue(Model):F2}",
+					Value = $"{property.GetValue(Model):F2}"
+				});
+	}
+}
+
+<div class="text-center">
+	<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+	<i class="text-info">The default exchange currency is USD!</i>
+
+	<hr />
+	<br />
+
+	<div class="bg-info text-white fw-bold py-5 container-md w-75">
+		<div class="d-flex flex-column align-items-center mb-5">
+			<p class="fs-4">You pay:</p>
+
+			<input class="fw-bold form-control"
+				   type="number"
+				   placeholder="In USD"
+				   step="0.01"
+				   value="0"
+				   min="0"
+				   id="usd"
+				   onchange="handleResultChange()" />
+		</div>
+
+		<div class="d-flex flex-column align-items-center mb-5">
+			<p class="fs-4">Convert to:</p>
+
+			@Html.DropDownList(
+			"myDropdown",
+			items,
+			null,
+			new
+			{
+			@class = "text-info bg-white fw-bold border border-dark w-100",
+			onchange = "handleResultChange()",
+			id = "currency-dropdown"
+			})
+		</div>
+
+		<div>
+			<p class="fs-4">You recieve:</p>
+
+			<input class="fw-bold form-control"
+				   placeholder="Result"
+				   id="result"
+				   readonly />
+		</div>
+	</div>
+</div>
+
+@section Scripts{
+	<script>
+		function handleResultChange() {
+			let usd = Number(document.getElementById("usd").value);
+			let dropdown = document.getElementById("currency-dropdown").value;
+			let resultInput = document.getElementById("result");
+
+			resultInput.value = (usd * dropdown).toFixed(2);
+		}
+	</script>
+}
