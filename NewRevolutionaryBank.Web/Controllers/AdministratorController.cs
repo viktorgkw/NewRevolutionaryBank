@@ -211,4 +211,13 @@ public class AdministratorController : Controller
 
 		return RedirectToAction("ManageBankSettings", "Administrator");
 	}
+
+	[HttpGet]
+	public async Task<IActionResult> Statistics()
+	{
+		WebsiteStatisticsViewModel statistics = await _administratorService
+			.GetWebsiteStatisticsAsync();
+
+		return View(statistics);
+	}
 }

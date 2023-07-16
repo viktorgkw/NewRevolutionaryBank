@@ -18,6 +18,7 @@ using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Tests.Services.Mocks;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 using System.Reflection;
+using Stripe.FinancialConnections;
 
 public class BankAccountServiceTests
 {
@@ -53,7 +54,8 @@ public class BankAccountServiceTests
 			new Mock<IHttpContextAccessor>().Object,
 			new Mock<IUserClaimsPrincipalFactory<ApplicationUser>>().Object,
 			new Mock<IOptions<IdentityOptions>>().Object,
-			null, null);
+			null,
+			null);
 
 		_stripeService = new StripeService();
 		_emailSender = new MockEmailSender();
@@ -269,6 +271,17 @@ public class BankAccountServiceTests
 	}
 
 	[Fact]
+	public async Task GetAllUserAccountsAsync_ThrowsArgumentNullException_OnNotExistingUser()
+	{
+		// Arrange
+		string userName = "testUser";
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.GetAllUserAccountsAsync(userName));
+	}
+
+	[Fact]
 	public async Task GetDetailsByIdAsync_WithValidData_ReturnsViewModel()
 	{
 		// Arrange
@@ -372,6 +385,40 @@ public class BankAccountServiceTests
 	}
 
 	[Fact]
+	public async Task GetDetailsByIdAsync_ThrowsArgumentNullException_OnNotExistingAccount()
+	{
+		// Arrange
+		ApplicationUser owner = new()
+		{
+			Id = Guid.NewGuid(),
+			UserName = "testuser",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
+
+		_dbContext.Users.Add(owner);
+		await _dbContext.SaveChangesAsync();
+
+		Guid randomGuid = Guid.NewGuid();
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.GetDetailsByIdAsync(randomGuid, owner.UserName));
+	}
+
+	[Fact]
+	public async Task GetDetailsByIdAsync_ThrowsArgumentNullException_OnNotExistingProfile()
+	{
+		// Arrange
+		Guid randomGuid = Guid.NewGuid();
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+		await _bankAccountService
+			.GetDetailsByIdAsync(randomGuid, "random"));
+	}
+
+	[Fact]
 	public async Task CloseAccountByIdAsync_ClosesBankAccount()
 	{
 		// Arrange
@@ -428,6 +475,123 @@ public class BankAccountServiceTests
 		// Assert
 		Assert.Equal(deletedAt, deletedAtLate);
 	}
+
+	[Fact]
+	public async Task CloseAccountByIdAsync_ThrowsArgumentNullException_OnNotExistingAccount()
+	{
+		// Arrange
+		Guid id = Guid.NewGuid();
+
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.CloseAccountByIdAsync(id));
+	}
+
+	[Fact]
+	public async Task GetAllBankAccountsAsync_ReturnsAllBankAccounts()
+	{
+		// Arrange
+		int expectedCount = 2;
+
+		ApplicationUser owner = new()
+		{
+			Id = Guid.NewGuid(),
+			UserName = "testuser",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
+
+		BankAccount accountOne = new()
+		{
+			Id = Guid.NewGuid(),
+			Owner = owner,
+			Address = "TestAddress1",
+			IBAN = "TestIBAN1",
+			UnifiedCivilNumber = "TestUCN1",
+			Balance = 100,
+			OwnerId = owner.Id
+		};
+
+		BankAccount accountTwo = new()
+		{
+			Id = Guid.NewGuid(),
+			Owner = owner,
+			Address = "TestAddress2",
+			IBAN = "TestIBAN2",
+			UnifiedCivilNumber = "TestUCN2",
+			Balance = 100,
+			OwnerId = owner.Id
+		};
+
+		_dbContext.Users.Add(owner);
+		_dbContext.BankAccounts.Add(accountOne);
+		_dbContext.BankAccounts.Add(accountTwo);
+
+		await _dbContext.SaveChangesAsync();
+
+		// Act
+		List<BankAccountDisplayViewModel> result = await _bankAccountService
+			.GetAllBankAccountsAsync();
+
+		Assert.NotNull(result);
+		Assert.Equal(expectedCount, result.Count);
+	}
+
+	[Fact]
+	public async Task PrepareDepositViewModel_Returns_CorrectModel()
+	{
+		// Arrange
+		ApplicationUser owner = new()
+		{
+			Id = Guid.NewGuid(),
+			UserName = "testuser",
+			FirstName = "FirstName",
+			LastName = "LastName"
+		};
+
+		BankAccount accountOne = new()
+		{
+			Id = Guid.NewGuid(),
+			Owner = owner,
+			Address = "TestAddress1",
+			IBAN = "TestIBAN1",
+			UnifiedCivilNumber = "TestUCN1",
+			Balance = 100,
+			OwnerId = owner.Id
+		};
+
+		BankAccount accountTwo = new()
+		{
+			Id = Guid.NewGuid(),
+			Owner = owner,
+			Address = "TestAddress2",
+			IBAN = "TestIBAN2",
+			UnifiedCivilNumber = "TestUCN2",
+			Balance = 100,
+			OwnerId = owner.Id
+		};
+
+		_dbContext.Users.Add(owner);
+		_dbContext.BankAccounts.Add(accountOne);
+		_dbContext.BankAccounts.Add(accountTwo);
+
+		await _dbContext.SaveChangesAsync();
+
+		// Act
+		DepositViewModel result = await _bankAccountService
+			.PrepareDepositViewModel(owner.UserName);
+
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal(2, result.MyAccounts.Count);
+		Assert.NotNull(result.StripePayment.Id);
+	}
+
+	[Fact]
+	public async Task PrepareDepositViewModel_ThrowsException() =>
+		// Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+			await _bankAccountService.PrepareDepositViewModel("RandomUsername"));
 
 	[Fact]
 	public async Task DepositAsync_MakesDepositToBankAccount()

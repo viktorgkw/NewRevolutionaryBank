@@ -230,6 +230,36 @@ public class AdministratorServiceTests
 		Assert.Equal(newTransactionFee, bankSettings.TransactionFee);
 	}
 
+	[Fact]
+	public async Task GetWebsiteStatistics_Returns_CorrectStatistics()
+	{
+		// Arrange
+		decimal expectedAverageDepositPrice = 0.00m;
+		decimal expectedAverageTransactionPrice = 15.00m;
+		double expectedWebsiteReviewRate = 0.00d;
+		decimal expectedNewUsers = 2;
+		decimal expectedTotalBankAccounts = 2;
+		decimal expectedTotalDeposits = 0;
+		decimal expectedTotalRegisteredUsers = 2;
+		decimal expectedTotalReviews = 0;
+		decimal expectedTransactions = 1;
+
+		// Act
+		WebsiteStatisticsViewModel result = await _administratorService
+			.GetWebsiteStatisticsAsync();
+
+		// Assert
+		Assert.Equal(expectedAverageDepositPrice, result.AverageDepositPrice);
+		Assert.Equal(expectedAverageTransactionPrice, result.AverageTransactionPrice);
+		Assert.Equal(expectedWebsiteReviewRate, result.AverageWebsiteReviewRate);
+		Assert.Equal(expectedNewUsers, result.NewUsers);
+		Assert.Equal(expectedTotalBankAccounts, result.TotalBankAccounts);
+		Assert.Equal(expectedTotalDeposits, result.TotalDeposits);
+		Assert.Equal(expectedTotalRegisteredUsers, result.TotalRegisteredUsers);
+		Assert.Equal(expectedTotalReviews, result.TotalReviews);
+		Assert.Equal(expectedTransactions, result.TotalTransactions);
+	}
+
 	private void InitializeData()
 	{
 		ApplicationUser user1 = new()

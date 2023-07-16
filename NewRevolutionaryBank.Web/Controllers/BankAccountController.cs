@@ -227,6 +227,13 @@ public partial class BankAccountController : Controller
 
 			return RedirectToAction("MyAccounts", "BankAccount");
 		}
+		catch (ArgumentNullException)
+		{
+			DepositViewModel newModel = await _bankAccountService
+					.PrepareDepositViewModel(User.Identity!.Name!);
+
+			return View(newModel);
+		}
 		catch (Exception)
 		{
 			return RedirectToAction(

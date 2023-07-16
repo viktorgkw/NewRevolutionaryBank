@@ -44,4 +44,10 @@ public interface IAdministratorService
 	Task<BankSettingsDisplayViewModel> GetBankSettingsAsync();
 
 	Task EditTransactionFeeAsync(decimal decimalValue);
+
+	// ------------------------------
+	//		Website Statistics
+	// ------------------------------
+
+	Task<WebsiteStatisticsViewModel> GetWebsiteStatisticsAsync();
 }

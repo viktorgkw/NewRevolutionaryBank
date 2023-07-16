@@ -1,0 +1,96 @@
+﻿@model WebsiteStatisticsViewModel
+@{
+	ViewData["Title"] = "Website Statistics";
+}
+
+<div class="d-flex flex-column align-items-center">
+	<div>
+		<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+		<hr />
+		<br />
+	</div>
+
+	<img src="~/gifs/statistics.gif"
+		 class="website-gif-small mb-5 rounded"
+		 alt="gif" />
+
+	<div class="d-flex flex-column align-items-center bg-dark text-white rounded w-50 py-5 fw-bold fs-5 mx-3 my-3">
+		<div class="d-flex flex-column text-center">
+			<p class="fs-4 mb-0 text-info">PROFILES RELATED</p>
+			<hr />
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.TotalRegisteredUsers):
+				@Html.DisplayFor(s => s.TotalRegisteredUsers)
+			</div>
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.NewUsers):
+				@Html.DisplayFor(s => s.NewUsers)
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex flex-column align-items-center bg-dark text-white rounded w-50 py-5 fw-bold fs-5 mx-3 my-3">
+		<div class="d-flex flex-column text-center">
+			<p class="fs-4 mb-0 text-info">BANK ACCOUNTS RELATED</p>
+			<hr />
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.TotalBankAccounts):
+				@Html.DisplayFor(s => s.TotalBankAccounts)
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex flex-column align-items-center bg-dark text-white rounded w-50 py-5 fw-bold fs-5 mx-3 my-3 ">
+		<div class="d-flex flex-column text-center">
+			<p class="fs-4 mb-0 text-info">TRANSACTIONS RELATED</p>
+			<hr />
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.TotalTransactions):
+				@Html.DisplayFor(s => s.TotalTransactions)
+			</div>
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.AverageTransactionPrice):
+				@Html.DisplayFor(s => s.AverageTransactionPrice)
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex flex-column align-items-center bg-dark text-white rounded w-50 py-5 fw-bold fs-5 mx-3 my-3">
+		<div class="d-flex flex-column text-center">
+			<p class="fs-4 mb-0 text-info">DEPOSITS RELATED</p>
+			<hr />
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.TotalDeposits):
+				@Html.DisplayFor(s => s.TotalDeposits)
+			</div>
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.AverageDepositPrice):
+				@Html.DisplayFor(s => s.AverageDepositPrice)
+			</div>
+		</div>
+	</div>
+
+	<div class="d-flex flex-column align-items-center bg-dark text-white rounded w-50 py-5 fw-bold fs-5 mx-3 my-3">
+		<div class="d-flex flex-column text-center">
+			<p class="fs-4 mb-0 text-info">REVIEWS RELATED</p>
+			<hr />
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.TotalReviews):
+				@Html.DisplayFor(s => s.TotalReviews)
+			</div>
+
+			<div class="mb-3">
+				@Html.DisplayNameFor(s => s.AverageWebsiteReviewRate):
+				@Html.DisplayFor(s => s.AverageWebsiteReviewRate)
+			</div>
+		</div>
+	</div>
+</div>

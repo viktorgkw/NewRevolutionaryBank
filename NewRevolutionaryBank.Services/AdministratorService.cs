@@ -256,7 +256,8 @@ public class AdministratorService : IAdministratorService
 
 		return new BankSettingsDisplayViewModel
 		{
-			TransactionFee = settings.TransactionFee
+			TransactionFee = settings.TransactionFee,
+			BankBalance = settings.BankBalance
 		};
 	}
 
@@ -271,5 +272,38 @@ public class AdministratorService : IAdministratorService
 		settings.TransactionFee = decimalValue;
 
 		await _context.SaveChangesAsync();
+	}
+
+	/// <returns>View model with statistics for the website.</returns>
+	public async Task<WebsiteStatisticsViewModel> GetWebsiteStatisticsAsync()
+	{
+		int newUsers = await _context.Users.AnyAsync()
+			? await _context.Users.CountAsync(u => u.CreatedOn.Day == DateTime.Now.Day)
+			: 0;
+
+		decimal averageDepositPrice = await _context.Deposits.AnyAsync()
+			? await _context.Deposits.AverageAsync(d => d.Amount)
+			: 0.00m;
+
+		decimal averageTransactionPrice = await _context.Transactions.AnyAsync()
+			? await _context.Transactions.AverageAsync(t => t.Amount)
+			: 0.00m;
+
+		double averageWebsiteReviewRate = await _context.Ratings.AnyAsync()
+			? await _context.Ratings.AverageAsync(r => r.RateValue)
+			: 0.00d;
+
+		return new()
+		{
+			TotalRegisteredUsers = await _context.Users.CountAsync(),
+			NewUsers = newUsers,
+			TotalBankAccounts = await _context.BankAccounts.CountAsync(),
+			TotalDeposits = await _context.Deposits.CountAsync(),
+			AverageDepositPrice = averageDepositPrice,
+			TotalTransactions = await _context.Transactions.CountAsync(),
+			AverageTransactionPrice = averageTransactionPrice,
+			TotalReviews = await _context.Ratings.CountAsync(),
+			AverageWebsiteReviewRate = averageWebsiteReviewRate
+		};
 	}
 }

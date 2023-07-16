@@ -15,4 +15,7 @@ public class BankSettings
 
 	[Comment("Такса за транзакция")]
 	public decimal TransactionFee { get; set; }
+
+	[Comment("Баланс на банката")]
+	public decimal BankBalance { get; set; }
 }

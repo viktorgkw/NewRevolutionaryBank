@@ -30,9 +30,16 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 				.Property(b => b.Amount)
 				.HasPrecision(18, 2));
 
-		builder.Entity<BankSettings>(options => options
+		builder.Entity<BankSettings>(options =>
+		{
+			options
 				.Property(b => b.TransactionFee)
-				.HasPrecision(18, 2));
+				.HasPrecision(18, 2);
+
+			options
+				.Property(b => b.BankBalance)
+				.HasPrecision(18, 2);
+		});
 
 		builder.Entity<BankAccount>()
 			.Property(b => b.Balance)

@@ -100,6 +100,8 @@ public class TransactionService : ITransactionService
 			accountFrom.Balance -= model.Amount + bankSettings.TransactionFee;
 			accountTo.Balance += model.Amount;
 
+			bankSettings.BankBalance += bankSettings.TransactionFee;
+
 			await _context.SaveChangesAsync();
 
 			await _emailSender.SendEmailAsync(

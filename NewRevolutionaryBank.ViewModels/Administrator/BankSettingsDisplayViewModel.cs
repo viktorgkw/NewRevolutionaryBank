@@ -3,4 +3,6 @@
 public class BankSettingsDisplayViewModel
 {
 	public decimal TransactionFee { get; set; }
+
+	public decimal BankBalance { get; set; }
 }

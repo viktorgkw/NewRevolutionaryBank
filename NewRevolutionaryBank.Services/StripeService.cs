@@ -13,41 +13,37 @@ public class StripeService : IStripeService
 	/// <returns>succeeded</returns>
 	public string MakePayment(StripePayment paymentInfo) => "succeeded";
 
-	/// <summary>
-	/// Not used because the app is in development stage.
-	/// </summary>
-	/// <returns>Payment result</returns>
-	private string RealMakePayment(
-		StripePayment paymentInfo,
-		long chargeAmount,
-		string currency,
-		string description)
-	{
-		TokenCreateOptions tokenOptions = new()
-		{
-			Card = new TokenCardOptions
-			{
-				Number = paymentInfo.CardNumber,
-				ExpYear = paymentInfo.ExpYear,
-				ExpMonth = paymentInfo.ExpMonth,
-				Cvc = paymentInfo.CVC
-			}
-		};
+	//private string RealMakePayment(
+	//	StripePayment paymentInfo,
+	//	long chargeAmount,
+	//	string currency,
+	//	string description)
+	//{
+	//	TokenCreateOptions tokenOptions = new()
+	//	{
+	//		Card = new TokenCardOptions
+	//		{
+	//			Number = paymentInfo.CardNumber,
+	//			ExpYear = paymentInfo.ExpYear,
+	//			ExpMonth = paymentInfo.ExpMonth,
+	//			Cvc = paymentInfo.CVC
+	//		}
+	//	};
 
-		TokenService tokenService = new();
-		Token token = tokenService.Create(tokenOptions);
+	//	TokenService tokenService = new();
+	//	Token token = tokenService.Create(tokenOptions);
 
-		ChargeCreateOptions chargeOptions = new()
-		{
-			Amount = chargeAmount,
-			Currency = currency,
-			Description = description,
-			Source = token.Id
-		};
+	//	ChargeCreateOptions chargeOptions = new()
+	//	{
+	//		Amount = chargeAmount,
+	//		Currency = currency,
+	//		Description = description,
+	//		Source = token.Id
+	//	};
 
-		ChargeService chargeService = new();
-		Charge charge = chargeService.Create(chargeOptions);
+	//	ChargeService chargeService = new();
+	//	Charge charge = chargeService.Create(chargeOptions);
 
-		return charge.Status;
-	}
+	//	return charge.Status;
+	//}
 }
