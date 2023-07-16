@@ -6,6 +6,8 @@ public static class ManageNavPages
 {
 	public static string Index => "Index";
 
+	public static string Avatar => "Avatar";
+
 	public static string Email => "Email";
 
 	public static string ChangePassword => "ChangePassword";
@@ -18,6 +20,9 @@ public static class ManageNavPages
 
 	public static string IndexNavClass(ViewContext viewContext) =>
 		PageNavClass(viewContext, Index);
+
+	public static string AvatarNavClass(ViewContext viewContext) =>
+		PageNavClass(viewContext, Avatar);
 
 	public static string EmailNavClass(ViewContext viewContext) =>
 		PageNavClass(viewContext, Email);

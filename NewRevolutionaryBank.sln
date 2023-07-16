@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Tests.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Tests.ViewModels", "NewRevolutionaryBank.Tests.ViewModels\NewRevolutionaryBank.Tests.ViewModels.csproj", "{FD936204-BC3B-4F1A-98ED-56F37E42FB48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewRevolutionaryBank.Common", "NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj", "{DE5D7503-C807-44C1-A4A0-9DCCB5D7726A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewRevolutionaryBank.Common", "NewRevolutionaryBank.Common\NewRevolutionaryBank.Common.csproj", "{DE5D7503-C807-44C1-A4A0-9DCCB5D7726A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

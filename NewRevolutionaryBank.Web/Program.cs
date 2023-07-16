@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Data.Seeding;
-using NewRevolutionaryBank.Services;
-using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.Extensions;

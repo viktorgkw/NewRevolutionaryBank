@@ -40,5 +40,8 @@ public class ApplicationUser : IdentityUser<Guid>
 	[Comment("Дата на изтриване")]
 	public DateTime? DeletedOn { get; set; }
 
-	public ICollection<BankAccount> BankAccounts { get; set; }
+	[Comment("Аватар на потребителя")]
+	public byte[]? Avatar { get; set; }
+
+    public ICollection<BankAccount> BankAccounts { get; set; }
 }
