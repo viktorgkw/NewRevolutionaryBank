@@ -45,6 +45,8 @@ public interface IAdministratorService
 
 	Task EditTransactionFeeAsync(decimal decimalValue);
 
+	Task EditMonthlyTaxAsync(decimal decimalValue);
+
 	// ------------------------------
 	//		Website Statistics
 	// ------------------------------

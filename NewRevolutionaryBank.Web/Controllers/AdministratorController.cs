@@ -213,6 +213,17 @@ public class AdministratorController : Controller
 	}
 
 	[HttpGet]
+	public IActionResult EditMonthlyTax() => View();
+
+	[HttpPost]
+	public async Task<IActionResult> EditMonthlyTax(decimal decimalValue)
+	{
+		await _administratorService.EditMonthlyTaxAsync(decimalValue);
+
+		return RedirectToAction("ManageBankSettings", "Administrator");
+	}
+
+	[HttpGet]
 	public async Task<IActionResult> Statistics()
 	{
 		WebsiteStatisticsViewModel statistics = await _administratorService

@@ -34,5 +34,14 @@ public static class ConfigureHangfireExtension
             {
 				TimeZone = TimeZoneInfo.Utc
 			});
+
+		RecurringJob.AddOrUpdate(
+			Guid.NewGuid().ToString(),
+			(HangfireJobsExtension service) => service.MonthlyTaxAsync(),
+			Cron.Monthly,
+			new RecurringJobOptions
+			{
+				TimeZone = TimeZoneInfo.Utc
+			});
 	}
 }

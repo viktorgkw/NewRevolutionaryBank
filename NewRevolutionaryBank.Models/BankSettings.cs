@@ -18,4 +18,7 @@ public class BankSettings
 
 	[Comment("Баланс на банката")]
 	public decimal BankBalance { get; set; }
+
+	[Comment("Месечна такса на банката")]
+	public decimal MonthlyTax { get; set; }
 }

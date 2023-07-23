@@ -231,6 +231,21 @@ public class AdministratorServiceTests
 	}
 
 	[Fact]
+	public async Task EditMonthlyTaxAsync_Updates_MonthlyTax()
+	{
+		// Arrange
+		decimal newMonthlyTax = 0.20m;
+
+		// Act
+		await _administratorService.EditMonthlyTaxAsync(newMonthlyTax);
+
+		// Assert
+		BankSettings bankSettings = _dbContext.BankSettings.First();
+
+		Assert.Equal(newMonthlyTax, bankSettings.MonthlyTax);
+	}
+
+	[Fact]
 	public async Task GetWebsiteStatistics_Returns_CorrectStatistics()
 	{
 		// Arrange

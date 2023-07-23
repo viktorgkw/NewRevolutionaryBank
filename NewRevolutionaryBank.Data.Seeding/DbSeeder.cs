@@ -39,9 +39,10 @@ public static class DbSeeder
 	{
 		if (!context.BankSettings.Any())
 		{
-			context.BankSettings.Add(new()
+			await context.BankSettings.AddAsync(new()
 			{
-				TransactionFee = 0.10m
+				TransactionFee = 0.10m,
+				MonthlyTax = 0.50m
 			});
 
 			await context.SaveChangesAsync();

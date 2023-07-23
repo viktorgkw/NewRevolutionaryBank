@@ -257,6 +257,7 @@ public class AdministratorService : IAdministratorService
 		return new BankSettingsDisplayViewModel
 		{
 			TransactionFee = settings.TransactionFee,
+			MonthlyTax = settings.MonthlyTax,
 			BankBalance = settings.BankBalance
 		};
 	}
@@ -305,5 +306,18 @@ public class AdministratorService : IAdministratorService
 			TotalReviews = await _context.Ratings.CountAsync(),
 			AverageWebsiteReviewRate = averageWebsiteReviewRate
 		};
+	}
+
+	/// <summary>
+	/// Edits the monthly tax with a given value.
+	/// </summary>
+	/// <param name="decimalValue">New tax value.</param>
+	public async Task EditMonthlyTaxAsync(decimal decimalValue)
+	{
+		BankSettings settings = await _context.BankSettings.FirstAsync();
+
+		settings.MonthlyTax = decimalValue;
+
+		await _context.SaveChangesAsync();
 	}
 }
