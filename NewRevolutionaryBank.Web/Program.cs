@@ -6,13 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Data.Seeding;
-using NewRevolutionaryBank.Services.Messaging;
-using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.Extensions;
-using NewRevolutionaryBank.Web.Handlers;
-using NewRevolutionaryBank.Web.Hangfire;
 using NewRevolutionaryBank.Web.Middlewares;
-using Stripe;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -135,33 +130,8 @@ using (IServiceScope initScope = app.Services.CreateScope())
 		configuration);
 }
 
+// Hangfire
 app.UseHangfireDashboard();
-
-RecurringJob.AddOrUpdate(
-	Guid.NewGuid().ToString(),
-	(HangfireJobs service) => service.DeleteNotVerifiedAsync(),
-	Cron.Daily,
-	new RecurringJobOptions
-	{
-		TimeZone = TimeZoneInfo.Utc
-	});
-
-RecurringJob.AddOrUpdate(
-	Guid.NewGuid().ToString(),
-	(HangfireJobs service) => service.DeleteThreeYearOldAccountsAsync(),
-	Cron.Weekly,
-	new RecurringJobOptions
-	{
-		TimeZone = TimeZoneInfo.Utc
-	});
-
-RecurringJob.AddOrUpdate(
-	Guid.NewGuid().ToString(),
-	(HangfireJobs service) => service.DeleteClosedAccountsAfterYearAsync(),
-	Cron.Weekly,
-	new RecurringJobOptions
-	{
-		TimeZone = TimeZoneInfo.Utc
-	});
+HangfireJobsExtension.ConfigureJobs();
 
 await app.RunAsync();

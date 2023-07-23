@@ -1,4 +1,4 @@
-﻿namespace NewRevolutionaryBank.Web.Hangfire;
+﻿namespace NewRevolutionaryBank.Web.HangfireJobs;
 
 using Microsoft.EntityFrameworkCore;
 

@@ -1,4 +1,4 @@
-﻿namespace NewRevolutionaryBank.Tests.Services;
+﻿namespace NewRevolutionaryBank.Tests.Models;
 
 using Xunit;
 
