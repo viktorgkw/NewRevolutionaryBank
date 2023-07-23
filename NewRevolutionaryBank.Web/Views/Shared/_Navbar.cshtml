@@ -18,7 +18,7 @@
 					<a class="nav-link text-white fw-bold"
 					   asp-controller="Home"
 					   asp-action="Index">
-						Home
+						<i class="fa fa-light fa-house"></i> Home
 					</a>
 				</li>
 
@@ -26,26 +26,26 @@
 					<a class="btn btn-close-white dropdown-toggle fw-bold"
 					   href="#"
 					   role="button"
-					   id="dropdownProfile"
+					   id="dropdownCurrencies"
 					   data-bs-toggle="dropdown"
 					   aria-expanded="false">
-						Currencies
+						<i class="fa fa-sharp fa-light fa-coins"></i> Currencies
 					</a>
 
-					<ul class="dropdown-menu dropdown-menu-end bg-dark"
-						aria-labelledby="dropdownProfile">
+					<ul class="dropdown-menu bg-dark"
+						aria-labelledby="dropdownCurrencies">
 						<li class="py-2">
 							<a class="nav-link text-white fw-bold"
 							   asp-controller="ExchangeCurrency"
 							   asp-action="All">
-								Currency Exchange Rates
+								<i class="fa fa-light fa-arrow-right-arrow-left"></i> Currency Exchange Rates
 							</a>
 						</li>
 						<li class="py-2">
 							<a class="nav-link text-white fw-bold"
 							   asp-controller="ExchangeCurrency"
 							   asp-action="CurrencyCalculator">
-								Currency Calculator
+								<i class="fa fa-light fa-calculator"></i> Currency Calculator
 							</a>
 						</li>
 					</ul>
@@ -56,7 +56,7 @@
 						<a class="nav-link text-white fw-bold"
 						   asp-controller="BankAccount"
 						   asp-action="Create">
-							Create Bank Account
+							<i class="fa fa-light fa-plus"></i> Create Bank Account
 						</a>
 					</li>
 				}
@@ -66,40 +66,40 @@
 						<a class="btn btn-close-white dropdown-toggle fw-bold"
 						   href="#"
 						   role="button"
-						   id="dropdownProfile"
+						   id="dropdownBanking"
 						   data-bs-toggle="dropdown"
 						   aria-expanded="false">
-							Banking
+							<i class="fa fa-light fa-building-columns"></i> Banking
 						</a>
 
-						<ul class="dropdown-menu dropdown-menu-end bg-dark"
-							aria-labelledby="dropdownProfile">
+						<ul class="dropdown-menu bg-dark"
+							aria-labelledby="dropdownBanking">
 							<li class="py-2">
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="BankAccount"
 								   asp-action="MyAccounts">
-									My Accounts
+									<i class="fa fa-light fa-piggy-bank"></i> My Accounts
 								</a>
 							</li>
 							<li class="py-2">
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="BankAccount"
 								   asp-action="Create">
-									Create new Bank Account
+									<i class="fa fa-light fa-plus"></i> Create Bank Account
 								</a>
 							</li>
 							<li class="py-2">
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Transaction"
 								   asp-action="NewTransaction">
-									New Transaction
+									<i class="fa fa-light fa-money-bill-transfer"></i> New Transaction
 								</a>
 							</li>
 							<li class="py-2">
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="BankAccount"
 								   asp-action="Deposit">
-									Deposit
+									<i class="fa fa-sharp fa-light fa-money-bills"></i> Deposit
 								</a>
 							</li>
 						</ul>
@@ -111,19 +111,19 @@
 						<a class="btn btn-close-white dropdown-toggle fw-bold"
 						   href="#"
 						   role="button"
-						   id="dropdownProfile"
+						   id="dropdownAdmin"
 						   data-bs-toggle="dropdown"
 						   aria-expanded="false">
-							A-Panel
+							<i class="fa fa-light fa-user-secret"></i> A-Panel
 						</a>
 
-						<ul class="dropdown-menu dropdown-menu-end bg-dark"
-							aria-labelledby="dropdownProfile">
+						<ul class="dropdown-menu bg-dark"
+							aria-labelledby="dropdownAdmin">
 							<li class="py-2">
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="Statistics">
-									Statistics
+									<i class="fa fa-light fa-chart-column"></i> Statistics
 								</a>
 							</li>
 
@@ -131,7 +131,7 @@
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="ManageBankSettings">
-									Manage Bank Settings
+									<i class="fa fa-light fa-chart-simple"></i> Manage Bank Settings
 								</a>
 							</li>
 
@@ -139,7 +139,7 @@
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="ManageUserProfiles">
-									Manage User Profiles
+									<i class="fa fa-sharp fa-light fa-users"></i> Manage User Profiles
 								</a>
 							</li>
 
@@ -147,7 +147,7 @@
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="ManageBankAccounts">
-									Manage Bank Accounts
+									<i class="fa fa-sharp fa-light fa-bars-progress"></i> Manage Bank Accounts
 								</a>
 							</li>
 
@@ -155,7 +155,7 @@
 								<a class="nav-link text-white fw-bold"
 								   asp-controller="Administrator"
 								   asp-action="TransactionsList">
-									All Transactions
+									<i class="fa fa-light fa-globe"></i> All Transactions
 								</a>
 							</li>
 						</ul>

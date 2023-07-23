@@ -12,9 +12,15 @@ using NewRevolutionaryBank.Data.Models;
 public class DownloadPersonalDataModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly SignInManager<ApplicationUser> _signInManager;
 
-	public DownloadPersonalDataModel(UserManager<ApplicationUser> userManager) =>
+	public DownloadPersonalDataModel(
+		UserManager<ApplicationUser> userManager,
+		SignInManager<ApplicationUser> signInManager)
+	{
 		_userManager = userManager;
+		_signInManager = signInManager;
+	}
 
 	public IActionResult OnGet() => NotFound();
 
@@ -24,7 +30,8 @@ public class DownloadPersonalDataModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		Dictionary<string, string> personalData = new();

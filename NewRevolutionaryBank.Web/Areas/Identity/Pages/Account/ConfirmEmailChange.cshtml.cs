@@ -36,7 +36,8 @@ public class ConfirmEmailChangeModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{userId}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));

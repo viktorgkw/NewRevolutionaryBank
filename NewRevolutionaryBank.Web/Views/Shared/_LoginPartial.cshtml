@@ -7,16 +7,16 @@
 		   id="dropdownProfile"
 		   data-bs-toggle="dropdown"
 		   aria-expanded="false">
-			Profile
+			<i class="fa fa-light fa-bars"></i> More
 		</a>
 
-		<ul class="dropdown-menu dropdown-menu-end bg-dark"
+		<ul class="dropdown-menu dropdown-menu-sm-end bg-dark"
 			aria-labelledby="dropdownProfile">
 			<li class="py-2">
 				<a class="nav-link text-white fw-bold"
 				   asp-controller="Profile"
 				   asp-action="MyProfile">
-					My Profile
+					<i class="fa fa-light fa-user"></i> Profile
 				</a>
 			</li>
 
@@ -25,7 +25,7 @@
 				   asp-area="Identity"
 				   asp-page="/Account/Manage/Index"
 				   title="Manage">
-					Settings
+					<i class="fa fa-light fa-gear"></i> Settings
 				</a>
 			</li>
 
@@ -33,7 +33,7 @@
 				<a class="nav-link text-white fw-bold"
 				   asp-area="Identity"
 				   asp-page="/Account/Logout">
-					Logout
+					<i class="fa fa-light fa-arrow-right-from-bracket"></i> Logout
 				</a>
 			</li>
 		</ul>

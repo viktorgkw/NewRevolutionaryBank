@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -15,14 +16,17 @@ using NewRevolutionaryBank.Services.Messaging.Contracts;
 public class EmailModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly SignInManager<ApplicationUser> _signInManager;
 	private readonly IEmailSender _emailSender;
 
 	public EmailModel(
 		UserManager<ApplicationUser> userManager,
-		IEmailSender emailSender)
+		IEmailSender emailSender,
+		SignInManager<ApplicationUser> signInManager)
 	{
 		_userManager = userManager;
 		_emailSender = emailSender;
+		_signInManager = signInManager;
 	}
 
 	public string Email { get; set; } = null!;
@@ -49,7 +53,8 @@ public class EmailModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		await LoadAsync(user);
@@ -63,7 +68,8 @@ public class EmailModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		if (!ModelState.IsValid)
@@ -114,7 +120,8 @@ public class EmailModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		if (!ModelState.IsValid)

@@ -42,7 +42,8 @@ public class IndexModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		await LoadAsync(user);
@@ -56,7 +57,8 @@ public class IndexModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		if (!ModelState.IsValid)

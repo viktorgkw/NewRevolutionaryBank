@@ -9,9 +9,15 @@ using NewRevolutionaryBank.Data.Models;
 public class PersonalDataModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly SignInManager<ApplicationUser> _signInManager;
 
-	public PersonalDataModel(UserManager<ApplicationUser> userManager) =>
+	public PersonalDataModel(
+		UserManager<ApplicationUser> userManager,
+		SignInManager<ApplicationUser> signInManager)
+	{
 		_userManager = userManager;
+		_signInManager = signInManager;
+	}
 
 	public async Task<IActionResult> OnGet()
 	{
@@ -19,7 +25,8 @@ public class PersonalDataModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		return Page();

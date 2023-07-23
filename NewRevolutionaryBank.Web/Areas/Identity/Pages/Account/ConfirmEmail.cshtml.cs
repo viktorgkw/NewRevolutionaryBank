@@ -12,9 +12,15 @@ using NewRevolutionaryBank.Data.Models;
 public class ConfirmEmailModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly SignInManager<ApplicationUser> _signInManager;
 
-	public ConfirmEmailModel(UserManager<ApplicationUser> userManager) =>
+	public ConfirmEmailModel(
+		UserManager<ApplicationUser> userManager,
+		SignInManager<ApplicationUser> signInManager)
+	{
 		_userManager = userManager;
+		_signInManager = signInManager;
+	}
 
 	[TempData]
 	public string? StatusMessage { get; set; }
@@ -30,7 +36,8 @@ public class ConfirmEmailModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{userId}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));

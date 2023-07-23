@@ -53,7 +53,8 @@ public class ChangePasswordModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		bool hasPassword = await _userManager.HasPasswordAsync(user);
@@ -77,7 +78,8 @@ public class ChangePasswordModel : PageModel
 
 		if (user is null)
 		{
-			return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
 
 		if (Input.OldPassword == Input.NewPassword)
