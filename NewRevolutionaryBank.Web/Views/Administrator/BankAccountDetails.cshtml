@@ -1,6 +1,9 @@
 ﻿@model BankAccountDetailsViewModel
 @{
 	ViewData["Title"] = "Bank Account Details";
+	string tierColor = Model.Tier.ToString() == "Standard" ? "text-secondary"
+						: Model.Tier.ToString() == "Premium" ? "text-warning"
+						: "text-success";
 }
 
 <div class="text-center">
@@ -12,6 +15,7 @@
 
 	<div class="fw-bold border border-dark rounded p-4 bg-dark mb-5">
 		<p class="fs-2 text-info">Account Information</p>
+		<p class="fs-5 text-white">Tier - <span class="@tierColor">@Model.Tier</span></p>
 		<p class="fs-5 text-white">Balance - @Model.Balance</p>
 	</div>
 

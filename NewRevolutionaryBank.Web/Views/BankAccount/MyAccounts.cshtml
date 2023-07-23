@@ -15,10 +15,14 @@
 		@foreach (var acc in Model)
 		{
 			string balanceColor = acc.Balance < 1 ? "text-danger" : "text-success";
+			string tierColor = acc.Tier.ToString() == "Standard" ? "text-secondary"
+			: acc.Tier.ToString() == "Premium" ? "text-warning"
+			: "text-success";
 
 			<div class="border border-dark rounded p-4 fw-bold m-3">
 
 				<p>@acc.IBAN</p>
+				<p class="@tierColor">@acc.Tier</p>
 				<p class="@balanceColor">$@acc.Balance</p>
 
 				<a class="btn btn-info text-white fw-bold"

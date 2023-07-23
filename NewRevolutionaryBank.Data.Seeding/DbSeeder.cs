@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Data.Models.Enums;
 
 public static class DbSeeder
 {
@@ -137,7 +138,8 @@ public static class DbSeeder
 			OwnerId = testUser.Id,
 			UnifiedCivilNumber = "7501020018",
 			IBAN = "1234567891011121314151617",
-			Address = "Random address for test user"
+			Address = "Random address for test user",
+			Tier = BankAccountTier.Standard
 		};
 
 		BankAccount bankAccTwo = new()
@@ -149,7 +151,21 @@ public static class DbSeeder
 			IBAN = "1234567891011121314151617",
 			Address = "Random address for test user",
 			IsClosed = true,
-			ClosedDate = DateTime.UtcNow
+			ClosedDate = DateTime.UtcNow,
+			Tier = BankAccountTier.Premium
+		};
+
+		BankAccount bankAccThree = new()
+		{
+			Balance = 92771.22m,
+			Owner = testUser,
+			OwnerId = testUser.Id,
+			UnifiedCivilNumber = "7501020018",
+			IBAN = "1234567891011121314151617",
+			Address = "Random address for test user",
+			IsClosed = true,
+			ClosedDate = DateTime.UtcNow,
+			Tier = BankAccountTier.VIP
 		};
 
 		Transaction transaction = new()
@@ -165,11 +181,13 @@ public static class DbSeeder
 
 		await context.BankAccounts.AddAsync(bankAcc);
 		await context.BankAccounts.AddAsync(bankAccTwo);
+		await context.BankAccounts.AddAsync(bankAccThree);
 
 		await context.Transactions.AddAsync(transaction);
 
 		testUser.BankAccounts.Add(bankAcc);
 		testUser.BankAccounts.Add(bankAccTwo);
+		testUser.BankAccounts.Add(bankAccThree);
 
 		await context.SaveChangesAsync();
 	}

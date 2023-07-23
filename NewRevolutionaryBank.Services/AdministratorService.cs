@@ -70,7 +70,8 @@ public class AdministratorService : IAdministratorService
 				IBAN = ba.IBAN,
 				OwnerUsername = ba.Owner.UserName!,
 				IsClosed = ba.IsClosed,
-				Balance = ba.Balance
+				Balance = ba.Balance,
+				Tier = ba.Tier
 			})
 			.ToListAsync();
 
@@ -107,6 +108,7 @@ public class AdministratorService : IAdministratorService
 			IBAN = account.IBAN,
 			Address = account.Address,
 			Balance = account.Balance,
+			Tier = account.Tier,
 			UnifiedCivilNumber = account.UnifiedCivilNumber,
 			SentTransactions = SentTransactions.ToHashSet(),
 			RecievedTransactions = RecievedTransactions.ToHashSet()

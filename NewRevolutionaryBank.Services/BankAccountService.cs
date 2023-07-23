@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 using NewRevolutionaryBank.Data;
 using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
@@ -67,7 +68,8 @@ public class BankAccountService : IBankAccountService
 		{
 			IBAN = IBAN,
 			UnifiedCivilNumber = model.UnifiedCivilNumber,
-			Address = model.Address
+			Address = model.Address,
+			Tier = model.Tier
 		};
 
 		foundUser.BankAccounts.Add(newAccount);
@@ -109,7 +111,8 @@ public class BankAccountService : IBankAccountService
 			{
 				Id = ba.Id,
 				IBAN = ba.IBAN,
-				Balance = ba.Balance
+				Balance = ba.Balance,
+				Tier = ba.Tier
 			})
 			.ToList();
 	}
@@ -343,4 +346,15 @@ public class BankAccountService : IBankAccountService
 
 		return new string(randomString);
 	}
+
+	public BankAccountCreateViewModel GetCreateViewModel() =>
+		new()
+		{
+			Tiers = new()
+				{
+					BankAccountTier.Standard,
+					BankAccountTier.Premium,
+					BankAccountTier.VIP
+				}
+		};
 }

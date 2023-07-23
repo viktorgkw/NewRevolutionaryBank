@@ -15,21 +15,29 @@ public partial class BankAccountController : Controller
 		_bankAccountService = bankAccountService;
 
 	[HttpGet]
+	[AllowAnonymous]
+	public IActionResult BankAccountTiers() => View();
+
+	[HttpGet]
 	[Authorize(Roles = "Guest,AccountHolder")]
 	public async Task<IActionResult> Create()
 	{
 		await _bankAccountService.CheckUserRole(User);
 
-		return View();
+		BankAccountCreateViewModel viewModel = _bankAccountService.GetCreateViewModel();
+
+		return View(viewModel);
 	}
 
 	[HttpPost]
 	[Authorize(Roles = "Guest,AccountHolder")]
 	public async Task<IActionResult> Create(BankAccountCreateViewModel model)
 	{
+		ModelState.Remove("Tiers");
+
 		if (!ModelState.IsValid)
 		{
-			return View(model);
+			return View(_bankAccountService.GetCreateViewModel());
 		}
 
 		try
