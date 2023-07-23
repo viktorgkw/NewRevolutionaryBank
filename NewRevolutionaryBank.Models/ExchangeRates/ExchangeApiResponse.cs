@@ -1,14 +1,22 @@
 ﻿namespace NewRevolutionaryBank.Data.Models.ExchangeRates;
 
+using System.Text.Json.Serialization;
+
 public class ExchangeApiResponse
 {
-	public string result { get; set; } = null!;
+	[JsonPropertyName("result")]
+	public string Result { get; set; } = null!;
 
-	public string time_last_update_utc { get; set; } = null!;
+	[JsonPropertyName("time_last_update_utc")]
+	public string TimeLastUpdateUtc { get; set; } = null!;
 
-	public string time_next_update_utc { get; set; } = null!;
+	[JsonPropertyName("time_next_update_utc")]
+	public string TimeNextUpdateUtc { get; set; } = null!;
 
-	public string base_code { get; set; } = null!;
+	[JsonPropertyName("base_code")]
+	public string BaseCode { get; set; } = null!;
 
-	public ConversionRate conversion_rates { get; set; } = null!;
+	[JsonPropertyName("conversion_rates")]
+	public ConversionRate ConversionRates { get; set; } = null!;
 }
+

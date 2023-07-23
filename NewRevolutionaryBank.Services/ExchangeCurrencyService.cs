@@ -26,6 +26,6 @@ public class ExchangeCurrencyService : IExchangeCurrencyService
 		ExchangeApiResponse? response = await client
 			.GetFromJsonAsync<ExchangeApiResponse>(api_url);
 
-		return response!.conversion_rates;
+		return response!.ConversionRates;
 	}
 }
