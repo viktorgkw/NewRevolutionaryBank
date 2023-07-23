@@ -26,7 +26,7 @@ builder.Services.AddDbContext<NrbDbContext>(options =>
 });
 
 // Add Identity
-builder.Services.ConfigureIdentity();
+builder.Services.ConfigureIdentity(configuration);
 
 // Cookie
 builder.Services.ConfigureApplicationCookie(options =>
@@ -100,7 +100,6 @@ using (IServiceScope initScope = app.Services.CreateScope())
 }
 
 // Hangfire
-app.UseHangfireDashboard();
-HangfireJobsExtension.ConfigureJobs();
+app.ConfigureHangfire();
 
 await app.RunAsync();

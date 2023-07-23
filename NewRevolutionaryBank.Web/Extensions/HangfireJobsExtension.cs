@@ -1,38 +1,29 @@
 ﻿namespace NewRevolutionaryBank.Web.Extensions;
 
-using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
-using NewRevolutionaryBank.Web.HangfireJobs;
+using NewRevolutionaryBank.Data;
 
-public static class HangfireJobsExtension
+public class HangfireJobsExtension
 {
-	public static void ConfigureJobs()
-	{
-		RecurringJob.AddOrUpdate(
-			Guid.NewGuid().ToString(),
-			(HangfireJobs service) => service.DeleteNotVerifiedAsync(),
-			Cron.Daily,
-			new RecurringJobOptions
-			{
-				TimeZone = TimeZoneInfo.Utc
-			});
+    private readonly NrbDbContext _dbContext;
 
-		RecurringJob.AddOrUpdate(
-			Guid.NewGuid().ToString(),
-			(HangfireJobs service) => service.DeleteThreeYearOldAccountsAsync(),
-			Cron.Weekly,
-			new RecurringJobOptions
-			{
-				TimeZone = TimeZoneInfo.Utc
-			});
+    public HangfireJobsExtension(NrbDbContext dbContext) => _dbContext = dbContext;
 
-		RecurringJob.AddOrUpdate(
-			Guid.NewGuid().ToString(),
-			(HangfireJobs service) => service.DeleteClosedAccountsAfterYearAsync(),
-			Cron.Weekly,
-			new RecurringJobOptions
-			{
-				TimeZone = TimeZoneInfo.Utc
-			});
-	}
+    public async Task DeleteNotVerifiedAsync()
+        => await _dbContext.Users
+            .Where(u => !u.EmailConfirmed &&
+                u.CreatedOn.Day == DateTime.Now.AddDays(-1).Day)
+            .ExecuteDeleteAsync();
+
+    public async Task DeleteThreeYearOldAccountsAsync()
+        => await _dbContext.Users
+            .Where(u => u.IsDeleted &&
+                u.DeletedOn!.Value.Year == DateTime.Now.AddYears(-3).Year)
+            .ExecuteDeleteAsync();
+
+    public async Task DeleteClosedAccountsAfterYearAsync()
+        => await _dbContext.BankAccounts
+            .Where(ba => ba.IsClosed && ba.ClosedDate == DateTime.Now.AddYears(-1))
+            .ExecuteDeleteAsync();
 }

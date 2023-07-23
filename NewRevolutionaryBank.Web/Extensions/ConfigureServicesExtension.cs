@@ -5,7 +5,6 @@ using System.Reflection;
 using NewRevolutionaryBank.Services.Messaging;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.Handlers;
-using NewRevolutionaryBank.Web.HangfireJobs;
 
 public static class ConfigureServicesExtension
 {
@@ -32,7 +31,7 @@ public static class ConfigureServicesExtension
 
 	public static void ConfigureOtherServices(this IServiceCollection services)
 	{
-		services.AddScoped<HangfireJobs>();
+		services.AddScoped<HangfireJobsExtension>();
 		services.AddScoped<IsDeletedHandler>();
 		services.AddScoped<IEmailSender, MailKitEmailSender>();
 	}
