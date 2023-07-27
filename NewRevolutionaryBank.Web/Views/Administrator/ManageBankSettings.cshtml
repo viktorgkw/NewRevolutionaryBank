@@ -33,19 +33,49 @@
 						   asp-action="EditTransactionFee">Edit</a>
 					</td>
 				</tr>
+
 				<tr class="text-info">
 					<td>
-						Monthly Tax
+						Standard Tax
 					</td>
 					<td>
-						@Model.MonthlyTax
+						@Model.StandardTax
 					</td>
 					<td>
 						<a class="btn btn-info text-white fw-bold w-100"
 						   asp-controller="Administrator"
-						   asp-action="EditMonthlyTax">Edit</a>
+						   asp-action="EditStandardTax">Edit</a>
 					</td>
 				</tr>
+
+				<tr class="text-info">
+					<td>
+						Premium Tax
+					</td>
+					<td>
+						@Model.PremiumTax
+					</td>
+					<td>
+						<a class="btn btn-info text-white fw-bold w-100"
+						   asp-controller="Administrator"
+						   asp-action="EditPremiumTax">Edit</a>
+					</td>
+				</tr>
+
+				<tr class="text-info">
+					<td>
+						VIP Tax
+					</td>
+					<td>
+						@Model.VipTax
+					</td>
+					<td>
+						<a class="btn btn-info text-white fw-bold w-100"
+						   asp-controller="Administrator"
+						   asp-action="EditVipTax">Edit</a>
+					</td>
+				</tr>
+
 				<tr class="text-info">
 					<td>
 						Bank Balance

@@ -231,18 +231,48 @@ public class AdministratorServiceTests
 	}
 
 	[Fact]
-	public async Task EditMonthlyTaxAsync_Updates_MonthlyTax()
+	public async Task EditStandardTaxAsync_Updates_MonthlyTax()
 	{
 		// Arrange
 		decimal newMonthlyTax = 0.20m;
 
 		// Act
-		await _administratorService.EditMonthlyTaxAsync(newMonthlyTax);
+		await _administratorService.EditStandardTaxAsync(newMonthlyTax);
 
 		// Assert
 		BankSettings bankSettings = _dbContext.BankSettings.First();
 
-		Assert.Equal(newMonthlyTax, bankSettings.MonthlyTax);
+		Assert.Equal(newMonthlyTax, bankSettings.StandardTax);
+	}
+
+	[Fact]
+	public async Task EditPremiumTaxAsync_Updates_MonthlyTax()
+	{
+		// Arrange
+		decimal newMonthlyTax = 0.20m;
+
+		// Act
+		await _administratorService.EditPremiumTaxAsync(newMonthlyTax);
+
+		// Assert
+		BankSettings bankSettings = _dbContext.BankSettings.First();
+
+		Assert.Equal(newMonthlyTax, bankSettings.PremiumTax);
+	}
+
+	[Fact]
+	public async Task EditVipTaxAsync_Updates_MonthlyTax()
+	{
+		// Arrange
+		decimal newMonthlyTax = 0.20m;
+
+		// Act
+		await _administratorService.EditVipTaxAsync(newMonthlyTax);
+
+		// Assert
+		BankSettings bankSettings = _dbContext.BankSettings.First();
+
+		Assert.Equal(newMonthlyTax, bankSettings.VipTax);
 	}
 
 	[Fact]

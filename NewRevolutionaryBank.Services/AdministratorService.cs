@@ -259,7 +259,9 @@ public class AdministratorService : IAdministratorService
 		return new BankSettingsDisplayViewModel
 		{
 			TransactionFee = settings.TransactionFee,
-			MonthlyTax = settings.MonthlyTax,
+			StandardTax = settings.StandardTax,
+			PremiumTax = settings.PremiumTax,
+			VipTax = settings.VipTax,
 			BankBalance = settings.BankBalance
 		};
 	}
@@ -311,14 +313,32 @@ public class AdministratorService : IAdministratorService
 	}
 
 	/// <summary>
-	/// Edits the monthly tax with a given value.
+	/// Edits the standard tax with a given value.
 	/// </summary>
 	/// <param name="decimalValue">New tax value.</param>
-	public async Task EditMonthlyTaxAsync(decimal decimalValue)
+	public async Task EditStandardTaxAsync(decimal decimalValue)
 	{
 		BankSettings settings = await _context.BankSettings.FirstAsync();
 
-		settings.MonthlyTax = decimalValue;
+		settings.StandardTax = decimalValue;
+
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task EditPremiumTaxAsync(decimal decimalValue)
+	{
+		BankSettings settings = await _context.BankSettings.FirstAsync();
+
+		settings.PremiumTax = decimalValue;
+
+		await _context.SaveChangesAsync();
+	}
+
+	public async Task EditVipTaxAsync(decimal decimalValue)
+	{
+		BankSettings settings = await _context.BankSettings.FirstAsync();
+
+		settings.VipTax = decimalValue;
 
 		await _context.SaveChangesAsync();
 	}

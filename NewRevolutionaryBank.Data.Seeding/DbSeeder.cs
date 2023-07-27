@@ -23,7 +23,9 @@ public static class DbSeeder
 			await context.BankSettings.AddAsync(new()
 			{
 				TransactionFee = 0.10m,
-				MonthlyTax = 0.50m
+				StandardTax = 0.79m,
+				PremiumTax = 4.69m,
+				VipTax = 12.49m,
 			});
 
 			await context.SaveChangesAsync();

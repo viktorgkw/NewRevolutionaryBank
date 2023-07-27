@@ -213,12 +213,34 @@ public class AdministratorController : Controller
 	}
 
 	[HttpGet]
-	public IActionResult EditMonthlyTax() => View();
+	public IActionResult EditStandardTax() => View();
 
 	[HttpPost]
-	public async Task<IActionResult> EditMonthlyTax(decimal decimalValue)
+	public async Task<IActionResult> EditStandardTax(decimal decimalValue)
 	{
-		await _administratorService.EditMonthlyTaxAsync(decimalValue);
+		await _administratorService.EditStandardTaxAsync(decimalValue);
+
+		return RedirectToAction("ManageBankSettings", "Administrator");
+	}
+
+	[HttpGet]
+	public IActionResult EditPremiumTax() => View();
+
+	[HttpPost]
+	public async Task<IActionResult> EditPremiumTax(decimal decimalValue)
+	{
+		await _administratorService.EditPremiumTaxAsync(decimalValue);
+
+		return RedirectToAction("ManageBankSettings", "Administrator");
+	}
+
+	[HttpGet]
+	public IActionResult EditVipTax() => View();
+
+	[HttpPost]
+	public async Task<IActionResult> EditVipTax(decimal decimalValue)
+	{
+		await _administratorService.EditVipTaxAsync(decimalValue);
 
 		return RedirectToAction("ManageBankSettings", "Administrator");
 	}
