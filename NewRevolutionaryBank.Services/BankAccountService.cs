@@ -347,6 +347,7 @@ public class BankAccountService : IBankAccountService
 		return new string(randomString);
 	}
 
+	/// <returns>Viewmodel for creating a new bank account.</returns>
 	public BankAccountCreateViewModel GetCreateViewModel() =>
 		new()
 		{

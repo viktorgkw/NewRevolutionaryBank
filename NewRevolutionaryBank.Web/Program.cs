@@ -82,22 +82,11 @@ app.UseAuthorization();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
-// Initialize Roles and Administrator profile
-using (IServiceScope initScope = app.Services.CreateScope())
-{
-	RoleManager<ApplicationRole> roleManager = initScope.ServiceProvider
-		.GetRequiredService<RoleManager<ApplicationRole>>();
-	UserManager<ApplicationUser> userManager = initScope.ServiceProvider
-		.GetRequiredService<UserManager<ApplicationUser>>();
-	NrbDbContext context = initScope.ServiceProvider
-		.GetRequiredService<NrbDbContext>();
-
-	await DbSeeder.SeedRolesAndAdministratorAsync(
-		roleManager,
-		userManager,
-		context,
-		configuration);
-}
+// Seeding
+await app.SeedBankSettingsAsync();
+await app.SeedRolesAsync();
+await app.SeedAdministratorAsync();
+await app.SeedTestUsersAsync();
 
 // Hangfire
 app.ConfigureHangfire();

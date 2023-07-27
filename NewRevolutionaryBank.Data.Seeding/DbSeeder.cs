@@ -1,43 +1,23 @@
 ﻿namespace NewRevolutionaryBank.Data.Seeding;
 
+using System;
+
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Data.Models.Enums;
 
 public static class DbSeeder
 {
-	public static async Task SeedRolesAndAdministratorAsync(
-		RoleManager<ApplicationRole> roleManager,
-		UserManager<ApplicationUser> userManager,
-		NrbDbContext context,
-		IConfiguration configuration)
+	public static async Task SeedBankSettingsAsync(this IApplicationBuilder app)
 	{
-		await SeedBankSettingsAsync(context);
+		NrbDbContext context = GetServiceProvider(app)
+			.GetRequiredService<NrbDbContext>();
 
-		await SeedRolesAsync(roleManager);
-
-		await SeedAdministratorAsync(configuration, userManager);
-
-		await SeedTestUser(
-			context,
-			userManager,
-			"TestUserOne",
-			"123testuseroneemail123@gmail.com",
-			Guid.Parse("c7c52461-ae6d-4ceb-2468-08db7ae8b3c2"));
-
-		await SeedTestUser(
-			context,
-			userManager,
-			"TestUserTwo",
-			"123testusertwoemail123@gmail.com",
-			Guid.Parse("e2c52461-ae6d-4ceb-2468-08db1ae8b3c2"));
-	}
-
-	private static async Task SeedBankSettingsAsync(NrbDbContext context)
-	{
 		if (!context.BankSettings.Any())
 		{
 			await context.BankSettings.AddAsync(new()
@@ -50,8 +30,11 @@ public static class DbSeeder
 		}
 	}
 
-	private static async Task SeedRolesAsync(RoleManager<ApplicationRole> roleManager)
+	public static async Task SeedRolesAsync(this IApplicationBuilder app)
 	{
+		RoleManager<ApplicationRole> roleManager = GetServiceProvider(app)
+			.GetRequiredService<RoleManager<ApplicationRole>>();
+
 		string[] roles = new[]
 		{
 			"Administrator",
@@ -68,10 +51,16 @@ public static class DbSeeder
 		}
 	}
 
-	private static async Task SeedAdministratorAsync(
-		IConfiguration configuration,
-		UserManager<ApplicationUser> userManager)
+	public static async Task SeedAdministratorAsync(this IApplicationBuilder app)
 	{
+		IServiceProvider provider = GetServiceProvider(app);
+
+		UserManager<ApplicationUser> userManager = provider
+			.GetRequiredService<UserManager<ApplicationUser>>();
+
+		IConfigurationRoot configuration = provider
+			.GetRequiredService<IConfigurationRoot>();
+
 		string adminUsername = configuration["Seeding:UserName"]!;
 		string adminEmail = configuration["Seeding:Email"]!;
 		string adminPassword = configuration["Seeding:Password"]!;
@@ -99,21 +88,24 @@ public static class DbSeeder
 		}
 	}
 
-	private static async Task SeedTestUser(
-		NrbDbContext context,
-		UserManager<ApplicationUser> userManager,
-		string userName,
-		string email,
-		Guid id)
+	public static async Task SeedTestUsersAsync(this IApplicationBuilder app)
 	{
+		IServiceProvider provider = GetServiceProvider(app);
+
+		NrbDbContext context = provider
+			.GetRequiredService<NrbDbContext>();
+
+		UserManager<ApplicationUser> userManager = provider
+			.GetRequiredService<UserManager<ApplicationUser>>();
+
 		ApplicationUser testUser = new()
 		{
-			Id = id,
-			Email = email,
+			Id = Guid.NewGuid(),
+			Email = "testemail@gmail.com",
 			EmailConfirmed = true,
 			FirstName = "Test",
 			LastName = "User",
-			UserName = userName,
+			UserName = "TestUser",
 		};
 
 		if (context.Users.Any(u => u.Id == testUser.Id))
@@ -148,7 +140,7 @@ public static class DbSeeder
 			Owner = testUser,
 			OwnerId = testUser.Id,
 			UnifiedCivilNumber = "7501020018",
-			IBAN = "1234567891011121314151617",
+			IBAN = "6362477910554111111811213",
 			Address = "Random address for test user",
 			IsClosed = true,
 			ClosedDate = DateTime.UtcNow,
@@ -161,7 +153,7 @@ public static class DbSeeder
 			Owner = testUser,
 			OwnerId = testUser.Id,
 			UnifiedCivilNumber = "7501020018",
-			IBAN = "1234567891011121314151617",
+			IBAN = "7161514131211101987654321",
 			Address = "Random address for test user",
 			IsClosed = true,
 			ClosedDate = DateTime.UtcNow,
@@ -191,4 +183,7 @@ public static class DbSeeder
 
 		await context.SaveChangesAsync();
 	}
+
+	private static IServiceProvider GetServiceProvider(IApplicationBuilder app)
+		=> app.ApplicationServices.CreateScope().ServiceProvider;
 }
