@@ -8,6 +8,25 @@
 <partial name="_StatusMessage" for="StatusMessage" />
 
 <div class="row justify-content-center">
+	<div class ="d-flex justify-content-center">
+		@if (Model.Avatar is null)
+		{
+			<img class="rounded-circle mb-5"
+				 src="~/images/default-user-avatar.png"
+				 alt="Avatar"
+				 width="200"
+				 height="200">
+		}
+		else
+		{
+			<img class="rounded-circle mb-5"
+				 src="data:image/jpeg;base64,@(Convert.ToBase64String(Model.Avatar!))"
+				 alt="Avatar"
+				 width="200"
+				 height="200">
+		}
+	</div>
+
 	<div class="col-md-6">
 		<form method="post" enctype="multipart/form-data">
 			<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>

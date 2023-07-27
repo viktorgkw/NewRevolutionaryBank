@@ -1,5 +1,6 @@
 ﻿namespace NewRevolutionaryBank.Tests.Services;
 
+using System.Reflection;
 using System.Security.Claims;
 
 using Microsoft.AspNetCore.Http;
@@ -17,8 +18,7 @@ using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Tests.Services.Mocks;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
-using System.Reflection;
-using Stripe.FinancialConnections;
+using NewRevolutionaryBank.Data.Models.Enums;
 
 public class BankAccountServiceTests
 {
@@ -877,6 +877,18 @@ public class BankAccountServiceTests
 		// Assert
 		Assert.NotNull(ibanPart);
 		Assert.Equal(expectedIbanLength, ibanPart.ToString()!.Length);
+	}
+
+	[Fact]
+	public void GetCreateViewModel_Returns_ViewModel_With_BankAccountTiers()
+	{
+		// Act
+		BankAccountCreateViewModel model = _bankAccountService.GetCreateViewModel();
+
+		// Assert
+		Assert.Contains(BankAccountTier.Standard, model.Tiers);
+		Assert.Contains(BankAccountTier.Premium, model.Tiers);
+		Assert.Contains(BankAccountTier.VIP, model.Tiers);
 	}
 
 	private async Task CheckUserRole(ClaimsPrincipal user) =>

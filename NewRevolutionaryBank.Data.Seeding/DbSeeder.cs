@@ -88,7 +88,7 @@ public static class DbSeeder
 		}
 	}
 
-	public static async Task SeedTestUsersAsync(this IApplicationBuilder app)
+	public static async Task SeedTestUserAsync(this IApplicationBuilder app)
 	{
 		IServiceProvider provider = GetServiceProvider(app);
 
@@ -100,7 +100,7 @@ public static class DbSeeder
 
 		ApplicationUser testUser = new()
 		{
-			Id = Guid.NewGuid(),
+			Id = Guid.Parse("b310a40e-275a-4d33-8426-c89043785f5e"),
 			Email = "testemail@gmail.com",
 			EmailConfirmed = true,
 			FirstName = "Test",

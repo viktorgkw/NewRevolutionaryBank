@@ -44,7 +44,7 @@ builder.Services.AddHangfireServer();
 // Configuring Services
 builder.Services.ServiceConfigurator();
 builder.Services.ConfigureOtherServices();
-builder.Services.AddSingleton<IConfiguration>(configuration);
+builder.Services.AddSingleton(configuration);
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -86,7 +86,7 @@ app.MapRazorPages();
 await app.SeedBankSettingsAsync();
 await app.SeedRolesAsync();
 await app.SeedAdministratorAsync();
-await app.SeedTestUsersAsync();
+await app.SeedTestUserAsync();
 
 // Hangfire
 app.ConfigureHangfire();

@@ -319,6 +319,18 @@ public class BankAccountService : IBankAccountService
 		}
 	}
 
+	/// <returns>Viewmodel for creating a new bank account.</returns>
+	public BankAccountCreateViewModel GetCreateViewModel() =>
+		new()
+		{
+			Tiers = new()
+				{
+					BankAccountTier.Standard,
+					BankAccountTier.Premium,
+					BankAccountTier.VIP
+				}
+		};
+
 	/// <summary>
 	/// Generates unique IBAN for a bank account.
 	/// </summary>
@@ -346,16 +358,4 @@ public class BankAccountService : IBankAccountService
 
 		return new string(randomString);
 	}
-
-	/// <returns>Viewmodel for creating a new bank account.</returns>
-	public BankAccountCreateViewModel GetCreateViewModel() =>
-		new()
-		{
-			Tiers = new()
-				{
-					BankAccountTier.Standard,
-					BankAccountTier.Premium,
-					BankAccountTier.VIP
-				}
-		};
 }
