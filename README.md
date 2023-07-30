@@ -25,11 +25,16 @@ New Revolutionary Bank is a web application built with ASP.NET Core, where users
 
 ## Roadmap
 
+* [x] Use Clean Architecture
 * [x] Create account management and transactions functionality
-* [ ] Integrate SignalR
+* [x] Add chat support page
+* [x] Integrate MailKit, Hangfire and Stripe
+* [x] Create admin panel for analytics and useful management tools
+* [x] Add rating system
+* [ ] Integrate SignalR for real-time support communication
 * [ ] Multi-language Support
+  * [X] English
   * [ ] Bulgarian
-  * [ ] English
 
 ## Contributing
 
