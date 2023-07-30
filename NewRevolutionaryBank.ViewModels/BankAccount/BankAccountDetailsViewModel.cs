@@ -1,6 +1,7 @@
 ﻿namespace NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
 using NewRevolutionaryBank.Data.Models;
+using NewRevolutionaryBank.Data.Models.Enums;
 
 public class BankAccountDetailsViewModel
 {
@@ -14,7 +15,9 @@ public class BankAccountDetailsViewModel
 
 	public string Address { get; set; } = null!;
 
-	public HashSet<Transaction> SentTransactions { get; set; } = null!;
+    public BankAccountTier Tier { get; set; }
+
+    public HashSet<Transaction> SentTransactions { get; set; } = null!;
 
 	public HashSet<Transaction> RecievedTransactions { get; set; } = null!;
 

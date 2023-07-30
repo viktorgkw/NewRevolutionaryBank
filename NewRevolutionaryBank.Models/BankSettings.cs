@@ -13,12 +13,23 @@ public class BankSettings
 	[Comment("Уникален идентификатор")]
 	public Guid Id { get; set; }
 
+	[Display(Name = "Transaction Fee")]
 	[Comment("Такса за транзакция")]
 	public decimal TransactionFee { get; set; }
 
+	[Display(Name = "Bank Balance")]
 	[Comment("Баланс на банката")]
 	public decimal BankBalance { get; set; }
 
-	[Comment("Месечна такса на банката")]
-	public decimal MonthlyTax { get; set; }
+	[Display(Name = "Standard Tax")]
+	[Comment("Месечна такса за Standard сметка")]
+	public decimal StandardTax { get; set; }
+
+	[Display(Name = "Premium Tax")]
+	[Comment("Месечна такса за Premium сметка")]
+	public decimal PremiumTax { get; set; }
+
+	[Display(Name = "VIP Tax")]
+	[Comment("Месечна такса за VIP сметка")]
+	public decimal VipTax { get; set; }
 }

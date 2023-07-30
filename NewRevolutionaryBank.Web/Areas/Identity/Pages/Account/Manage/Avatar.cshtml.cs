@@ -24,17 +24,20 @@ public class AvatarModel : PageModel
 	[TempData]
 	public string? StatusMessage { get; set; }
 
-	public async Task<IActionResult> OnGetAsync()
+    public byte[]? Avatar { get; set; }
+
+    public async Task<IActionResult> OnGetAsync()
 	{
 		ApplicationUser? user = await _context.Users
 			.FirstOrDefaultAsync(u => u.UserName == User.Identity!.Name);
 
 		if (user is null)
 		{
-			StatusMessage = "Error: Could not load user!";
-
-			return RedirectToPage();
+			await _signInManager.SignOutAsync();
+			return RedirectToAction("Index", "Home");
 		}
+
+		Avatar = user.Avatar;
 
 		return Page();
 	}

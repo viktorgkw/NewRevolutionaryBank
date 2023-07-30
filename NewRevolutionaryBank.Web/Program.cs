@@ -44,7 +44,11 @@ builder.Services.AddHangfireServer();
 // Configuring Services
 builder.Services.ServiceConfigurator();
 builder.Services.ConfigureOtherServices();
-builder.Services.AddSingleton<IConfiguration>(configuration);
+builder.Services.AddSingleton(configuration);
+
+builder.Services.AddMemoryCache();
+
+builder.Services.AddRecaptchaService();
 
 builder.Services.AddMvc(options =>
 	options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute()));
@@ -82,22 +86,11 @@ app.UseAuthorization();
 app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
-// Initialize Roles and Administrator profile
-using (IServiceScope initScope = app.Services.CreateScope())
-{
-	RoleManager<ApplicationRole> roleManager = initScope.ServiceProvider
-		.GetRequiredService<RoleManager<ApplicationRole>>();
-	UserManager<ApplicationUser> userManager = initScope.ServiceProvider
-		.GetRequiredService<UserManager<ApplicationUser>>();
-	NrbDbContext context = initScope.ServiceProvider
-		.GetRequiredService<NrbDbContext>();
-
-	await DbSeeder.SeedRolesAndAdministratorAsync(
-		roleManager,
-		userManager,
-		context,
-		configuration);
-}
+// Seeding
+await app.SeedBankSettingsAsync();
+await app.SeedRolesAsync();
+await app.SeedAdministratorAsync();
+await app.SeedTestUserAsync();
 
 // Hangfire
 app.ConfigureHangfire();

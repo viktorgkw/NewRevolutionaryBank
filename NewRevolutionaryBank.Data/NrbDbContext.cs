@@ -41,7 +41,15 @@ public class NrbDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, 
 				.HasPrecision(18, 2);
 
 			options
-				.Property(b => b.MonthlyTax)
+				.Property(b => b.StandardTax)
+				.HasPrecision(18, 2);
+
+			options
+				.Property(b => b.PremiumTax)
+				.HasPrecision(18, 2);
+
+			options
+				.Property(b => b.VipTax)
 				.HasPrecision(18, 2);
 		});
 

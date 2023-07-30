@@ -1,0 +1,27 @@
+﻿@{
+	ViewData["Title"] = "Edit Vip Tax";
+}
+
+<div class="text-center">
+	<h1 class="display-4 text-dark fw-bold py-3">@ViewData["Title"]</h1>
+	<hr />
+	<br />
+
+	<form method="post"
+		  class="mb-3">
+		<div class="d-flex flex-column align-items-center">
+			<label for="decimalValue" class="mb-2 fw-bold text-dark fs-4">New amount</label>
+			<p class="align-self-center text-danger">Use . for decimal separator.</p>
+			<input name="decimalValue"
+				   type="number"
+				   step=".01"
+				   min="0"
+				   max="50"
+				   required />
+			<button type="submit"
+					class="btn btn-info text-white fw-bold w-25 mt-3">
+				Edit
+			</button>
+		</div>
+	</form>
+</div>

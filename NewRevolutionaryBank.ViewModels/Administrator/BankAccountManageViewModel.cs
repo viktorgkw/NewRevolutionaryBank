@@ -1,5 +1,7 @@
 ﻿namespace NewRevolutionaryBank.Web.ViewModels.Administrator;
 
+using NewRevolutionaryBank.Data.Models.Enums;
+
 public class BankAccountManageViewModel
 {
 	public Guid Id { get; set; }
@@ -11,4 +13,6 @@ public class BankAccountManageViewModel
 	public bool IsClosed { get; set; }
 
 	public decimal Balance { get; set; }
+
+    public BankAccountTier Tier { get; set; }
 }

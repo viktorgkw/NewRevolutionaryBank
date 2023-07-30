@@ -3,7 +3,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
-
+using Griesoft.AspNetCore.ReCaptcha;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.WebUtilities;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 
+[ValidateRecaptcha(
+	Action = "Register",
+	ValidationFailedAction = ValidationFailedAction.ContinueRequest)]
 public class RegisterModel : PageModel
 {
 	private readonly UserManager<ApplicationUser> _userManager;
@@ -58,6 +61,7 @@ public class RegisterModel : PageModel
 		[Display(Name = "Password")]
 		public string Password { get; set; } = null!;
 
+		[Required]
 		[DataType(DataType.Password)]
 		[Display(Name = "Confirm password")]
 		[Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]

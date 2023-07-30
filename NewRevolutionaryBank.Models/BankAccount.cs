@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 using Microsoft.EntityFrameworkCore;
 
+using NewRevolutionaryBank.Data.Models.Enums;
 using static NewRevolutionaryBank.Common.ModelsConstants;
 
 [Comment("Банкова сметка")]
@@ -15,6 +16,7 @@ public class BankAccount
 		Id = Guid.NewGuid();
 		Balance = 0m;
 		IsClosed = false;
+		Tier = BankAccountTier.Standard;
 	}
 
 	[Key]
@@ -30,6 +32,9 @@ public class BankAccount
 
 	[Comment("Салдо на сметката")]
 	public decimal Balance { get; set; }
+
+	[Comment("Ниво на сметката")]
+	public BankAccountTier Tier { get; set; }
 
 	[Required]
 	[ForeignKey(nameof(Owner))]

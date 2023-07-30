@@ -58,11 +58,11 @@
 					<span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 				</div>
 
-				<button id="registerSubmit"
-						type="submit"
-						class="w-100 btn btn-lg btn-info text-white fw-bold my-2">
+				<recaptcha-v3 form-id="registerForm"
+							  action="Register"
+							  class="w-100 btn btn-lg btn-info text-white fw-bold my-2">
 					Register
-				</button>
+				</recaptcha-v3>
 
 				<a asp-area="Identity"
 				   asp-page="/Account/Login"

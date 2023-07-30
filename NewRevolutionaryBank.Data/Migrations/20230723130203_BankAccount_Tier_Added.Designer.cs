@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NewRevolutionaryBank.Data;
 
@@ -11,9 +12,11 @@ using NewRevolutionaryBank.Data;
 namespace NewRevolutionaryBank.Data.Migrations
 {
     [DbContext(typeof(NrbDbContext))]
-    partial class NrbDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230723130203_BankAccount_Tier_Added")]
+    partial class BankAccount_Tier_Added
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -325,25 +328,15 @@ namespace NewRevolutionaryBank.Data.Migrations
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Баланс на банката");
 
-                    b.Property<decimal>("PremiumTax")
+                    b.Property<decimal>("MonthlyTax")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
-                        .HasComment("Месечна такса за Premium сметка");
-
-                    b.Property<decimal>("StandardTax")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Месечна такса за Standard сметка");
+                        .HasComment("Месечна такса на банката");
 
                     b.Property<decimal>("TransactionFee")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)")
                         .HasComment("Такса за транзакция");
-
-                    b.Property<decimal>("VipTax")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Месечна такса за VIP сметка");
 
                     b.HasKey("Id");
 

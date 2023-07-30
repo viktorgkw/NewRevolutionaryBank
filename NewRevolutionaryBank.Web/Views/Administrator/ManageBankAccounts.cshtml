@@ -16,11 +16,15 @@
 			@foreach (var bankAcc in Model)
 			{
 				string borderColor = bankAcc.IsClosed ? "border-danger" : "border-dark";
+				string tierColor = bankAcc.Tier.ToString() == "Standard" ? "text-secondary"
+				: bankAcc.Tier.ToString() == "Premium" ? "text-warning"
+				: "text-success";
 
 				<div class="border @borderColor rounded p-4 fw-bold m-3">
 
 					<p>@bankAcc.IBAN</p>
 					<p>@bankAcc.OwnerUsername</p>
+					<p class="fw-bold @tierColor">@bankAcc.Tier.ToString()</p>
 					<p>$@bankAcc.Balance</p>
 
 					<a class="btn btn-info text-white fw-bold"
