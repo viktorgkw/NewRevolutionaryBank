@@ -46,6 +46,8 @@ builder.Services.ServiceConfigurator();
 builder.Services.ConfigureOtherServices();
 builder.Services.AddSingleton(configuration);
 
+builder.Services.AddMemoryCache();
+
 builder.Services.AddRecaptchaService();
 
 builder.Services.AddMvc(options =>
