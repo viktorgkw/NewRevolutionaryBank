@@ -9,13 +9,21 @@ using NewRevolutionaryBank.Data.Models.Enums;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Transaction;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [Authorize(Roles = "AccountHolder")]
 public class TransactionController : Controller
 {
 	private readonly ITransactionService _transactionService;
+	private readonly ILogger<TransactionController> _logger;
 
-	public TransactionController(ITransactionService transactionService) =>
+	public TransactionController(
+		ITransactionService transactionService,
+		ILogger<TransactionController> logger)
+	{
 		_transactionService = transactionService;
+		_logger = logger;
+	}
 
 	[HttpGet]
 	public async Task<IActionResult> NewTransaction()
@@ -29,6 +37,10 @@ public class TransactionController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogWarning(string.Format(
+				WarningConstants.NonExistingUserTriesToSendTransaction,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -75,6 +87,10 @@ public class TransactionController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogWarning(string.Format(
+				WarningConstants.NonExistingUserTriesToSendTransaction,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",

@@ -7,20 +7,25 @@ using Microsoft.Extensions.Caching.Memory;
 using NewRevolutionaryBank.Data.Models.ExchangeRates;
 using NewRevolutionaryBank.Services.Contracts;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [Authorize]
 public class ExchangeCurrencyController : Controller
 {
 	private const string CurrencyConversionRates = "CCR";
 
 	private readonly IExchangeCurrencyService _currencyService;
+	private readonly ILogger<ExchangeCurrencyController> _logger;
 	private readonly IMemoryCache _memoryCache;
 
 	public ExchangeCurrencyController(
 		IExchangeCurrencyService currencyService,
+		ILogger<ExchangeCurrencyController> logger,
 		IMemoryCache memoryCache)
 	{
 		_currencyService = currencyService;
 		_memoryCache = memoryCache;
+		_logger = logger;
 	}
 
 	[AllowAnonymous]
@@ -36,12 +41,20 @@ public class ExchangeCurrencyController : Controller
 					.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
 				_memoryCache.Set(CurrencyConversionRates, rates, cacheOptions);
+
+				_logger.LogInformation(string.Format(
+					InformationConstants.CurrencyRatesCached,
+					DateTime.UtcNow));
 			}
 
 			return View(rates);
 		}
 		catch (InvalidOperationException)
 		{
+			_logger.LogCritical(string.Format(
+					CriticalConstants.CurrencyRatesDontFetch,
+					DateTime.UtcNow));
+
 			return View(null);
 		}
 	}
@@ -59,12 +72,20 @@ public class ExchangeCurrencyController : Controller
 					.SetAbsoluteExpiration(TimeSpan.FromMinutes(5));
 
 				_memoryCache.Set(CurrencyConversionRates, rates, cacheOptions);
+
+				_logger.LogInformation(string.Format(
+					InformationConstants.CurrencyRatesCached,
+					DateTime.UtcNow));
 			}
 
 			return View(rates);
 		}
 		catch (InvalidOperationException)
 		{
+			_logger.LogCritical(string.Format(
+					CriticalConstants.CurrencyRatesDontFetch,
+					DateTime.UtcNow));
+
 			return View(null);
 		}
 	}

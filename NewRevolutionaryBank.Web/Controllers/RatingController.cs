@@ -7,18 +7,23 @@ using Microsoft.AspNetCore.Mvc;
 using NewRevolutionaryBank.Data.Models;
 using NewRevolutionaryBank.Services.Contracts;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [Authorize]
 public class RatingController : Controller
 {
 	private readonly IRatingService _ratingService;
 	private readonly UserManager<ApplicationUser> _userManager;
+	private readonly ILogger<RatingController> _logger;
 
 	public RatingController(
 		IRatingService ratingService,
-		UserManager<ApplicationUser> userManager)
+		UserManager<ApplicationUser> userManager,
+		ILogger<RatingController> logger)
 	{
 		_ratingService = ratingService;
 		_userManager = userManager;
+		_logger = logger;
 	}
 
 	[HttpGet]
@@ -28,6 +33,11 @@ public class RatingController : Controller
 
 		if (hasRated)
 		{
+			_logger.LogInformation(string.Format(
+				InformationConstants.UserTriesToRateMoreThanOnce,
+				User.Identity?.Name,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -51,12 +61,22 @@ public class RatingController : Controller
 
 		if (currUser is null)
 		{
+			_logger.LogInformation(string.Format(
+				InformationConstants.UnauthorizedUserTriedToRate,
+				User.Identity?.Name,
+				DateTime.UtcNow));
+
 			return Unauthorized();
 		}
 
 		model.RatedBy = currUser;
 
 		await _ratingService.SendRating(model);
+
+		_logger.LogInformation(string.Format(
+				InformationConstants.UserRated,
+				User.Identity?.Name,
+				DateTime.UtcNow));
 
 		return RedirectToAction("Index", "Home");
 	}

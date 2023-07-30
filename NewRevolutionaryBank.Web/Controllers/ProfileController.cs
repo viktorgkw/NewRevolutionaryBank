@@ -6,13 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Profile;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [Authorize]
 public class ProfileController : Controller
 {
 	private readonly IProfileService _profileService;
+	private readonly ILogger<ProfileController> _logger;
 
-	public ProfileController(IProfileService profileService) =>
+	public ProfileController(
+		IProfileService profileService,
+		ILogger<ProfileController> logger)
+	{
 		_profileService = profileService;
+		_logger = logger;
+	}
 
 	public async Task<IActionResult> MyProfile()
 	{
@@ -27,6 +35,11 @@ public class ProfileController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogError(string.Format(
+				ErrorConstants.ProfilePageError,
+				User.Identity?.Name,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -40,6 +53,12 @@ public class ProfileController : Controller
 		}
 		catch
 		{
+			_logger.LogCritical(string.Format(
+				CriticalConstants.CriticalErrorInMethod,
+				nameof(MyProfile),
+				nameof(ProfileController),
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",

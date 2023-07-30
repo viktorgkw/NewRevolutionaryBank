@@ -6,13 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.BankAccount;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [Authorize]
 public partial class BankAccountController : Controller
 {
 	private readonly IBankAccountService _bankAccountService;
+	private readonly ILogger<BankAccountController> _logger;
 
-	public BankAccountController(IBankAccountService bankAccountService) =>
+	public BankAccountController(
+		IBankAccountService bankAccountService,
+		ILogger<BankAccountController> logger)
+	{
 		_bankAccountService = bankAccountService;
+		_logger = logger;
+	}
 
 	[HttpGet]
 	[AllowAnonymous]
@@ -48,6 +56,11 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogError(string.Format(
+				ErrorConstants.UserTriedToCreateBankAccountWithInvalidData,
+				User.Identity?.Name,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -76,6 +89,11 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogError(string.Format(
+				ErrorConstants.UserTriedToAccessHisBankAccountUnsuccessfully,
+				User.Identity?.Name,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -104,6 +122,12 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogWarning(string.Format(
+				WarningConstants.UserTriedToAccessUnexistingBankAccDetails,
+				User.Identity?.Name,
+				id,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -127,6 +151,12 @@ public partial class BankAccountController : Controller
 
 		if (!isOwner)
 		{
+			_logger.LogError(string.Format(
+				ErrorConstants.NotOwnerTriedToCloseBankAccount,
+				User.Identity?.Name,
+				id,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -184,6 +214,10 @@ public partial class BankAccountController : Controller
 		}
 		catch (ArgumentNullException)
 		{
+			_logger.LogError(string.Format(
+				ErrorConstants.UnauthorizedUserTriedToDeposit,
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",
@@ -231,6 +265,12 @@ public partial class BankAccountController : Controller
 		}
 		catch (Exception)
 		{
+			_logger.LogCritical(string.Format(
+				CriticalConstants.CriticalErrorInMethod,
+				nameof(Deposit),
+				nameof(BankAccountController),
+				DateTime.UtcNow));
+
 			return RedirectToAction(
 				"Error",
 				"Home",

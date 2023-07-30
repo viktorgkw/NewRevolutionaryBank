@@ -8,18 +8,23 @@ using NewRevolutionaryBank.Services.Contracts;
 using NewRevolutionaryBank.Services.Messaging.Contracts;
 using NewRevolutionaryBank.Web.ViewModels.Home;
 
+using static NewRevolutionaryBank.Common.LoggingMessageConstants;
+
 [AllowAnonymous]
 public class HomeController : Controller
 {
 	private readonly IEmailSender _emailSender;
 	private readonly IRatingService _ratingService;
+	private readonly ILogger<HomeController> _logger;
 
 	public HomeController(
 		IEmailSender emailSender,
-		IRatingService ratingService)
+		IRatingService ratingService,
+		ILogger<HomeController> logger)
 	{
 		_emailSender = emailSender;
 		_ratingService = ratingService;
+		_logger = logger;
 	}
 
 	[HttpGet]
@@ -52,6 +57,10 @@ public class HomeController : Controller
 			!string.IsNullOrWhiteSpace(subject) &&
 			!string.IsNullOrWhiteSpace(description))
 		{
+			_logger.LogInformation(string.Format(
+				InformationConstants.SupportMessageSent,
+				User.Identity?.Name));
+
 			description += $"<br />From {emailFrom}";
 
 			await _emailSender.SendEmailAsync(
@@ -64,11 +73,18 @@ public class HomeController : Controller
 	}
 
 	[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-	public IActionResult Error(string title, string description, bool isNotFound) =>
-		View(new ErrorViewModel
-			{
-				Title = title,
-				Description = description,
-				IsNotFound = isNotFound
-			});
+	public IActionResult Error(string title, string description, bool isNotFound)
+	{
+		_logger.LogError(string.Format(
+				ErrorConstants.UserHitAnError,
+				User.Identity?.Name,
+				description));
+
+		return View(new ErrorViewModel
+		{
+			Title = title,
+			Description = description,
+			IsNotFound = isNotFound
+		});
+	}
 }
